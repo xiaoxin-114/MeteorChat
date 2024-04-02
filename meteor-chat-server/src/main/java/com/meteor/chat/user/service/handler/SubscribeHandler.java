@@ -48,7 +48,7 @@ public class SubscribeHandler extends AbstractHandler {
     }
 
     /**
-     * 处理特殊请求，比如如果是扫码进来的，可以做相应处理
+     * 处理特殊请求，比如如果是扫码进来的，可以做相应处理，扫码第一次关注发送的就是关注事件，但我们还是要按照扫码进行处理
      */
     private WxMpXmlOutMessage handleSpecial(WxMpService weixinService, WxMpXmlMessage wxMessage)
             throws Exception {

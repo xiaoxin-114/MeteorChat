@@ -1,22 +1,24 @@
 package com.meteor.chat.websocket.handler;
 
 import cn.hutool.json.JSONUtil;
-import com.meteor.chat.common.domain.enums.WSReqTypeEnum;
-import com.meteor.chat.common.domain.vo.websocket.WSBaseReqVO;
+import com.meteor.chat.websocket.domain.enums.WSReqTypeEnum;
+import com.meteor.chat.websocket.domain.vo.WSBaseReq;
 import com.meteor.chat.websocket.service.WebSocketService;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 
 @Slf4j
 public class WebsocketHandler extends SimpleChannelInboundHandler<TextWebSocketFrame> {
 
+    @Autowired
     private WebSocketService webSocketService;
 
     @Override
     protected void channelRead0(ChannelHandlerContext channelHandlerContext, TextWebSocketFrame textWebSocketFrame) throws Exception {
-        WSBaseReqVO wsBaseReqVO = JSONUtil.toBean(textWebSocketFrame.text(), WSBaseReqVO.class);
+        WSBaseReq wsBaseReqVO = JSONUtil.toBean(textWebSocketFrame.text(), WSBaseReq.class);
         WSReqTypeEnum typeEnum = WSReqTypeEnum.of(wsBaseReqVO.getType());
         switch (typeEnum){
             case LOGIN:

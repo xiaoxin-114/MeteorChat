@@ -1,6 +1,6 @@
-package com.meteor.chat.common.domain.enums;
+package com.meteor.chat.websocket.domain.enums;
 
-import com.meteor.chat.common.domain.vo.websocket.*;
+import com.meteor.chat.websocket.domain.vo.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 

@@ -1,4 +1,4 @@
-package com.meteor.chat.common.domain.vo.websocket;
+package com.meteor.chat.websocket.domain.vo;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -14,11 +14,6 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class WSLoginSuccess {
+public class WSBlack {
     private Long uid;
-    private String avatar;
-    private String token;
-    private String name;
-    //用户权限 0普通用户 1超管
-    private Integer power;
 }

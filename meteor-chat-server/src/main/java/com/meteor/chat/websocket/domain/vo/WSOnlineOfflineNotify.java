@@ -1,12 +1,9 @@
-package com.meteor.chat.common.domain.vo.websocket;
+package com.meteor.chat.websocket.domain.vo;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Description:用户上下线变动的推送类

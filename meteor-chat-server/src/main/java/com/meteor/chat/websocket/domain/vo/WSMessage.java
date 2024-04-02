@@ -1,4 +1,4 @@
-package com.meteor.chat.common.domain.vo.websocket;
+package com.meteor.chat.websocket.domain.vo;
 
 import lombok.Data;
 

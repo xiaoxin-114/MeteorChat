@@ -1,7 +1,7 @@
 package com.meteor.chat.common.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import generator.domain.WxMsg;
+import com.meteor.chat.common.domain.entity.WxMsg;
 
 /**
 * @author meteor
