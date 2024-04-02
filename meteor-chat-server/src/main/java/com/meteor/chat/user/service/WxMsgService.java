@@ -1,0 +1,10 @@
+package com.meteor.chat.user.service;
+
+import me.chanjar.weixin.mp.api.WxMpService;
+import me.chanjar.weixin.mp.bean.message.WxMpXmlMessage;
+import me.chanjar.weixin.mp.bean.message.WxMpXmlOutMessage;
+
+public interface WxMsgService {
+
+    WxMpXmlOutMessage scan(WxMpService service, WxMpXmlMessage message);
+}
