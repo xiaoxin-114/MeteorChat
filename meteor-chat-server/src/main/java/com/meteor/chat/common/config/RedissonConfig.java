@@ -1,4 +1,4 @@
-package com.meteor.chat.common.util;
+package com.meteor.chat.common.config;
 
 import org.redisson.Redisson;
 import org.redisson.api.RedissonClient;
