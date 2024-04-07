@@ -4,7 +4,7 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.meteor.chat.common.mapper.RoomFriendMapper">
 
-    <resultMap id="BaseResultMap" type="generator.domain.RoomFriend">
+    <resultMap id="BaseResultMap" type="com.meteor.chat.common.domain.entity.RoomFriend">
             <id property="id" column="id" jdbcType="BIGINT"/>
             <result property="roomId" column="room_id" jdbcType="BIGINT"/>
             <result property="uid1" column="uid1" jdbcType="BIGINT"/>

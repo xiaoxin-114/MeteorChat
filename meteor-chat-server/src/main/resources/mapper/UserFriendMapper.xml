@@ -4,7 +4,7 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.meteor.chat.common.mapper.UserFriendMapper">
 
-    <resultMap id="BaseResultMap" type="generator.domain.UserFriend">
+    <resultMap id="BaseResultMap" type="com.meteor.chat.common.domain.entity.UserFriend">
             <id property="id" column="id" jdbcType="BIGINT"/>
             <result property="uid" column="uid" jdbcType="BIGINT"/>
             <result property="friendUid" column="friend_uid" jdbcType="BIGINT"/>
