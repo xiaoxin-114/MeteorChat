@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import java.util.Objects;
 
 @Service
@@ -15,10 +16,12 @@ import java.util.Objects;
 public class LoginServiceImpl implements LoginService {
 
     private static final Long EXPIRE_TIME = 1000L * 60 * 60 * 24 * 7; // 过期时间一周
+    @Resource
+    private JWTUtils jwtUtils;
 
     @Override
     public boolean verify(String token) {
-        Long uid = JWTUtils.getUid(token);
+        Long uid = jwtUtils.getUid(token);
         if (Objects.isNull(uid)) {
             return false;
         }
@@ -39,7 +42,7 @@ public class LoginServiceImpl implements LoginService {
         if (StringUtils.isNotEmpty(token)){
             return token;
         }
-        token = JWTUtils.createToken(uid);
+        token = jwtUtils.createToken(uid);
         RedisUtils.set(key, token, EXPIRE_TIME);
         return token;
     }
@@ -47,6 +50,6 @@ public class LoginServiceImpl implements LoginService {
     @Override
     public Long getValidUid(String token) {
         boolean verify = verify(token);
-        return verify ? JWTUtils.getUid(token) : null;
+        return verify ? jwtUtils.getUid(token) : null;
     }
 }

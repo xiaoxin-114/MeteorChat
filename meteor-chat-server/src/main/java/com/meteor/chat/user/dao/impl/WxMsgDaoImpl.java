@@ -8,6 +8,6 @@ import org.springframework.stereotype.Repository;
 public class WxMsgDaoImpl implements WxMsgDao {
     @Override
     public void save(WxMsg msg) {
-
+        //todo
     }
 }

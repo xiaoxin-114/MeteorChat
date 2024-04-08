@@ -7,23 +7,24 @@ import com.auth0.jwt.interfaces.Claim;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
 import java.util.Map;
 import java.util.Optional;
 
 @Slf4j
+@Component
 public class JWTUtils {
 
     /**
      * 进行加解密的密钥
      */
-    @Value("${mallchat.jwt.secret}")
-    private static String secret;
+    @Value("${jwt.secret}")
+    private String secret;
+    private String UID = "uid";
+    private String CREATE_TIME = "createTime";
 
-    private static String UID = "uid";
-    private static String CREATE_TIME = "createTime";
-
-    public static String createToken(Long uid){
+    public String createToken(Long uid){
         String token = JWT.create()
                 .withClaim(UID, uid)
                 .withClaim(CREATE_TIME, System.currentTimeMillis())
@@ -31,14 +32,14 @@ public class JWTUtils {
         return token;
     }
 
-    public static Long getUid(String token){
+    public Long getUid(String token){
         return Optional.ofNullable(decodeToken(token))
                 .map(map -> map.get(UID))
                 .map(uid -> uid.asLong())
                 .orElse(null);
     }
 
-    public static Map<String, Claim> decodeToken(String token) {
+    public Map<String, Claim> decodeToken(String token) {
         if (token == null){
             return null;
         }

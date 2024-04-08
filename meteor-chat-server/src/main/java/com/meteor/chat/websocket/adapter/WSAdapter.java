@@ -1,7 +1,9 @@
 package com.meteor.chat.websocket.adapter;
 
+import com.meteor.chat.common.domain.entity.User;
 import com.meteor.chat.websocket.domain.enums.WSRespTypeEnum;
 import com.meteor.chat.websocket.domain.vo.WSBaseResp;
+import com.meteor.chat.websocket.domain.vo.WSLoginSuccess;
 import com.meteor.chat.websocket.domain.vo.WSLoginUrl;
 import me.chanjar.weixin.mp.bean.result.WxMpQrCodeTicket;
 
@@ -12,5 +14,25 @@ public class WSAdapter {
         wsBaseResp.setType(WSRespTypeEnum.LOGIN_URL.getType());
         wsBaseResp.setData(WSLoginUrl.builder().loginUrl(wxMpQrCodeTicket.getUrl()).build());
         return wsBaseResp;
+    }
+
+    public static WSBaseResp buildScanSuccessResp() {
+        WSBaseResp<Object> resp = new WSBaseResp<>();
+        resp.setType(WSRespTypeEnum.LOGIN_SCAN_SUCCESS.getType());
+        return resp;
+    }
+
+    public static WSBaseResp<WSLoginSuccess> buildLoginSuccessResp(User user, String token, Long power) {
+        WSBaseResp<WSLoginSuccess> resp = new WSBaseResp<>();
+        WSLoginSuccess loginSuccess = WSLoginSuccess.builder()
+                .avatar(user.getAvatar())
+                .name(user.getName())
+                .power(power == null ? 0 : power)
+                .uid(user.getId())
+                .token(token)
+                .build();
+        resp.setData(loginSuccess);
+        resp.setType(WSRespTypeEnum.LOGIN_SUCCESS.getType());
+        return resp;
     }
 }

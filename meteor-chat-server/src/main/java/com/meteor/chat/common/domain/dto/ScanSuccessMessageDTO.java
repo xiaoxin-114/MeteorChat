@@ -11,7 +11,7 @@ import java.io.Serializable;
 @NoArgsConstructor
 public class ScanSuccessMessageDTO implements Serializable {
     /**
-     * 推送的uid
+     * 推送的code
      */
     private Integer code;
 
