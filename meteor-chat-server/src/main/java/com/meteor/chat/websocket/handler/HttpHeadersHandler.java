@@ -20,9 +20,11 @@ public class HttpHeadersHandler extends ChannelInboundHandlerAdapter {
 
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
+        //如果还是FullHttpRequest，说明现在正在申请websocket连接
         if (msg instanceof FullHttpRequest){
             FullHttpRequest request = (FullHttpRequest) msg;
             UrlBuilder urlBuilder = UrlBuilder.ofHttp(request.uri());
+            //从请求中获取token，并且存放到channel的背景中
             String token = Optional.ofNullable(urlBuilder.getQuery()).map(map -> map.get("token")).map(CharSequence::toString).orElse("");
             NettyUtils.setAttr(ctx.channel(), NettyUtils.TOKEN_KEY, token);
             // 获取请求路径
@@ -36,7 +38,9 @@ public class HttpHeadersHandler extends ChannelInboundHandlerAdapter {
             }
             NettyUtils.setAttr(ctx.channel(), NettyUtils.IP_KEY, ip);
             ctx.pipeline().remove(this);
+            ctx.fireChannelRead(request);
+        } else {
+            ctx.fireChannelRead(msg);
         }
-        ctx.fireChannelRead(msg);
     }
 }

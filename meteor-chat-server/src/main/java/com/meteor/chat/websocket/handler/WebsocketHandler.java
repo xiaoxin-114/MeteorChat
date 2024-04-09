@@ -3,13 +3,20 @@ package com.meteor.chat.websocket.handler;
 import cn.hutool.extra.spring.SpringUtil;
 import cn.hutool.json.JSONUtil;
 import com.meteor.chat.websocket.domain.enums.WSReqTypeEnum;
+import com.meteor.chat.websocket.domain.vo.WSAuthorize;
 import com.meteor.chat.websocket.domain.vo.WSBaseReq;
 import com.meteor.chat.websocket.service.WebSocketService;
+import com.meteor.chat.websocket.util.NettyUtils;
+import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandler.Sharable;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
+import io.netty.handler.codec.http.websocketx.WebSocketServerProtocolHandler;
+import io.netty.handler.timeout.IdleState;
+import io.netty.handler.timeout.IdleStateEvent;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 
 @Slf4j
 @Sharable
@@ -90,7 +97,22 @@ public class WebsocketHandler extends SimpleChannelInboundHandler<TextWebSocketF
      */
     @Override
     public void userEventTriggered(ChannelHandlerContext ctx, Object evt) throws Exception {
-        //todo
+        if (evt instanceof IdleStateEvent) {
+            IdleStateEvent event = (IdleStateEvent) evt;
+            //如果是读空闲事件，那么直接断开websocket连接
+            if (event.state() == IdleState.READER_IDLE) {
+                userOffLine(ctx);
+            }
+        }else if (evt instanceof WebSocketServerProtocolHandler.HandshakeComplete) {
+            //如果是握手的事件，那么就从channel背景中获取到token，并对token进行验证
+            Channel channel = ctx.channel();
+            webSocketService.connect(channel);
+            String token = NettyUtils.getAttr(channel, NettyUtils.TOKEN_KEY);
+            if (StringUtils.isNotEmpty(token)) {
+                webSocketService.authorize(channel, new WSAuthorize(token));
+            }
+        }
+        super.userEventTriggered(ctx, evt);
     }
 
     private WebSocketService getService() {

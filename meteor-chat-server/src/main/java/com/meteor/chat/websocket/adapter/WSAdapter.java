@@ -35,4 +35,10 @@ public class WSAdapter {
         resp.setType(WSRespTypeEnum.LOGIN_SUCCESS.getType());
         return resp;
     }
+
+    public static WSBaseResp<?> buildTokenInvalidResp() {
+        WSBaseResp<Object> wsBaseResp = new WSBaseResp<>();
+        wsBaseResp.setType(WSRespTypeEnum.INVALIDATE_TOKEN.getType());
+        return wsBaseResp;
+    }
 }

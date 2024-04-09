@@ -7,6 +7,7 @@ import com.meteor.chat.common.constants.RedisKey;
 import com.meteor.chat.common.domain.entity.User;
 import com.meteor.chat.common.domain.entity.UserRole;
 import com.meteor.chat.common.util.RedisUtils;
+import com.meteor.chat.event.UserOfflineEvent;
 import com.meteor.chat.event.UserOnlineEvent;
 import com.meteor.chat.user.dao.UserDao;
 import com.meteor.chat.user.dao.UserRoleDao;
@@ -24,12 +25,14 @@ import lombok.extern.slf4j.Slf4j;
 import me.chanjar.weixin.common.error.WxErrorException;
 import me.chanjar.weixin.mp.api.WxMpService;
 import me.chanjar.weixin.mp.bean.result.WxMpQrCodeTicket;
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.time.Duration;
+import java.util.Collections;
 import java.util.Date;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
@@ -54,7 +57,7 @@ public class WebSocketServiceImpl  implements WebSocketService {
      */
     private static final ConcurrentHashMap<Channel, WSChannelExtraDTO> ONLINE_WS_MAP = new ConcurrentHashMap<>();
     /**
-     * 所有在线的用户和对应的socket
+     * 所有在线的用户和对应的socket，之所以value是个channel列表，应该是一个账号支持多地登入
      */
     private static final ConcurrentHashMap<Long, CopyOnWriteArrayList<Channel>> ONLINE_UID_MAP = new ConcurrentHashMap<>();
 
@@ -89,19 +92,48 @@ public class WebSocketServiceImpl  implements WebSocketService {
         sendMsg(channel, WSAdapter.buildLoginResp(qrCodeTicket));
     }
 
+    /**
+     * 完成websocket连接后
+     * @param channel
+     */
     @Override
     public void connect(Channel channel) {
-
+        ONLINE_WS_MAP.put(channel, new WSChannelExtraDTO());
     }
 
+    /**
+     * channel断开连接，用户离线
+     * @param channel
+     */
     @Override
     public void removed(Channel channel) {
-
+        WSChannelExtraDTO dto = ONLINE_WS_MAP.get(channel);
+        Optional<Long> uid = Optional.ofNullable(dto).map(d -> d.getUid());
+        boolean offSuccess = offline(channel, uid);
+        if (uid.isPresent() && offSuccess) {
+            User user = User.builder()
+                    .id(uid.get())
+                    .lastOptTime(new Date())
+                    .build();
+            //发送一个用户离线的事件
+            applicationEventPublisher.publishEvent(new UserOfflineEvent(this, user));
+        }
     }
 
+    /**
+     * 前端通过websocket连接进行主动认证
+     * @param channel
+     * @param wsAuthorize
+     */
     @Override
     public void authorize(Channel channel, WSAuthorize wsAuthorize) {
-
+        String token = wsAuthorize.getToken();
+        if (!loginService.verify(token)) {
+            sendMsg(channel, WSAdapter.buildTokenInvalidResp());
+        } else {
+            Long uid = loginService.getValidUid(token);
+            successLogin(channel, userDao.getById(uid), token);
+        }
     }
 
     @Override
@@ -198,7 +230,7 @@ public class WebSocketServiceImpl  implements WebSocketService {
     }
 
     /**
-     * 用户上线，更新用户的在线列表
+     * 用户上线，更新在线的channel列表与其对应的uid
      * @param uid
      */
     private void online(Channel channel, Long uid) {
@@ -206,6 +238,26 @@ public class WebSocketServiceImpl  implements WebSocketService {
         ONLINE_UID_MAP.putIfAbsent(uid, new CopyOnWriteArrayList<>());
         ONLINE_UID_MAP.get(uid).add(channel);
         NettyUtils.setAttr(channel, NettyUtils.UID_KEY, uid);
+    }
+
+    /**
+     * 用户离线，移除ONLINE_WS_MAP中的channel，并更新ONLINE_UID_MAP中的uid对应的channel列表
+     * @param channel
+     * @param uid
+     * @return ONLINE_UID_MAP中uid对应的channel是否移除完
+     */
+    private boolean offline(Channel channel, Optional<Long> uid) {
+        ONLINE_WS_MAP.remove(channel);
+        if (uid.isPresent()) {
+            CopyOnWriteArrayList<Channel> channels = ONLINE_UID_MAP.get(uid.get());
+            channels.forEach(uChannel -> {
+                if (uChannel == channel) {
+                    channels.remove(uChannel);
+                }
+            });
+            return CollectionUtils.isEmpty(channels);
+        }
+        return true;
     }
 
     /**
