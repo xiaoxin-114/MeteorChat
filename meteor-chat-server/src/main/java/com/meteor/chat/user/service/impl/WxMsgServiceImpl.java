@@ -21,6 +21,7 @@ import me.chanjar.weixin.mp.bean.message.WxMpXmlOutMessage;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.net.URLEncoder;
@@ -46,6 +47,7 @@ public class WxMsgServiceImpl implements WxMsgService {
     private UserRoleDao userRoleDao;
 
     @Override
+    @Transactional
     public WxMpXmlOutMessage scan(WxMpService service, WxMpXmlMessage message) {
         String openId = message.getFromUser();
         User user = userDao.getByOpenId(openId);

@@ -1,15 +1,19 @@
 package com.meteor.chat.user.service.cache;
 
 import com.meteor.chat.common.constants.RedisKey;
+import com.meteor.chat.common.domain.entity.User;
 import com.meteor.chat.common.util.RedisUtils;
 import com.meteor.chat.user.dao.UserDao;
 import com.meteor.chat.user.dao.UserRoleDao;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
-import java.util.Date;
+import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * 用户列表缓存，以zset数据格式，在redis中存储用户的在线列表和离线列表，
@@ -75,6 +79,39 @@ public class UserCache {
     public boolean isOnline(Long uid) {
         String key = onlineOrOfflineKey(true);
         return RedisUtils.zIsMember(key, uid);
+    }
+
+    /**
+     * 获取用户信息，盘路缓存模式
+     */
+    public User getUserInfo(Long uid){
+        return getUserInfoBatch(Collections.singletonList(uid)).get(uid);
+    }
+
+    /**
+     * 获取用户信息，盘路缓存模式
+     */
+    public Map<Long, User> getUserInfoBatch(List<Long> idList) {
+        //获取到对于的redis中的key
+        List<String> keys = idList.stream()
+                .map(id -> RedisKey.getKey(RedisKey.USER_INFO_STRING, id))
+                .collect(Collectors.toList());
+        // 从redis中获取用户信息数据
+        List<User> userList = RedisUtils.mget(keys, User.class);
+        Map<Long, User> userMap = userList.stream()
+                .filter(Objects::nonNull)
+                .collect(Collectors.toMap(User::getId, Function.identity()));
+        // 过滤出那些需要查询，但是redis中没有的用户数据id
+        List<Long> extraUid = idList.stream().filter(id -> !userMap.containsKey(id)).collect(Collectors.toList());
+        if (CollectionUtils.isNotEmpty(extraUid)) {
+            // 从数据库中查询，并且存储回redis中
+            List<User> users = userDao.listByIds(extraUid);
+            Map<String, User> extraMap = users.stream().collect(Collectors.toMap(user -> RedisKey.getKey(RedisKey.USER_INFO_STRING, user.getId()), Function.identity()));
+            RedisUtils.mset(extraMap, 5 * 60);
+            // 并加入到返回结果中
+            users.forEach(user -> userMap.put(user.getId(), user));
+        }
+        return userMap;
     }
 
     /**

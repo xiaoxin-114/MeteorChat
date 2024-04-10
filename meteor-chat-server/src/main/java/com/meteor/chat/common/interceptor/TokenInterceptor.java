@@ -1,4 +1,4 @@
-package com.meteor.chat.common.interceptro;
+package com.meteor.chat.common.interceptor;
 
 import com.meteor.chat.common.constants.MDCKey;
 import com.meteor.chat.common.domain.enums.HttpErrorEnum;

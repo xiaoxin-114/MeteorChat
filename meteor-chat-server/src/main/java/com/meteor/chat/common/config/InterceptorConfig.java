@@ -1,8 +1,7 @@
 package com.meteor.chat.common.config;
 
-import com.meteor.chat.common.interceptro.TokenInterceptor;
+import com.meteor.chat.common.interceptor.TokenInterceptor;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.annotation.Order;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 

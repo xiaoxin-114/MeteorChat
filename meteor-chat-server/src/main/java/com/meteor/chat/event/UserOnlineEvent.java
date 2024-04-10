@@ -2,9 +2,10 @@ package com.meteor.chat.event;
 
 import com.meteor.chat.common.domain.entity.User;
 import lombok.Data;
+import lombok.Getter;
 import org.springframework.context.ApplicationEvent;
 
-@Data
+@Getter
 public class UserOnlineEvent extends ApplicationEvent {
     private final User user;
 
