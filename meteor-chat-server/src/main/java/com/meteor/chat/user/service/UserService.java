@@ -8,4 +8,6 @@ public interface UserService {
     void register(User user);
 
     UserInfoVO getUserInfo(Long uid);
+
+    void wearBadge(Long uid, Long itemId);
 }

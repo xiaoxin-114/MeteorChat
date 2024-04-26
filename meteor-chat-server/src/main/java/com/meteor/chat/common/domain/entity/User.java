@@ -58,7 +58,7 @@ public class User implements Serializable {
     /**
      * ip信息
      */
-    private Object ipInfo;
+    private IpInfo ipInfo;
 
     /**
      * 佩戴的徽章id

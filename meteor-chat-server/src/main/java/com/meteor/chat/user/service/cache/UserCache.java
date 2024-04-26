@@ -27,6 +27,9 @@ public class UserCache {
     private UserDao userDao;
 
     @Resource
+    private UserSummaryCache userSummaryCache;
+
+    @Resource
     private UserRoleDao userRoleDao;
 
     /**
@@ -114,6 +117,43 @@ public class UserCache {
         return userMap;
     }
 
+    /**
+     * 移除用户，将用户从redis中的在线和离线列表中都删去
+     * @param uid 用户id
+     */
+    public void remove(Long uid) {
+        String onlineKey = onlineOrOfflineKey(true);
+        String offlineKey = onlineOrOfflineKey(false);
+        RedisUtils.zRemove(offlineKey, uid);
+        RedisUtils.zRemove(onlineKey, uid);
+    }
+
+    public List<Long> getUserModifyTime(List<Long> uidList) {
+        if (CollectionUtils.isEmpty(uidList)) {
+            return null;
+        }
+        List<String> keyList = uidList.stream().map(id -> RedisKey.getKey(RedisKey.USER_MODIFY_STRING, id)).collect(Collectors.toList());
+        return RedisUtils.mget(keyList, Long.class);
+    }
+
+    public void updateUserModifyTime(Long uid) {
+        String key = RedisKey.getKey(RedisKey.USER_MODIFY_STRING, uid);
+        RedisUtils.set(key, System.currentTimeMillis());
+    }
+
+    /**
+     * 用户信息发送变化，删掉缓存，确保下次读取的是最新数据
+     * @param uid
+     */
+    public void userInfoChange(Long uid) {
+        delUserInfoChange(uid);
+        userSummaryCache.delete(uid);
+        updateUserModifyTime(uid);
+    }
+
+    public void delUserInfoChange(Long uid) {
+        RedisUtils.del(RedisKey.getKey(RedisKey.USER_INFO_STRING, uid));
+    }
     /**
      * 获取在线或离线用户id列表在redis存储的key
      * @param mark true获取在线的，false获取离线的

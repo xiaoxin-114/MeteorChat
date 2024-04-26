@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import lombok.Builder;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -15,6 +16,7 @@ import java.util.Date;
  */
 @TableName(value ="user_backpack")
 @Data
+@Builder
 public class UserBackpack implements Serializable {
     /**
      * id
@@ -30,7 +32,7 @@ public class UserBackpack implements Serializable {
     /**
      * 物品id
      */
-    private Integer itemId;
+    private Long itemId;
 
     /**
      * 使用状态 0.待使用 1已使用

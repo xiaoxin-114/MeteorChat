@@ -33,4 +33,10 @@ public class UserServiceImpl implements UserService {
         // todo 背包改名卡查询，获取用户可改名次数
         return UserAdapter.buildUserInfoResp(userInfo, 1);
     }
+
+    @Override
+    public void wearBadge(Long uid, Long itemId) {
+        User userInfo = User.builder().id(uid).itemId(itemId).build();
+        userDao.updateById(userInfo);
+    }
 }
