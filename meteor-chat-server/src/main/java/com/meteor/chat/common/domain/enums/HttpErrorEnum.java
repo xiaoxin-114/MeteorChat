@@ -3,8 +3,6 @@ package com.meteor.chat.common.domain.enums;
 import cn.hutool.http.ContentType;
 import com.meteor.chat.common.domain.result.ApiResult;
 import com.meteor.chat.common.exception.ErrorEnum;
-import lombok.Getter;
-
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;

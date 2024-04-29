@@ -1,6 +1,7 @@
 package com.meteor.chat.user.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.meteor.chat.common.annotation.RedissonLock;
 import com.meteor.chat.common.constants.CommonConstants;
 import com.meteor.chat.common.domain.entity.ItemConfig;
 import com.meteor.chat.common.domain.entity.User;
@@ -20,6 +21,7 @@ import javax.annotation.Resource;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 
 @Service
 @Slf4j
@@ -37,6 +39,10 @@ public class UserBackpackServiceImpl implements UserBackpackService {
     public void issueItem(Long uid, Long itemId, IdempotenceCodeEnum codeEnum, Long bussinessId) {
         // 幂等判断
         String idempotent = getIdempotent(itemId, codeEnum, bussinessId);
+        doIssueItem(idempotent, uid, itemId);
+    }
+    @RedissonLock(key = "#idempotent", time = 5000)
+    public void doIssueItem(String idempotent, Long uid, Long itemId) {
         UserBackpack backpack = userBackpackDao.getByIdempotent(idempotent);
         if (Objects.nonNull(backpack)) {
             return;
