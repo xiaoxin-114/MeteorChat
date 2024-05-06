@@ -222,8 +222,8 @@ public class WebSocketServiceImpl  implements WebSocketService {
         if (!userCache.isOnline(user.getId())){
             //如果用户之前是离线状态，那么就更新用户的状态信息
             user.setLastOptTime(new Date());
-            //todo 更新用户的ip信息
-
+            // 更新用户的ip信息
+            user.getIpInfo().refreshIp(NettyUtils.getAttr(channel, NettyUtils.IP_KEY));
             //发送用户登陆的事件
             applicationEventPublisher.publishEvent(new UserOnlineEvent(this, user));
         }

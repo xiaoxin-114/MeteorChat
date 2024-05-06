@@ -1,17 +1,21 @@
 package com.meteor.chat.event.listener;
 
+import com.meteor.chat.common.domain.entity.IpDetail;
 import com.meteor.chat.common.domain.entity.User;
 import com.meteor.chat.common.domain.enums.ChatActiveStatusEnum;
+import com.meteor.chat.common.util.IPUtils;
 import com.meteor.chat.event.UserOnlineEvent;
 import com.meteor.chat.user.dao.UserDao;
 import com.meteor.chat.user.dao.UserRoleDao;
 import com.meteor.chat.user.service.cache.UserCache;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
+import java.util.concurrent.ExecutionException;
 
 /**
  * 用户登陆事件的监听器
@@ -44,7 +48,16 @@ public class UserOnlineListener {
         update.setLastOptTime(user.getLastOptTime());
         update.setIpInfo(user.getIpInfo());
         update.setActiveStatus(ChatActiveStatusEnum.ONLINE.getStatus());
+        String needRefreshIp = update.getIpInfo().needRefreshIp();
+        if (StringUtils.isNotEmpty(needRefreshIp)) {
+            try {
+                IpDetail ipDetail = IPUtils.asyncGetIpDetail(needRefreshIp);
+                update.getIpInfo().refreshIpDetail(ipDetail);
+            } catch (Exception e) {
+                log.error("ip[" + needRefreshIp + "]解析归属地异常", e);
+            }
+            userCache.userInfoChange(user.getId());
+        }
         userDao.updateById(update);
-        //todo 更新用户ip详情
     }
 }
