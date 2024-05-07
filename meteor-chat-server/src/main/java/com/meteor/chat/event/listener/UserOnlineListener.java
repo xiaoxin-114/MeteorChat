@@ -29,6 +29,8 @@ public class UserOnlineListener {
     private UserCache userCache;
     @Resource
     private UserRoleDao userRoleDao;
+    @Resource
+    private IPUtils ipUtils;
 
     @Async
     @EventListener(classes = UserOnlineEvent.class)
@@ -51,7 +53,7 @@ public class UserOnlineListener {
         String needRefreshIp = update.getIpInfo().needRefreshIp();
         if (StringUtils.isNotEmpty(needRefreshIp)) {
             try {
-                IpDetail ipDetail = IPUtils.asyncGetIpDetail(needRefreshIp);
+                IpDetail ipDetail = ipUtils.asyncGetIpDetail(needRefreshIp);
                 update.getIpInfo().refreshIpDetail(ipDetail);
             } catch (Exception e) {
                 log.error("ip[" + needRefreshIp + "]解析归属地异常", e);

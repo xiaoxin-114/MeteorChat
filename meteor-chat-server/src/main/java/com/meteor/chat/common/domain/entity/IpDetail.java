@@ -6,9 +6,9 @@ import java.io.Serializable;
 
 @Data
 public class IpDetail implements Serializable {
-    //注册时的ip
+    //ip
     private String ip;
-    //最新登录的ip
+    //运营商
     private String isp;
     private String isp_id;
     private String city;

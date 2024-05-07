@@ -7,14 +7,18 @@ import com.alibaba.fastjson.JSONObject;
 import com.meteor.chat.common.constants.CommonConstants;
 import com.meteor.chat.common.domain.dto.IpResultDTO;
 import com.meteor.chat.common.domain.entity.IpDetail;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.DisposableBean;
+import org.springframework.stereotype.Component;
 
 import java.util.concurrent.*;
+@Component
+@Slf4j
+public class IPUtils implements DisposableBean {
+    private final ThreadPoolExecutor executor = new ThreadPoolExecutor(1, 1, 0, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<>(500), new NamedThreadFactory(CommonConstants.IP_EXECUTOR, false));
+    private final String URL = "https://ip.taobao.com/outGetIpInfo?ip={%s}&accessKey=alibaba-inc";
 
-public class IPUtils {
-    private static final ThreadPoolExecutor executor = new ThreadPoolExecutor(1, 1, 0, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<>(500), new NamedThreadFactory(CommonConstants.IP_EXECUTOR, false));
-    private static final String URL = "https://ip.taobao.com/outGetIpInfo?ip={%s}&accessKey=alibaba-inc";
-
-    public static IpDetail asyncGetIpDetail(String ip) throws ExecutionException, InterruptedException {
+    public IpDetail asyncGetIpDetail(String ip) throws ExecutionException, InterruptedException {
         String url = URL.replace("{%s}", ip);
         Future<IpDetail> future = executor.submit(() -> {
             for (int i = 0; i < CommonConstants.GET_IPINFO_RETRY; i++) {
@@ -29,5 +33,17 @@ public class IPUtils {
             return null;
         });
         return future.get();
+    }
+
+    @Override
+    public void destroy() throws Exception {
+        executor.shutdown();
+        // 阻塞等待30s
+        boolean termination = executor.awaitTermination(30, TimeUnit.SECONDS);
+        if (termination) {
+            log.info("线程池{}已经停止", executor);
+        } else {
+            log.error("Timed out while waiting for executor [{}] to terminate", executor);
+        }
     }
 }
