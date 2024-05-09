@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface UserBackpackService {
 
-    void issueItem(Long uid, Long itemId, IdempotenceCodeEnum codeEnum, Long bussinessId);
+    void issueItem(Long uid, Long itemId, String idempotent);
 
     /**
      * 根据用户id和物品id查询列表

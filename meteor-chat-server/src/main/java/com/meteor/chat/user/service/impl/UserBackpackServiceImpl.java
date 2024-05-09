@@ -36,13 +36,9 @@ public class UserBackpackServiceImpl implements UserBackpackService {
 
 
     @Override
-    public void issueItem(Long uid, Long itemId, IdempotenceCodeEnum codeEnum, Long bussinessId) {
-        // 幂等判断
-        String idempotent = getIdempotent(itemId, codeEnum, bussinessId);
-        doIssueItem(idempotent, uid, itemId);
-    }
     @RedissonLock(key = "#idempotent", time = 5000)
-    public void doIssueItem(String idempotent, Long uid, Long itemId) {
+    public void issueItem(Long uid, Long itemId, String idempotent) {
+        // 幂等判断
         UserBackpack backpack = userBackpackDao.getByIdempotent(idempotent);
         if (Objects.nonNull(backpack)) {
             return;
@@ -77,9 +73,4 @@ public class UserBackpackServiceImpl implements UserBackpackService {
                 .in(UserBackpack::getItemId, itemIdList);
         return userBackpackDao.list(queryWrapper);
     }
-
-    private String getIdempotent(Long itemId, IdempotenceCodeEnum codeEnum, Long bussinessId) {
-        return String.format("%s_%s_%s", itemId, codeEnum.getDescr(), bussinessId);
-    }
-
 }

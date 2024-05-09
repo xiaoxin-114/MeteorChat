@@ -5,10 +5,10 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.meteor.chat.common.domain.entity.ItemConfig;
 import com.meteor.chat.common.mapper.ItemConfigMapper;
 import com.meteor.chat.user.dao.ItemConfigDao;
-import io.minio.messages.Item;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
-
+@Repository
 public class ItemConfigDaoImpl extends ServiceImpl<ItemConfigMapper, ItemConfig> implements ItemConfigDao {
     @Override
     public List<ItemConfig> listByType(Integer type) {

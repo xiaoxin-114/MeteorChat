@@ -4,6 +4,7 @@ import cn.hutool.json.JSONUtil;
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.meteor.chat.common.constants.RedisKey;
+import com.meteor.chat.common.domain.entity.IpInfo;
 import com.meteor.chat.common.domain.entity.User;
 import com.meteor.chat.common.domain.entity.UserRole;
 import com.meteor.chat.common.util.RedisUtils;
@@ -34,6 +35,7 @@ import javax.annotation.Resource;
 import java.time.Duration;
 import java.util.Collections;
 import java.util.Date;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -223,7 +225,7 @@ public class WebSocketServiceImpl  implements WebSocketService {
             //如果用户之前是离线状态，那么就更新用户的状态信息
             user.setLastOptTime(new Date());
             // 更新用户的ip信息
-            user.getIpInfo().refreshIp(NettyUtils.getAttr(channel, NettyUtils.IP_KEY));
+            user.refreshIp(NettyUtils.getAttr(channel, NettyUtils.IP_KEY));
             //发送用户登陆的事件
             applicationEventPublisher.publishEvent(new UserOnlineEvent(this, user));
         }

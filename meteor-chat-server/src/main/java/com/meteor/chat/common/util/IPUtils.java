@@ -4,6 +4,7 @@ import cn.hutool.core.thread.NamedThreadFactory;
 import cn.hutool.core.thread.ThreadUtil;
 import cn.hutool.http.HttpUtil;
 import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.TypeReference;
 import com.meteor.chat.common.constants.CommonConstants;
 import com.meteor.chat.common.domain.dto.IpResultDTO;
 import com.meteor.chat.common.domain.entity.IpDetail;
@@ -23,7 +24,7 @@ public class IPUtils implements DisposableBean {
         Future<IpDetail> future = executor.submit(() -> {
             for (int i = 0; i < CommonConstants.GET_IPINFO_RETRY; i++) {
                 String result = HttpUtil.get(url);
-                IpResultDTO<IpDetail> resultDTO = JSONObject.parseObject(result, IpResultDTO.class);
+                IpResultDTO<IpDetail> resultDTO = JSONObject.parseObject(result, new TypeReference<IpResultDTO<IpDetail>>(){});
                 if (resultDTO.isSuccess()) {
                     return resultDTO.getData();
                 }

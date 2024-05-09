@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 public class UserSummaryCache extends AbstractRedisStringCache<Long, SummaryInfoDTO> {
 
     @Resource
-    private UserCache userCache;
+    private UserInfoCache userInfoCache;
     @Resource
     private ItemConfigDao itemConfigDao;
     @Resource
@@ -41,7 +41,7 @@ public class UserSummaryCache extends AbstractRedisStringCache<Long, SummaryInfo
         if (CollectionUtils.isEmpty(list)) {
             return null;
         }
-        Map<Long, User> userMap = userCache.getUserInfoBatch(list);
+        Map<Long, User> userMap = userInfoCache.getBatch(list);
         List<ItemConfig> itemConfigs = itemConfigDao.listByType(ItemConfigTypeEnum.BADGE.getType());
         List<Long> itemIdList = itemConfigs.stream().map(ItemConfig::getId).collect(Collectors.toList());
         List<UserBackpack> userBackpacks = userBackpackService.listByUidAndItemId(list, itemIdList);

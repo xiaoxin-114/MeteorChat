@@ -4,20 +4,25 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.extension.handlers.JacksonTypeHandler;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.Objects;
 
 /**
  * 用户表
  * @TableName user
  */
-@TableName(value ="user")
+@TableName(value ="user", autoResultMap = true)
 @Data
 @Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class User implements Serializable {
     /**
      * 用户id
@@ -58,6 +63,7 @@ public class User implements Serializable {
     /**
      * ip信息
      */
+    @TableField(value = "ip_info", typeHandler = JacksonTypeHandler.class)
     private IpInfo ipInfo;
 
     /**
@@ -149,5 +155,12 @@ public class User implements Serializable {
         sb.append(", serialVersionUID=").append(serialVersionUID);
         sb.append("]");
         return sb.toString();
+    }
+
+    public void refreshIp(String ip) {
+        if (Objects.isNull(this.ipInfo)) {
+            this.ipInfo = new IpInfo();
+        }
+        this.ipInfo.refreshIp(ip);
     }
 }
