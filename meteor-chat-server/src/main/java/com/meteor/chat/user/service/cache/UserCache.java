@@ -1,12 +1,16 @@
 package com.meteor.chat.user.service.cache;
 
 import com.meteor.chat.common.constants.RedisKey;
+import com.meteor.chat.common.domain.entity.Black;
 import com.meteor.chat.common.domain.entity.User;
 import com.meteor.chat.common.util.RedisUtils;
+import com.meteor.chat.user.dao.BlackDao;
 import com.meteor.chat.user.dao.UserDao;
 import com.meteor.chat.user.dao.UserRoleDao;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
@@ -30,6 +34,9 @@ public class UserCache {
 
     @Resource
     private UserRoleDao userRoleDao;
+
+    @Resource
+    private BlackDao blackDao;
 
     /**
      * 获取在线总人数
@@ -83,6 +90,21 @@ public class UserCache {
         return RedisUtils.zIsMember(key, uid);
     }
 
+    /**
+     * 修改用户信息，删除缓存
+     * 采用延时双删，保证缓存与数据库一致性
+     * @param user
+     */
+    public void updateUser(User user) {
+        RedisUtils.del(RedisKey.getKey(RedisKey.USER_INFO_STRING, user.getId()));
+        userDao.updateById(user);
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            log.error(e.getMessage(), e);
+        }
+        RedisUtils.del(RedisKey.getKey(RedisKey.USER_INFO_STRING, user.getId()));
+    }
     /**
      * 获取用户信息，盘路缓存模式
      */
@@ -161,5 +183,20 @@ public class UserCache {
     private String onlineOrOfflineKey(boolean mark) {
         String key = mark ? RedisKey.ONLINE_UID_ZET : RedisKey.OFFLINE_UID_ZET;
         return RedisKey.getKey(key);
+    }
+
+    @Cacheable(value = "user", key = "'blackList'")
+    public Map<Integer, Set<String>> getBlackMap() {
+        List<Black> blackList = blackDao.list();
+        Map<Integer, List<Black>> map = blackList.stream().collect(Collectors.groupingBy(Black::getType));
+        Map<Integer, Set<String>> result = new HashMap<>();
+        map.forEach((key, list) -> result.put(key,
+                list.stream().map(Black::getTarget).collect(Collectors.toSet())));
+        return result;
+    }
+
+    @CacheEvict(value = "user", key = "'blackList'")
+    public void clearBlackMap() {
+
     }
 }

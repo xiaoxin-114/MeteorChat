@@ -1,9 +1,15 @@
 package com.meteor.chat.user.service.impl;
 
+import com.meteor.chat.common.domain.entity.IpInfo;
 import com.meteor.chat.common.domain.entity.User;
+import com.meteor.chat.common.domain.enums.RoleEnum;
 import com.meteor.chat.common.domain.vo.UserInfoVO;
+import com.meteor.chat.common.exception.BusinessException;
+import com.meteor.chat.event.BlackUserEvent;
 import com.meteor.chat.event.UserRegisterEvent;
+import com.meteor.chat.user.dao.BlackDao;
 import com.meteor.chat.user.dao.UserDao;
+import com.meteor.chat.user.dao.UserRoleDao;
 import com.meteor.chat.user.service.UserBackpackService;
 import com.meteor.chat.user.service.UserService;
 import com.meteor.chat.user.service.adapter.UserAdapter;
@@ -23,7 +29,9 @@ public class UserServiceImpl implements UserService {
     @Resource
     private UserBackpackService userBackpackService;
     @Resource
-
+    private UserRoleDao userRoleDao;
+    @Resource
+    private BlackDao blackDao;
 
     @Override
     public void register(User user) {
@@ -48,7 +56,23 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public boolean isAdmin(Long uid) {
+        return userRoleDao.hasPower(uid, RoleEnum.SUPERADMIN.getId())
+                || userRoleDao.hasPower(uid, RoleEnum.CHAT_ADMIN.getId());
+    }
 
-        return false;
+    @Override
+    public void black(Long blackId) {
+        User blackUser = userCache.getUserInfo(blackId);
+        if (blackUser == null) {
+            throw new BusinessException("拉黑的用户不存在");
+        }
+        blackDao.blackUid(blackUser.getId());
+        IpInfo ipInfo = blackUser.getIpInfo();
+        blackDao.blackIP(ipInfo.getCreateIp());
+        // 如果ip相同不重复拉黑，以免数据库报错
+        if (!ipInfo.getCreateIp().equals(ipInfo.getUpdateIp())) {
+            blackDao.blackIP(ipInfo.getUpdateIp());
+        }
+        applicationEventPublisher.publishEvent(new BlackUserEvent(this, blackUser));
     }
 }

@@ -13,4 +13,11 @@ public class UserRoleDao extends ServiceImpl<UserRoleMapper, UserRole>{
         LambdaQueryWrapper<UserRole> queryWrapper = new LambdaQueryWrapper<UserRole>().eq(UserRole::getUid, uid);
         return getOne(queryWrapper);
     }
+
+    public boolean hasPower(Long uid, Long id) {
+        LambdaQueryWrapper<UserRole> queryWrapper = new LambdaQueryWrapper<UserRole>()
+                .eq(UserRole::getUid, uid)
+                .eq(UserRole::getRoleId, id);
+        return count(queryWrapper) > 0;
+    }
 }

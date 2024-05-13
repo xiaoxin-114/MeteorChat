@@ -17,4 +17,10 @@ public interface UserService {
      * @return
      */
     boolean isAdmin(Long uid);
+
+    /**
+     * 拉黑用户
+     * @param blackId
+     */
+    void black(Long blackId);
 }
