@@ -4,10 +4,9 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.meteor.chat.common.annotation.RedissonLock;
 import com.meteor.chat.common.constants.CommonConstants;
 import com.meteor.chat.common.domain.entity.ItemConfig;
-import com.meteor.chat.common.domain.entity.User;
 import com.meteor.chat.common.domain.entity.UserBackpack;
-import com.meteor.chat.common.domain.enums.IdempotenceCodeEnum;
 import com.meteor.chat.common.domain.enums.ItemConfigTypeEnum;
+import com.meteor.chat.common.exception.BusinessException;
 import com.meteor.chat.event.ItemReceiveEvent;
 import com.meteor.chat.user.dao.UserBackpackDao;
 import com.meteor.chat.user.service.UserBackpackService;
@@ -21,7 +20,6 @@ import javax.annotation.Resource;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
-import java.util.concurrent.TimeUnit;
 
 @Service
 @Slf4j
@@ -72,5 +70,17 @@ public class UserBackpackServiceImpl implements UserBackpackService {
                 .in(UserBackpack::getUid, list)
                 .in(UserBackpack::getItemId, itemIdList);
         return userBackpackDao.list(queryWrapper);
+    }
+
+    @Override
+    public int countRenameTimes(Long uid) {
+        ItemConfig modifyCard = itemCache.getByType(ItemConfigTypeEnum.MODIFY_NAME_CARD.getType().toString());
+        if (modifyCard == null) {
+            throw new BusinessException("改名卡数据异常");
+        }
+        int count = userBackpackDao.count(new LambdaQueryWrapper<UserBackpack>()
+                .eq(UserBackpack::getUid, uid)
+                .eq(UserBackpack::getItemId, modifyCard.getId()));
+        return count;
     }
 }

@@ -1,15 +1,21 @@
 package com.meteor.chat.user.dao;
 
-import com.baomidou.mybatisplus.extension.service.IService;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.meteor.chat.common.domain.entity.UserBackpack;
+import com.meteor.chat.common.mapper.UserBackpackMapper;
+import org.springframework.stereotype.Repository;
 
-public interface UserBackpackDao extends IService<UserBackpack> {
-    UserBackpack getByIdempotent(String idempotent);
+@Repository
+public class UserBackpackDao extends ServiceImpl<UserBackpackMapper, UserBackpack> {
+    public UserBackpack getByIdempotent(String idempotent) {
+        LambdaQueryWrapper<UserBackpack> queryWrapper = new LambdaQueryWrapper<UserBackpack>().eq(UserBackpack::getIdempotent, idempotent);
+        return getOne(queryWrapper);
+    }
 
-    /**
-     * 查询用户已有该物品的数量
-     * @param uid 用户id
-     * @param itemId 物品id
-     */
-    int getCountByUidAndItemId(Long uid, Long itemId);
+    public int getCountByUidAndItemId(Long uid, Long itemId) {
+        LambdaQueryWrapper<UserBackpack> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(UserBackpack::getUid, uid).eq(UserBackpack::getItemId, itemId);
+        return this.count(queryWrapper);
+    }
 }

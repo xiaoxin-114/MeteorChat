@@ -16,4 +16,11 @@ public interface UserBackpackService {
      * @return
      */
     List<UserBackpack> listByUidAndItemId(List<Long> list, List<Long> itemIdList);
+
+    /**
+     * 获取用户改名卡数量
+     * @param uid
+     * @return
+     */
+    int countRenameTimes(Long uid);
 }

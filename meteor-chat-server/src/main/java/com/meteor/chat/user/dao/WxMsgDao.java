@@ -1,7 +1,12 @@
 package com.meteor.chat.user.dao;
 
 import com.meteor.chat.common.domain.entity.WxMsg;
+import org.springframework.stereotype.Repository;
 
-public interface WxMsgDao {
-    void save(WxMsg msg);
+@Repository
+public class WxMsgDao{
+
+    public void save(WxMsg msg) {
+        //todo
+    }
 }

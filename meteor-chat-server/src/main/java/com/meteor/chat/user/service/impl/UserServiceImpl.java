@@ -1,15 +1,13 @@
 package com.meteor.chat.user.service.impl;
 
-import com.meteor.chat.common.domain.entity.IpInfo;
 import com.meteor.chat.common.domain.entity.User;
 import com.meteor.chat.common.domain.vo.UserInfoVO;
-import com.meteor.chat.common.util.UserContext;
 import com.meteor.chat.event.UserRegisterEvent;
 import com.meteor.chat.user.dao.UserDao;
+import com.meteor.chat.user.service.UserBackpackService;
 import com.meteor.chat.user.service.UserService;
 import com.meteor.chat.user.service.adapter.UserAdapter;
 import com.meteor.chat.user.service.cache.UserCache;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
@@ -22,6 +20,10 @@ public class UserServiceImpl implements UserService {
     private ApplicationEventPublisher applicationEventPublisher;
     @Resource
     private UserCache userCache;
+    @Resource
+    private UserBackpackService userBackpackService;
+    @Resource
+
 
     @Override
     public void register(User user) {
@@ -33,13 +35,20 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserInfoVO getUserInfo(Long uid) {
         User userInfo = userCache.getUserInfo(uid);
-        // todo 背包改名卡查询，获取用户可改名次数
-        return UserAdapter.buildUserInfoResp(userInfo, 1);
+        // 背包改名卡查询，获取用户可改名次数
+        int renameTimes = userBackpackService.countRenameTimes(uid);
+        return UserAdapter.buildUserInfoResp(userInfo, renameTimes);
     }
 
     @Override
     public void wearBadge(Long uid, Long itemId) {
         User userInfo = User.builder().id(uid).itemId(itemId).build();
         userDao.updateById(userInfo);
+    }
+
+    @Override
+    public boolean isAdmin(Long uid) {
+
+        return false;
     }
 }

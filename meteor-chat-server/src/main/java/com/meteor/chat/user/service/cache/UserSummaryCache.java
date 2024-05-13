@@ -5,7 +5,6 @@ import com.meteor.chat.common.constants.RedisKey;
 import com.meteor.chat.common.domain.dto.SummaryInfoDTO;
 import com.meteor.chat.common.domain.entity.*;
 import com.meteor.chat.common.domain.enums.ItemConfigTypeEnum;
-import com.meteor.chat.common.mapper.ItemConfigMapper;
 import com.meteor.chat.user.dao.ItemConfigDao;
 import com.meteor.chat.user.service.UserBackpackService;
 import org.springframework.stereotype.Component;

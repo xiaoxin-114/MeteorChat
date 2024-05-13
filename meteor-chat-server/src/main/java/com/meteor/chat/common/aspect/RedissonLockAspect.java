@@ -1,5 +1,6 @@
 package com.meteor.chat.common.aspect;
 
+import cn.hutool.extra.spring.SpringUtil;
 import com.meteor.chat.common.annotation.RedissonLock;
 import com.meteor.chat.common.util.LockUtil;
 import com.meteor.chat.common.util.SpElUtils;
@@ -11,6 +12,7 @@ import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.MethodSignature;
+import org.checkerframework.checker.units.qual.A;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
@@ -31,10 +33,22 @@ public class RedissonLockAspect {
     private LockUtil lockUtil;
 
     @Pointcut("@annotation(com.meteor.chat.common.annotation.RedissonLock)")
-    public void redissonLockPointcut() {}
+    public void methodRedissonLockPointcut() {}
 
-    @Around("redissonLockPointcut()")
-    public Object around(ProceedingJoinPoint joinPoint) throws Throwable {
+    @Pointcut("@within(com.meteor.chat.common.annotation.RedissonLock)")
+    public void typeRedissonLockPointcut() {}
+
+    @Around("methodRedissonLockPointcut()")
+    public Object methodAround(ProceedingJoinPoint joinPoint) throws Throwable {
+        return doAround(joinPoint);
+    }
+
+    @Around("typeRedissonLockPointcut()")
+    public Object typeAround(ProceedingJoinPoint joinPoint) throws Throwable {
+        return doAround(joinPoint);
+    }
+
+    private Object doAround(ProceedingJoinPoint joinPoint) throws Throwable {
         Signature signature = joinPoint.getSignature();
         if (signature instanceof MethodSignature) {
             MethodSignature methodSignature = (MethodSignature) signature;
@@ -53,7 +67,6 @@ public class RedissonLockAspect {
         }
         return null;
     }
-
 
     private static String getDefaultPrefix(Method method) {
         return method.getDeclaringClass() + "#" + method.getName();

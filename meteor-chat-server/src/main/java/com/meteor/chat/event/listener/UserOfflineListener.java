@@ -2,7 +2,6 @@ package com.meteor.chat.event.listener;
 
 import com.meteor.chat.common.domain.entity.User;
 import com.meteor.chat.common.domain.enums.ChatActiveStatusEnum;
-import com.meteor.chat.common.util.RedisUtils;
 import com.meteor.chat.event.UserOfflineEvent;
 import com.meteor.chat.user.dao.UserDao;
 import com.meteor.chat.user.service.cache.UserCache;

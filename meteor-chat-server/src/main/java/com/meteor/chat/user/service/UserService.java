@@ -10,4 +10,11 @@ public interface UserService {
     UserInfoVO getUserInfo(Long uid);
 
     void wearBadge(Long uid, Long itemId);
+
+    /**
+     * 判断用户是否有拉黑的权限（系统管理员，群聊管理员都能拉黑）
+     * @param uid
+     * @return
+     */
+    boolean isAdmin(Long uid);
 }

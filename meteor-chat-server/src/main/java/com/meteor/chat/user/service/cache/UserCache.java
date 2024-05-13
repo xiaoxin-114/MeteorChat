@@ -5,7 +5,6 @@ import com.meteor.chat.common.domain.entity.User;
 import com.meteor.chat.common.util.RedisUtils;
 import com.meteor.chat.user.dao.UserDao;
 import com.meteor.chat.user.dao.UserRoleDao;
-import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.stereotype.Component;

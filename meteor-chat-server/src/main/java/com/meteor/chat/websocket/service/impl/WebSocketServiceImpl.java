@@ -4,7 +4,6 @@ import cn.hutool.json.JSONUtil;
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.meteor.chat.common.constants.RedisKey;
-import com.meteor.chat.common.domain.entity.IpInfo;
 import com.meteor.chat.common.domain.entity.User;
 import com.meteor.chat.common.domain.entity.UserRole;
 import com.meteor.chat.common.util.RedisUtils;
@@ -33,9 +32,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.time.Duration;
-import java.util.Collections;
 import java.util.Date;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;

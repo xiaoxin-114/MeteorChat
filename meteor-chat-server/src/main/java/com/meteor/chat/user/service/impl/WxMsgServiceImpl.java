@@ -4,7 +4,6 @@ import com.meteor.chat.common.constants.MQConstant;
 import com.meteor.chat.common.constants.RedisKey;
 import com.meteor.chat.common.domain.dto.LoginMessageDTO;
 import com.meteor.chat.common.domain.dto.ScanSuccessMessageDTO;
-import com.meteor.chat.common.domain.entity.IpInfo;
 import com.meteor.chat.common.domain.entity.User;
 import com.meteor.chat.common.domain.entity.UserRole;
 import com.meteor.chat.common.util.RedisUtils;
