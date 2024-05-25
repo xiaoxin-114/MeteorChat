@@ -3,6 +3,7 @@ package com.meteor.chat.websocket.service.impl;
 import cn.hutool.json.JSONUtil;
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
+import com.meteor.chat.common.config.ThreadConfig;
 import com.meteor.chat.common.constants.RedisKey;
 import com.meteor.chat.common.domain.entity.User;
 import com.meteor.chat.common.domain.entity.UserRole;
@@ -27,16 +28,20 @@ import me.chanjar.weixin.mp.api.WxMpService;
 import me.chanjar.weixin.mp.bean.result.WxMpQrCodeTicket;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.time.Duration;
 import java.util.Date;
 import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -80,6 +85,8 @@ public class WebSocketServiceImpl  implements WebSocketService {
     private UserCache userCache;
     @Autowired
     private ApplicationEventPublisher applicationEventPublisher;
+    @Qualifier(value = ThreadConfig.WB_EXECUTRO)
+    private ThreadPoolTaskExecutor webSocketExecutor;
 
     @Override
     public void handleLoginReq(Channel channel) throws WxErrorException {
@@ -166,13 +173,22 @@ public class WebSocketServiceImpl  implements WebSocketService {
     }
 
     @Override
+    /**
+     * 使用线程池向所有在线用户发送信息
+     */
     public void sendToAllOnline(WSBaseResp<?> wsBaseResp) {
-
+        ONLINE_WS_MAP.keySet().forEach(channel -> {
+            webSocketExecutor.execute(() -> sendMsg(channel, wsBaseResp));
+        });
     }
 
     @Override
     public void sendToAllOnline(WSBaseResp<?> wsBaseResp, Long skipUid) {
-
+        CopyOnWriteArrayList<Channel> skipChannels = ONLINE_UID_MAP.get(skipUid);
+        ConcurrentHashMap.KeySetView<Channel, WSChannelExtraDTO> channels = ONLINE_WS_MAP.keySet();
+        if (channels != null) {
+            channels.stream().filter(channel -> !skipChannels.contains(channel)).collect(Collectors.toSet());
+        }
     }
 
     /**

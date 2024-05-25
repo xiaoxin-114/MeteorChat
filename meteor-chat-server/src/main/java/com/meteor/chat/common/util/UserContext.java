@@ -2,6 +2,8 @@ package com.meteor.chat.common.util;
 
 import com.meteor.chat.common.domain.RequestInfo;
 
+import java.util.Optional;
+
 public class UserContext {
 
     private static final ThreadLocal<RequestInfo> context = new ThreadLocal<>();
@@ -16,5 +18,13 @@ public class UserContext {
 
     public static void remove() {
         context.remove();
+    }
+
+    public static Long getUid() {
+        return Optional.ofNullable(get()).map(RequestInfo::getUid).orElse(null);
+    }
+
+    public static String getIp() {
+        return Optional.ofNullable(get()).map(RequestInfo::getIp).orElse(null);
     }
 }
