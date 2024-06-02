@@ -1,9 +1,8 @@
-package com.meteor.chat.msg.dao;
+package com.meteor.chat.chat.dao;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.meteor.chat.common.domain.entity.Room;
-import com.meteor.chat.common.domain.entity.UserFriend;
 import com.meteor.chat.common.domain.enums.HotFlagEunm;
 import com.meteor.chat.common.mapper.RoomMapper;
 import org.springframework.stereotype.Repository;

@@ -1,4 +1,4 @@
-package com.meteor.chat.msg.service.impl;
+package com.meteor.chat.chat.service.impl;
 
 import com.meteor.chat.common.domain.entity.Room;
 import com.meteor.chat.common.domain.entity.RoomFriend;
@@ -8,14 +8,13 @@ import com.meteor.chat.common.domain.vo.ChatRoomResp;
 import com.meteor.chat.common.domain.vo.CursorPageBaseResp;
 import com.meteor.chat.common.domain.vo.req.CursorPageBaseReq;
 import com.meteor.chat.common.exception.BusinessException;
-import com.meteor.chat.msg.dao.GroupMemberDao;
-import com.meteor.chat.msg.dao.RoomDao;
-import com.meteor.chat.msg.dao.RoomFriendDao;
-import com.meteor.chat.msg.dao.RoomGroupDao;
-import com.meteor.chat.msg.service.RoomService;
-import com.meteor.chat.msg.service.adapter.RoomAdapter;
+import com.meteor.chat.chat.dao.GroupMemberDao;
+import com.meteor.chat.chat.dao.RoomDao;
+import com.meteor.chat.chat.dao.RoomFriendDao;
+import com.meteor.chat.chat.dao.RoomGroupDao;
+import com.meteor.chat.chat.service.RoomService;
+import com.meteor.chat.chat.service.adapter.RoomAdapter;
 import lombok.extern.slf4j.Slf4j;
-import org.junit.Assert;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

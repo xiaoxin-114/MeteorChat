@@ -1,18 +1,11 @@
 package com.meteor.chat.common.util;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.mapper.Mapper;
-import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
-import com.baomidou.mybatisplus.core.toolkit.LambdaUtils;
 import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.meteor.chat.common.domain.entity.Room;
-import com.meteor.chat.common.domain.vo.ChatRoomResp;
 import com.meteor.chat.common.domain.vo.CursorPageBaseResp;
 import com.meteor.chat.common.domain.vo.req.CursorPageBaseReq;
-import com.meteor.chat.msg.service.adapter.RoomAdapter;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.Date;
@@ -29,7 +22,7 @@ public class CursorUtils {
         int pageSize = request.getPageSize();
         String cursor = request.getCursor();
         // todo 根据cursorColumn获取游标类型
-        Class cursorClass = null;
+        Class cursorClass = LambdaUtils.getReturnType(cursorCollum);
         LambdaQueryWrapper<T> queryWrapper = new LambdaQueryWrapper<>();
         if (StringUtils.isNotEmpty(cursor)) {
             // 根据游标，定位条件

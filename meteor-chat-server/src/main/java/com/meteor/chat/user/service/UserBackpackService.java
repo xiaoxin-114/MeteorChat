@@ -2,6 +2,7 @@ package com.meteor.chat.user.service;
 
 import com.meteor.chat.common.domain.entity.UserBackpack;
 import com.meteor.chat.common.domain.enums.IdempotenceCodeEnum;
+import com.meteor.chat.common.domain.vo.BadgeResp;
 
 import java.util.List;
 
@@ -23,4 +24,22 @@ public interface UserBackpackService {
      * @return
      */
     int countRenameTimes(Long uid);
+
+
+    /**
+     * 获取徽章图鉴
+     * @param uid
+     * @return
+     */
+    List<BadgeResp> allBadgeList(Long uid);
+
+    boolean useBackpackItem(Long renameCardId);
+
+    /**
+     * 获取用户背包中某个类型的一个物品
+     * @param uid 用户id
+     * @param type 物品类型
+     * @return
+     */
+    UserBackpack getOneBackpackByItemType(Long uid, Integer type);
 }

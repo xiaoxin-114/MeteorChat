@@ -1,13 +1,11 @@
-package com.meteor.chat.msg.service.adapter;
+package com.meteor.chat.chat.service.adapter;
 
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.meteor.chat.common.domain.entity.Room;
 import com.meteor.chat.common.domain.entity.RoomFriend;
 import com.meteor.chat.common.domain.enums.HotFlagEunm;
 import com.meteor.chat.common.domain.enums.RoomFriendStatusEnum;
 import com.meteor.chat.common.domain.enums.RoomTypeEnum;
 import com.meteor.chat.common.domain.vo.ChatRoomResp;
-import com.meteor.chat.common.domain.vo.CursorPageBaseResp;
 import org.springframework.beans.BeanUtils;
 
 import java.util.List;

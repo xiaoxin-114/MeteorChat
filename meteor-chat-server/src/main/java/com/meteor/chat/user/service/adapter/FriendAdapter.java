@@ -9,8 +9,6 @@ import com.meteor.chat.common.domain.enums.UserApplyStatusEnum;
 import com.meteor.chat.common.domain.enums.UserApplyTypeEnum;
 import com.meteor.chat.common.domain.vo.FriendApplyResp;
 import com.meteor.chat.common.domain.vo.FriendResp;
-import com.meteor.chat.user.dao.UserApplyDao;
-import com.mysql.cj.xdevapi.DeleteStatement;
 import org.apache.commons.collections.CollectionUtils;
 
 import java.util.*;

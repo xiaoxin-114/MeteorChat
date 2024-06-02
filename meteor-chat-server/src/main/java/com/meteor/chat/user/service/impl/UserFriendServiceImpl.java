@@ -1,7 +1,6 @@
 package com.meteor.chat.user.service.impl;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.meteor.chat.common.domain.entity.RoomFriend;
 import com.meteor.chat.common.domain.entity.User;
 import com.meteor.chat.common.domain.entity.UserApply;
 import com.meteor.chat.common.domain.entity.UserFriend;
@@ -11,9 +10,9 @@ import com.meteor.chat.common.domain.vo.req.*;
 import com.meteor.chat.common.exception.BusinessException;
 import com.meteor.chat.event.NewFriendEvent;
 import com.meteor.chat.event.NewUserApplyEvent;
-import com.meteor.chat.msg.dao.RoomFriendDao;
-import com.meteor.chat.msg.service.RoomService;
-import com.meteor.chat.msg.service.adapter.RoomAdapter;
+import com.meteor.chat.chat.dao.RoomFriendDao;
+import com.meteor.chat.chat.service.RoomService;
+import com.meteor.chat.chat.service.adapter.RoomAdapter;
 import com.meteor.chat.user.dao.UserApplyDao;
 import com.meteor.chat.user.dao.UserFriendDao;
 import com.meteor.chat.user.service.UserFriendService;
@@ -22,6 +21,7 @@ import com.meteor.chat.user.service.cache.UserCache;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.junit.Assert;
+import org.springframework.aop.framework.AopContext;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -72,9 +72,15 @@ public class UserFriendServiceImpl implements UserFriendService {
         Assert.assertNull("你们已经是好友了", friend);
         UserApply userApply = userApplyDao.getWaitingApply(uid, targetUid);
         Assert.assertNull("已经提交过申请了", userApply);
-        UserApply insert = FriendAdapter.buildNewApply(uid, targetUid, msg);
-        userApplyDao.save(insert);
-        applicationEventPublisher.publishEvent(new NewUserApplyEvent(this, insert));
+        // 查询对方是否发起过好友申请，如果发起过就直接同意申请，不再发送
+        UserApply converseApply = userApplyDao.getWaitingApply(targetUid, uid);
+        if (converseApply != null) {
+            ((UserFriendService) AopContext.currentProxy()).processApply(new FriendApproveReq(converseApply.getId()));
+        } else {
+            UserApply insert = FriendAdapter.buildNewApply(uid, targetUid, msg);
+            userApplyDao.save(insert);
+            applicationEventPublisher.publishEvent(new NewUserApplyEvent(this, insert));
+        }
     }
 
     @Override

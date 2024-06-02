@@ -1,4 +1,4 @@
-package com.meteor.chat.msg.service.cache;
+package com.meteor.chat.chat.service.cache;
 
 import com.meteor.chat.common.cache.AbstractRedisStringCache;
 import com.meteor.chat.common.constants.RedisKey;

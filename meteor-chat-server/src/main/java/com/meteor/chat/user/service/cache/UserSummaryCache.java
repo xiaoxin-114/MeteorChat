@@ -6,6 +6,7 @@ import com.meteor.chat.common.domain.dto.SummaryInfoDTO;
 import com.meteor.chat.common.domain.entity.*;
 import com.meteor.chat.common.domain.enums.ItemConfigTypeEnum;
 import com.meteor.chat.user.dao.ItemConfigDao;
+import com.meteor.chat.user.dao.UserBackpackDao;
 import com.meteor.chat.user.service.UserBackpackService;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
@@ -23,7 +24,7 @@ public class UserSummaryCache extends AbstractRedisStringCache<Long, SummaryInfo
     @Resource
     private ItemConfigDao itemConfigDao;
     @Resource
-    private UserBackpackService userBackpackService;
+    private UserBackpackDao userBackpackDao;
 
     @Override
     protected Long getExpireTime() {
@@ -43,7 +44,7 @@ public class UserSummaryCache extends AbstractRedisStringCache<Long, SummaryInfo
         Map<Long, User> userMap = userInfoCache.getBatch(list);
         List<ItemConfig> itemConfigs = itemConfigDao.listByType(ItemConfigTypeEnum.BADGE.getType());
         List<Long> itemIdList = itemConfigs.stream().map(ItemConfig::getId).collect(Collectors.toList());
-        List<UserBackpack> userBackpacks = userBackpackService.listByUidAndItemId(list, itemIdList);
+        List<UserBackpack> userBackpacks = userBackpackDao.listByUidsAndItems(list, itemIdList);
         Map<Long, List<UserBackpack>>  userBadgeMap = userBackpacks.stream()
                     .collect(Collectors.groupingBy(UserBackpack::getUid));
         return list.stream().map(uid -> {

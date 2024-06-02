@@ -1,11 +1,11 @@
-package com.meteor.chat.msg.controller;
+package com.meteor.chat.chat.controller;
 
 import com.meteor.chat.common.domain.result.ApiResult;
 import com.meteor.chat.common.domain.vo.ChatRoomResp;
 import com.meteor.chat.common.domain.vo.CursorPageBaseResp;
 import com.meteor.chat.common.domain.vo.req.CursorPageBaseReq;
 import com.meteor.chat.common.util.UserContext;
-import com.meteor.chat.msg.service.RoomService;
+import com.meteor.chat.chat.service.RoomService;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;

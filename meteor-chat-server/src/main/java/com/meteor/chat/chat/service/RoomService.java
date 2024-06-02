@@ -1,4 +1,4 @@
-package com.meteor.chat.msg.service;
+package com.meteor.chat.chat.service;
 
 import com.meteor.chat.common.domain.vo.ChatRoomResp;
 import com.meteor.chat.common.domain.vo.CursorPageBaseResp;

@@ -5,6 +5,7 @@ import com.meteor.chat.common.domain.entity.UserBackpack;
 import com.meteor.chat.common.domain.enums.ItemConfigTypeEnum;
 import com.meteor.chat.common.mapper.ItemConfigMapper;
 import com.meteor.chat.event.ItemReceiveEvent;
+import com.meteor.chat.user.dao.UserDao;
 import com.meteor.chat.user.service.UserService;
 import com.meteor.chat.user.service.cache.UserCache;
 import com.meteor.chat.user.service.cache.UserInfoCache;
@@ -18,7 +19,7 @@ public class ItemReceiveEventListener {
     @Resource
     private ItemConfigMapper itemConfigMapper;
     @Resource
-    private UserService userService;
+    private UserDao userDao;
     @Resource
     private UserInfoCache userInfoCache;
     @Resource
@@ -33,7 +34,7 @@ public class ItemReceiveEventListener {
         // 如果是用户收到徽章，默认自动帮用户佩戴
         ItemConfig itemConfig = itemConfigMapper.selectById(userBackpack.getItemId());
         if (ItemConfigTypeEnum.BADGE.getType().equals(itemConfig.getType())) {
-            userService.wearBadge(userBackpack.getUid(), userBackpack.getItemId());
+            userDao.wearBadge(userBackpack.getUid(), userBackpack.getItemId());
             userCache.userInfoChange(userBackpack.getUid());
         }
     }

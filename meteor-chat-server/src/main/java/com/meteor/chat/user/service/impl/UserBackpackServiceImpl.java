@@ -3,23 +3,25 @@ package com.meteor.chat.user.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.meteor.chat.common.annotation.RedissonLock;
 import com.meteor.chat.common.constants.CommonConstants;
+import com.meteor.chat.common.domain.dto.SummaryInfoDTO;
 import com.meteor.chat.common.domain.entity.ItemConfig;
 import com.meteor.chat.common.domain.entity.UserBackpack;
 import com.meteor.chat.common.domain.enums.ItemConfigTypeEnum;
+import com.meteor.chat.common.domain.vo.BadgeResp;
 import com.meteor.chat.common.exception.BusinessException;
 import com.meteor.chat.event.ItemReceiveEvent;
 import com.meteor.chat.user.dao.UserBackpackDao;
 import com.meteor.chat.user.service.UserBackpackService;
+import com.meteor.chat.user.service.adapter.UserAdapter;
 import com.meteor.chat.user.service.cache.ItemCache;
+import com.meteor.chat.user.service.cache.UserSummaryCache;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 @Service
 @Slf4j
@@ -31,6 +33,8 @@ public class UserBackpackServiceImpl implements UserBackpackService {
     private UserBackpackDao userBackpackDao;
     @Resource
     private ItemCache itemCache;
+    @Resource
+    private UserSummaryCache userSummaryCache;
 
 
     @Override
@@ -62,25 +66,36 @@ public class UserBackpackServiceImpl implements UserBackpackService {
 
     @Override
     public List<UserBackpack> listByUidAndItemId(List<Long> list, List<Long> itemIdList) {
-        if (CollectionUtils.isEmpty(list) || CollectionUtils.isEmpty(itemIdList)) {
-            return null;
-        }
-        LambdaQueryWrapper<UserBackpack> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.eq(UserBackpack::getStatus, CommonConstants.USER_BACK_PACK_NOT_USED)
-                .in(UserBackpack::getUid, list)
-                .in(UserBackpack::getItemId, itemIdList);
-        return userBackpackDao.list(queryWrapper);
+        return userBackpackDao.listByUidsAndItems(list, itemIdList);
     }
 
     @Override
     public int countRenameTimes(Long uid) {
-        ItemConfig modifyCard = itemCache.getByType(ItemConfigTypeEnum.MODIFY_NAME_CARD.getType().toString());
-        if (modifyCard == null) {
+        List<ItemConfig> modifyCard = itemCache.getByType(ItemConfigTypeEnum.MODIFY_NAME_CARD.getType().toString());
+        if (modifyCard == null || modifyCard.size() != 1 || modifyCard.get(0) == null) {
             throw new BusinessException("改名卡数据异常");
         }
-        int count = userBackpackDao.count(new LambdaQueryWrapper<UserBackpack>()
-                .eq(UserBackpack::getUid, uid)
-                .eq(UserBackpack::getItemId, modifyCard.getId()));
-        return count;
+        return userBackpackDao.countNumber(uid, modifyCard.get(0).getId());
+    }
+
+    @Override
+    public List<BadgeResp> allBadgeList(Long uid) {
+        List<ItemConfig> badges = itemCache.getByType(ItemConfigTypeEnum.BADGE.getType().toString());
+        SummaryInfoDTO summaryInfoDTO = userSummaryCache.get(uid);
+        return UserAdapter.buildBadgeResp(badges, summaryInfoDTO);
+    }
+
+    @Override
+    public boolean useBackpackItem(Long renameCardId) {
+        return userBackpackDao.useOne(renameCardId);
+    }
+
+    @Override
+    public UserBackpack getOneBackpackByItemType(Long uid, Integer type) {
+        List<ItemConfig> itemConfigs = itemCache.getByType(type.toString());
+        if (CollectionUtils.isEmpty(itemConfigs)) {
+            throw new BusinessException("物品信息异常");
+        }
+        return userBackpackDao.getFirstNotUsedItemByUidAndItemId(uid, itemConfigs.get(0).getId());
     }
 }

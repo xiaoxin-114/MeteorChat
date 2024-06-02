@@ -5,6 +5,10 @@ import com.meteor.chat.common.domain.enums.ChatActiveStatusEnum;
 import com.meteor.chat.event.UserOfflineEvent;
 import com.meteor.chat.user.dao.UserDao;
 import com.meteor.chat.user.service.cache.UserCache;
+import com.meteor.chat.websocket.adapter.WSAdapter;
+import com.meteor.chat.websocket.domain.enums.WSRespTypeEnum;
+import com.meteor.chat.websocket.domain.vo.WSBaseResp;
+import com.meteor.chat.websocket.service.WebSocketService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
@@ -19,6 +23,10 @@ public class UserOfflineListener {
     private UserCache userCache;
     @Resource
     private UserDao userDao;
+    @Resource
+    private WebSocketService webSocketService;
+    @Resource
+    private WSAdapter wsAdapter;
 
     @EventListener(classes = UserOfflineEvent.class)
     public void saveRedisAndPush(UserOfflineEvent event){
