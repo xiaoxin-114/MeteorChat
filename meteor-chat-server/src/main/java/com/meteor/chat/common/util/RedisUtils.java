@@ -146,6 +146,7 @@ public class RedisUtils {
      * @param size       每页数目
      * @return /
      */
+    // todo redis实现分页
     public static List<String> findKeysForPage(String patternKey, int page, int size) {
         ScanOptions options = ScanOptions.scanOptions().match(patternKey).build();
         RedisConnectionFactory factory = stringRedisTemplate.getConnectionFactory();
@@ -803,7 +804,7 @@ public class RedisUtils {
      * @param values
      * @return
      */
-    public Long zAdd(String key, Set<TypedTuple<String>> values) {
+    public static Long zAdd(String key, Set<TypedTuple<String>> values) {
         return stringRedisTemplate.opsForZSet().add(key, values);
     }
 

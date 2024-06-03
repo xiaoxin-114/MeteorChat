@@ -9,7 +9,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public class RoomFriendDao extends ServiceImpl<RoomFriendMapper, RoomFriend> {
 
-    public RoomFriend findByRoomKeyList(String roomKey) {
+    public RoomFriend findByRoomKey(String roomKey) {
         return lambdaQuery().eq(RoomFriend::getRoomKey, roomKey)
                 .one();
     }

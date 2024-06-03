@@ -1,12 +1,11 @@
 package com.meteor.chat.chat.service.impl;
 
+import com.meteor.chat.chat.service.cache.HotRoomCache;
+import com.meteor.chat.chat.service.cache.RoomCache;
 import com.meteor.chat.common.domain.entity.Room;
 import com.meteor.chat.common.domain.entity.RoomFriend;
 import com.meteor.chat.common.domain.enums.RoomFriendStatusEnum;
 import com.meteor.chat.common.domain.enums.RoomTypeEnum;
-import com.meteor.chat.common.domain.vo.ChatRoomResp;
-import com.meteor.chat.common.domain.vo.CursorPageBaseResp;
-import com.meteor.chat.common.domain.vo.req.CursorPageBaseReq;
 import com.meteor.chat.common.exception.BusinessException;
 import com.meteor.chat.chat.dao.GroupMemberDao;
 import com.meteor.chat.chat.dao.RoomDao;
@@ -19,7 +18,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
-import java.util.List;
 import java.util.Objects;
 
 @Service
@@ -38,17 +36,12 @@ public class RoomServiceImpl implements RoomService {
     @Resource
     private GroupMemberDao groupMemberDao;
 
-    @Override
-    public CursorPageBaseResp<ChatRoomResp> pageChatRoom(Long uid, CursorPageBaseReq request) {
-        // 获取热点群聊
-        List<Room> hotRoomList = roomDao.getHotRoom();
+    @Resource
+    private HotRoomCache hotRoomCache;
 
-        // todo 如果用户登陆了，还需要展示用户个人群聊
-        if (Objects.nonNull(uid)) {
+    @Resource
+    private RoomCache roomCache;
 
-        }
-        return CursorPageBaseResp.empty();
-    }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -57,7 +50,7 @@ public class RoomServiceImpl implements RoomService {
             throw new BusinessException("用户id为空，创建单聊失败");
         }
         String roomKey = RoomAdapter.buildRoomKey(uid1, uid2);
-        RoomFriend roomFriend = roomFriendDao.findByRoomKeyList(roomKey);
+        RoomFriend roomFriend = roomFriendDao.findByRoomKey(roomKey);
         if (Objects.nonNull(roomFriend)) {
             restoreRoomFriend(roomFriend);
             return roomFriend.getRoomId();

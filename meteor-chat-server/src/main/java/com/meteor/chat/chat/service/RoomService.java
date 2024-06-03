@@ -5,13 +5,6 @@ import com.meteor.chat.common.domain.vo.CursorPageBaseResp;
 import com.meteor.chat.common.domain.vo.req.CursorPageBaseReq;
 
 public interface RoomService {
-    /**
-     * 游标分页查询用户的会话列表
-     * @param uid 用户id
-     * @param request 页面大小和游标等信息
-     * @return
-     */
-    CursorPageBaseResp<ChatRoomResp> pageChatRoom(Long uid, CursorPageBaseReq request);
 
     /**
      * 创建单聊会话

@@ -1,5 +1,6 @@
 package com.meteor.chat.common.util;
 
+import cn.hutool.core.lang.Pair;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -7,16 +8,44 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.meteor.chat.common.domain.vo.CursorPageBaseResp;
 import com.meteor.chat.common.domain.vo.req.CursorPageBaseReq;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.data.redis.core.ZSetOperations;
 
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * 游标工具类，将游标翻页的共同操作抽象到该工具类
  */
 public class CursorUtils {
+
+    /**
+     * redis的分页查询，存储的数据结果只能是zset，游标为score可以进行排序和筛选
+     * @param request 游标分页请求
+     * @param redisKey redis中对应的key
+     * @param function 将redis工具类返回的string转换成我们需要的值
+     * @param <T> 返回的值
+     * @return 返回游标分页的值，需要的数据和其游标值为一对的列表
+     */
+    public static <T> CursorPageBaseResp<Pair<T, Double>> cursorRedisPage(CursorPageBaseReq request, String redisKey, Function<String, T> function) {
+        Set<ZSetOperations.TypedTuple<String>> typedTuples;
+        if (StringUtils.isEmpty(request.getCursor())) {
+            typedTuples = RedisUtils.zReverseRangeWithScores(redisKey, request.getPageSize() + 1);
+        }else {
+            typedTuples = RedisUtils.zReverseRangeByScoreWithScores(redisKey, Double.parseDouble(request.getCursor()), request.getPageSize());
+        }
+        List<Pair<T, Double>> pairs = typedTuples.stream()
+                .map(t -> Pair.of(function.apply(t.getValue()), t.getScore()))
+                .sorted((o1, o2) -> o2.getValue().compareTo(o1.getValue()))
+                .collect(Collectors.toList());
+        String cursor = pairs.get(pairs.size() - 1).getValue().toString();
+        return new CursorPageBaseResp<Pair<T, Double>>(cursor, pairs.size() == request.getPageSize() + 1, pairs.subList(0, request.getPageSize()));
+
+    }
 
     public static <T> CursorPageBaseResp<T> cursorPage(CursorPageBaseReq request, IService<T> dao, Consumer<LambdaQueryWrapper<T>> consumer, SFunction<T, ?> cursorCollum) {
         int pageSize = request.getPageSize();

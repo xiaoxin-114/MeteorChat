@@ -17,7 +17,8 @@ public class RoomDao extends ServiceImpl<RoomMapper, Room> {
      */
     public List<Room> getHotRoom() {
         LambdaQueryWrapper<Room> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.eq(Room::getHotFlag, HotFlagEunm.HOT_ROOM.getCode());
+        queryWrapper.eq(Room::getHotFlag, HotFlagEunm.HOT_ROOM.getCode())
+                .orderByDesc(Room::getActiveTime);
         return list(queryWrapper);
     }
 }
