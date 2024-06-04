@@ -66,7 +66,7 @@ public class ContactServiceImpl implements ContactService {
         CursorPageBaseResp<Contact> privateRoom = CursorPageBaseResp.empty();
         // 如果用户登陆了，还需要展示用户个人群聊
         if (Objects.nonNull(uid)) {
-            privateRoom = contactDao.cursorPage(request, uid);
+            privateRoom = contactDao.cursorPageByUid(request, uid);
             List<Pair<Long, Double>> privateRoomIds = privateRoom.getData().stream().map(room -> Pair.of(room.getRoomId(), (double) room.getActiveTime().getTime())).collect(Collectors.toList());
             roomList.addAll(privateRoomIds);
         }

@@ -4,7 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.meteor.chat.common.domain.entity.UserApply;
-import com.meteor.chat.common.domain.enums.UserApplyReadEnum;
+import com.meteor.chat.common.domain.enums.ReadEnum;
 import com.meteor.chat.common.domain.enums.UserApplyStatusEnum;
 import com.meteor.chat.common.domain.enums.UserApplyTypeEnum;
 import com.meteor.chat.common.mapper.UserApplyMapper;
@@ -47,7 +47,7 @@ public class UserApplyDao extends ServiceImpl<UserApplyMapper, UserApply> {
     public void readApply(List<Long> ids) {
         lambdaUpdate()
                 .in(UserApply::getId, ids)
-                .set(UserApply::getReadStatus, UserApplyReadEnum.READED.getCode())
+                .set(UserApply::getReadStatus, ReadEnum.READED.getCode())
                 .update();
     }
 

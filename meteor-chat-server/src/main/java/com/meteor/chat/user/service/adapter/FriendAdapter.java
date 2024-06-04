@@ -4,7 +4,7 @@ import com.meteor.chat.common.domain.entity.User;
 import com.meteor.chat.common.domain.entity.UserApply;
 import com.meteor.chat.common.domain.entity.UserFriend;
 import com.meteor.chat.common.domain.enums.DeleteStatusEunm;
-import com.meteor.chat.common.domain.enums.UserApplyReadEnum;
+import com.meteor.chat.common.domain.enums.ReadEnum;
 import com.meteor.chat.common.domain.enums.UserApplyStatusEnum;
 import com.meteor.chat.common.domain.enums.UserApplyTypeEnum;
 import com.meteor.chat.common.domain.vo.FriendApplyResp;
@@ -39,7 +39,7 @@ public class FriendAdapter {
         userApply.setUid(uid);
         userApply.setTargetId(targetId);
         userApply.setMsg(msg);
-        userApply.setReadStatus(UserApplyReadEnum.UNREAD.getCode());
+        userApply.setReadStatus(ReadEnum.UNREAD.getCode());
         userApply.setStatus(UserApplyStatusEnum.WAITING.getCode());
         userApply.setType(UserApplyTypeEnum.GETFRIEND.getCode());
         return userApply;

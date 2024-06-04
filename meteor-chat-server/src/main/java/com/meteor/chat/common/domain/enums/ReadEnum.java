@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
-public enum UserApplyReadEnum {
+public enum ReadEnum {
     UNREAD(1, "未读"),
     READED(2, "已读");
     private Integer code;
