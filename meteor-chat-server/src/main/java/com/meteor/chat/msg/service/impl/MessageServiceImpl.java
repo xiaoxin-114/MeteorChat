@@ -9,11 +9,13 @@ import com.meteor.chat.common.domain.vo.ChatMessageReadResp;
 import com.meteor.chat.common.domain.vo.CursorPageBaseResp;
 import com.meteor.chat.common.domain.vo.req.MessageReadCursorPageReq;
 import com.meteor.chat.common.domain.vo.req.MessageReadInfoReq;
+import com.meteor.chat.common.exception.BusinessException;
 import com.meteor.chat.msg.dao.MessageDao;
 import com.meteor.chat.msg.service.MessageService;
 import com.meteor.chat.msg.service.adapter.MsgAdapter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
+import org.junit.Assert;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -51,15 +53,19 @@ public class MessageServiceImpl implements MessageService {
     public List<MsgReadInfoDTO> countReadAndUnRead(MessageReadInfoReq req, Long uid) {
         List<Long> idList = req.getMsgIds();
         List<Message> msgList = messageDao.listByIds(idList);
-        List<Long> roomIds = msgList.stream().map(Message::getRoomId).collect(Collectors.toList());
-        List<Contact> contactList = contactDao.listByRoomId(roomIds, uid);
-        Map<Long, List<Contact>> contactMap = contactList.stream().collect(Collectors.groupingBy(Contact::getRoomId));
-        return msgList.stream().map(msg -> {
-            List<Contact> contacts = contactMap.get(msg.getRoomId());
-            if (CollectionUtils.isEmpty(contacts)) {
-                log.error("roomId:{} not found in contact", msg.getRoomId());
+        msgList.forEach(msg -> {
+            if (!uid.equals(msg.getFromUid())) {
+                throw new BusinessException("只能查询自己发送的消息阅读数");
             }
-            return MsgAdapter.buildMsgReadInfoDTO(msg, contacts);
-        }).collect(Collectors.toList());
+        });
+        List<Long> roomIds = msgList.stream().map(Message::getRoomId).collect(Collectors.toList());
+        Assert.assertTrue("只能查询同一会话下的消息", roomIds.size() == 1);
+        List<Contact> contactList = contactDao.listByRoomId(roomIds.get(0), uid);
+        if (CollectionUtils.isEmpty(contactList)) {
+            throw new BusinessException("会话信息缺失，计算失败");
+        }
+        return msgList.stream()
+                .map(msg -> MsgAdapter.buildMsgReadInfoDTO(msg, contactList))
+                .collect(Collectors.toList());
     }
 }

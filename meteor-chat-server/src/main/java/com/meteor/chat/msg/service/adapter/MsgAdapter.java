@@ -15,9 +15,6 @@ public class MsgAdapter {
      * @return
      */
     public static MsgReadInfoDTO buildMsgReadInfoDTO(Message msg, List<Contact> contacts) {
-        if (CollectionUtils.isEmpty(contacts)) {
-            return MsgReadInfoDTO.builder().msgId(msg.getId()).build();
-        }
         int readCount = (int) contacts.stream()
                 .filter(contact -> contact.getReadTime().compareTo(msg.getCreateTime()) > -1)
                 .count();

@@ -50,12 +50,12 @@ public class ContactDao extends ServiceImpl<ContactMapper, Contact> {
 
     /**
      * 用于查询消息的已读未读数，查询群聊列表的所有用户记录，除去uid
-     * @param roomIds 房间列表
+     * @param roomId 房间id
      * @param uid 登陆用户
      * @return
      */
-    public List<Contact> listByRoomId(List<Long> roomIds, Long uid) {
-        return lambdaQuery().in(Contact::getRoomId, roomIds)
+    public List<Contact> listByRoomId(Long roomId, Long uid) {
+        return lambdaQuery().eq(Contact::getRoomId, roomId)
                 .ne(Objects.nonNull(uid),  Contact::getUid, uid)
                 .list();
     }

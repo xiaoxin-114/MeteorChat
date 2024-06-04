@@ -2,7 +2,6 @@ package com.meteor.chat.chat.service.impl;
 
 import cn.hutool.core.lang.Pair;
 import com.meteor.chat.chat.dao.ContactDao;
-import com.meteor.chat.chat.dao.RoomDao;
 import com.meteor.chat.chat.dao.RoomFriendDao;
 import com.meteor.chat.chat.service.ContactService;
 import com.meteor.chat.chat.service.adapter.RoomAdapter;
@@ -20,7 +19,6 @@ import com.meteor.chat.common.domain.vo.req.CursorPageBaseReq;
 import com.meteor.chat.common.domain.vo.req.IdBaseReq;
 import com.meteor.chat.common.exception.BusinessException;
 import com.meteor.chat.msg.dao.MessageDao;
-import com.meteor.chat.user.service.adapter.FriendAdapter;
 import com.meteor.chat.user.service.cache.UserCache;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.stereotype.Service;
@@ -74,14 +72,14 @@ public class ContactServiceImpl implements ContactService {
             return CursorPageBaseResp.empty();
         }
         roomList.sort((o1, o2) -> o2.getValue().compareTo(o1.getValue()));
-        List<Long> roomIds = roomList.subList(0, request.getPageSize()).stream().map(pair -> pair.getKey()).collect(Collectors.toList());
+        List<Long> roomIds = roomList.subList(0, request.getPageSize()).stream().map(Pair::getKey).collect(Collectors.toList());
         List<ChatRoomResp> result = buildChatRoomResp(roomIds, uid);
         // 判断是否最后一页
         // 如果热点或私人群聊其中一个不是最后一页，那么聚合后肯定也不是最后一页
         // 只有当两类群聊都是最后一页，且聚合后数据量小于等于请求的pageSize时，才是最后一页
         // 当只有一类数据时，且这类数量刚好是pageSize+ 1时，只用数量判断的话无法判断
         boolean isLast = hotRoom.getIsLast() && privateRoom.getIsLast() && roomList.size() <= request.getPageSize();
-        return new CursorPageBaseResp<ChatRoomResp>(result.get(result.size()).getActiveTime().getTime() + "", isLast, result);
+        return new CursorPageBaseResp<>(result.get(result.size()).getActiveTime().getTime() + "", isLast, result);
     }
 
     @Override
@@ -116,7 +114,7 @@ public class ContactServiceImpl implements ContactService {
         if (Objects.isNull(room)) {
             throw new BusinessException("房间号有误，数据异常");
         }
-        return buildChatRoomResp(Arrays.asList(req.getId()), uid).get(0);
+        return buildChatRoomResp(Collections.singletonList(req.getId()), uid).get(0);
     }
 
     @Override
@@ -126,7 +124,7 @@ public class ContactServiceImpl implements ContactService {
         if (Objects.isNull(roomFriend)) {
             throw new BusinessException("该用户不是你的好友");
         }
-        return buildChatRoomResp(Arrays.asList(roomFriend.getRoomId()), uid).get(0);
+        return buildChatRoomResp(Collections.singletonList(roomFriend.getRoomId()), uid).get(0);
     }
 
     private List<ChatRoomDTO> getBaseChatRoom(List<Long> roomIds, Long uid) {
