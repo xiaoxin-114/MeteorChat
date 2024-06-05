@@ -62,6 +62,8 @@ public class CursorUtils {
         queryWrapper.orderByAsc(cursorCollum);
         // 根据游标翻页，构建普通翻页的page对象
         Page page = request.plusPage();
+        // 不查询总数，节约性能
+        page.setSearchCount(false);
         // 查询数据
         Page<T> result = dao.page(page, queryWrapper);
         List<T> records = result.getRecords();
@@ -82,7 +84,7 @@ public class CursorUtils {
      * @param o 目前游标类型兼容两种：字符串和date类型，游标对象
      * @return
      */
-    public static String toCursor(Object o) {
+    private static String toCursor(Object o) {
         if (o == null) {
             return null;
         }
@@ -99,7 +101,7 @@ public class CursorUtils {
      * @param cursorClass 游标类型
      * @return
      */
-    public static Object parseCursor(String cursor, Class<?> cursorClass) {
+    private static Object parseCursor(String cursor, Class<?> cursorClass) {
         if (Date.class.isAssignableFrom(cursorClass)) {
             return new Date(Long.parseLong(cursor));
         }else {

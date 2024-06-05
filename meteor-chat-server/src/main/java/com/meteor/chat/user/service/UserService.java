@@ -5,8 +5,10 @@ import com.meteor.chat.common.domain.dto.ItemInfoDTO;
 import com.meteor.chat.common.domain.dto.SummaryInfoDTO;
 import com.meteor.chat.common.domain.entity.User;
 import com.meteor.chat.common.domain.vo.BadgeResp;
+import com.meteor.chat.common.domain.vo.CursorPageBaseResp;
 import com.meteor.chat.common.domain.vo.UserInfoVO;
 import com.meteor.chat.common.domain.vo.req.ItemInfoReq;
+import com.meteor.chat.common.domain.vo.req.MemberCursorReq;
 import com.meteor.chat.common.domain.vo.req.ModifyNameReq;
 import com.meteor.chat.common.domain.vo.req.SummaryInfoReq;
 
@@ -42,4 +44,12 @@ public interface UserService {
     List<SummaryInfoDTO> getSummaryInfoDTOList(SummaryInfoReq req);
 
     List<ItemInfoDTO> getItemInfoDTOList(ItemInfoReq req);
+
+    /**
+     * 查询群成员时，游标分页查询用户列表
+     * @param req
+     * @param uidList 用户id列表
+     * @return
+     */
+    CursorPageBaseResp<User> cursorPageUser(MemberCursorReq req, List<Long> uidList);
 }

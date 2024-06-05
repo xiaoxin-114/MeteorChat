@@ -16,7 +16,7 @@ import java.util.List;
 public class UserFriendDao extends ServiceImpl<UserFriendMapper, UserFriend> {
 
     public CursorPageBaseResp<UserFriend> pageFriendList(Long uid, CursorPageBaseReq request) {
-        return CursorUtils.cursorPage(request, this, wrapper -> wrapper.eq(UserFriend::getUid, uid).eq(UserFriend::getDeleteStatus, 0) , UserFriend::getId);
+        return CursorUtils.cursorPage(request, this, wrapper -> wrapper.eq(UserFriend::getUid, uid), UserFriend::getId);
     }
 
     public UserFriend getFriend(Long uid, Long targetUid) {
@@ -33,8 +33,7 @@ public class UserFriendDao extends ServiceImpl<UserFriendMapper, UserFriend> {
      */
     public List<UserFriend> getFriends(Long uid) {
         return list(new LambdaQueryWrapper<UserFriend>()
-                .eq(UserFriend::getUid, uid)
-                .eq(UserFriend::getDeleteStatus, 0));
+                .eq(UserFriend::getUid, uid));
     }
 
     public List<UserFriend> getFriendRelation(Long friendId, Long uid) {

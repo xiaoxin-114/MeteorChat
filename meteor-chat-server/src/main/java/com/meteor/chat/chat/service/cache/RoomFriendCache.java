@@ -28,8 +28,8 @@ public class RoomFriendCache extends AbstractRedisStringCache<Long, RoomFriend> 
     }
 
     @Override
-    public Map<Long, RoomFriend> load(List<Long> list) {
-        List<RoomFriend> roomFriends = roomFriendDao.listByIds(list);
-        return roomFriends.stream().collect(Collectors.toMap(RoomFriend::getId, Function.identity()));
+    public Map<Long, RoomFriend> load(List<Long> roomIds) {
+        List<RoomFriend> roomFriends = roomFriendDao.listByRoomIds(roomIds);
+        return roomFriends.stream().collect(Collectors.toMap(RoomFriend::getRoomId, Function.identity()));
     }
 }

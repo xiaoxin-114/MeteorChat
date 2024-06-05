@@ -65,7 +65,7 @@ public class FriendAdapter {
         UserFriend userFriend = new UserFriend();
         userFriend.setUid(uid);
         userFriend.setFriendUid(targetId);
-        userFriend.setDeleteStatus(DeleteStatusEunm.NORAML.getCode());
+//        userFriend.setDeleteStatus(DeleteStatusEunm.NORAML.getCode());
         return userFriend;
     }
 }

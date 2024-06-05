@@ -59,4 +59,21 @@ public class ContactDao extends ServiceImpl<ContactMapper, Contact> {
                 .ne(Objects.nonNull(uid),  Contact::getUid, uid)
                 .list();
     }
+
+    public void removeContact(Long roomId, Long uid) {
+        LambdaQueryWrapper<Contact> queryWrapper = new LambdaQueryWrapper<Contact>()
+                .eq(Contact::getRoomId, roomId)
+                .eq(Contact::getUid, uid);
+        remove(queryWrapper);
+    }
+
+    /**
+     * 移除一个聊天室的所有记录
+     * @param roomId
+     */
+    public void removeByRoomId(Long roomId) {
+        LambdaQueryWrapper<Contact> queryWrapper = new LambdaQueryWrapper<Contact>()
+                .eq(Contact::getRoomId, roomId);
+        remove(queryWrapper);
+    }
 }

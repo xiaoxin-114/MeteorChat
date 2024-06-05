@@ -1,21 +1,20 @@
 package com.meteor.chat.user.service.impl;
 
-import com.meteor.chat.common.constants.RedisKey;
+import cn.hutool.core.lang.Pair;
 import com.meteor.chat.common.domain.dto.ItemInfoDTO;
 import com.meteor.chat.common.domain.dto.SummaryInfoDTO;
 import com.meteor.chat.common.domain.entity.IpInfo;
 import com.meteor.chat.common.domain.entity.ItemConfig;
 import com.meteor.chat.common.domain.entity.User;
 import com.meteor.chat.common.domain.entity.UserBackpack;
+import com.meteor.chat.common.domain.enums.ChatActiveStatusEnum;
 import com.meteor.chat.common.domain.enums.ItemConfigTypeEnum;
 import com.meteor.chat.common.domain.enums.RoleEnum;
-import com.meteor.chat.common.domain.vo.BadgeResp;
+import com.meteor.chat.common.domain.vo.CursorPageBaseResp;
 import com.meteor.chat.common.domain.vo.UserInfoVO;
-import com.meteor.chat.common.domain.vo.req.ItemInfoReq;
-import com.meteor.chat.common.domain.vo.req.ModifyNameReq;
-import com.meteor.chat.common.domain.vo.req.SummaryInfoReq;
+import com.meteor.chat.common.domain.vo.req.*;
 import com.meteor.chat.common.exception.BusinessException;
-import com.meteor.chat.common.util.RedisUtils;
+import com.meteor.chat.common.util.CommonUtils;
 import com.meteor.chat.event.BlackUserEvent;
 import com.meteor.chat.event.UserRegisterEvent;
 import com.meteor.chat.user.dao.BlackDao;
@@ -30,7 +29,6 @@ import com.meteor.chat.user.service.cache.UserCache;
 import com.meteor.chat.user.service.cache.UserSummaryCache;
 import org.apache.commons.collections.CollectionUtils;
 import org.junit.Assert;
-import org.springframework.boot.autoconfigure.cache.CacheProperties;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -85,7 +83,7 @@ public class UserServiceImpl implements UserService {
             throw new BusinessException("暂时拥有该徽章");
         }
         ItemConfig item = itemCache.getById(itemId);
-        Assert.assertTrue("该徽章无法佩戴", ItemConfigTypeEnum.BADGE.getType() == item.getType());
+        Assert.assertEquals("该徽章无法佩戴", ItemConfigTypeEnum.BADGE.getType(), item.getType());
         userDao.wearBadge(uid, itemId);
         userCache.userInfoChange(uid);
     }
@@ -150,6 +148,8 @@ public class UserServiceImpl implements UserService {
     public List<ItemInfoDTO> getItemInfoDTOList(ItemInfoReq req) {
         return req.getReqList().stream().map(infoReq -> {
             ItemConfig item = itemCache.getById(infoReq.getItemId());
+            // 如果请求没有最后更新时间 或者 请求中的最后更新时间小于数据库中徽章的更新时间，那么说明需要更新
+            // 封装更新的数据
             if (Objects.isNull(infoReq.getLastModifyTime()) || (Objects.nonNull(item.getUpdateTime()) && item.getUpdateTime().getTime() > infoReq.getLastModifyTime())) {
                 ItemInfoDTO itemInfoDTO = new ItemInfoDTO();
                 itemInfoDTO.setItemId(item.getId());
@@ -163,12 +163,37 @@ public class UserServiceImpl implements UserService {
         }).collect(Collectors.toList());
     }
 
+    @Override
+    public CursorPageBaseResp<User> cursorPageUser(MemberCursorReq req, List<Long> uidList) {
+        // 获取请求中的游标信息，获取成员的游标形式为  在线/离线_游标（最后上下线时间）
+        Pair<ChatActiveStatusEnum, String> cursorPair = CommonUtils.getMemberCursor(req.getCursor());
+        String timeCursor = cursorPair.getValue();
+        // 游标分页获取数据
+        CursorPageBaseResp<User> userPage = userDao.cursorPage(new CursorPageBaseReq(req.getPageSize(), timeCursor), cursorPair.getKey(), uidList);
+        List<User> data = userPage.getData();
+        boolean isLast = userPage.getIsLast();
+        String cursor = CommonUtils.generateMemberCursor(cursorPair.getKey(), userPage.getCursor());
+        if (cursorPair.getKey() == ChatActiveStatusEnum.ONLINE && userPage.getData().size() < req.getPageSize()) {
+            // 如果是获取在线的分页，且数量不足，需要补充离线的用户数据
+            // 先计算需要补充多少条记录
+            int count = req.getPageSize() - userPage.getData().size();
+            // 获取离线的补充数据
+            CursorPageBaseResp<User> offlinePage = userDao.cursorPage(new CursorPageBaseReq(count, null), ChatActiveStatusEnum.OFFLINE, uidList);
+            data.addAll(offlinePage.getData());
+            // 根据离线的分页数据，重置分页的属性：是否最后一页，游标信息
+            isLast = offlinePage.getIsLast();
+            cursor = CommonUtils.generateMemberCursor(ChatActiveStatusEnum.OFFLINE, offlinePage.getCursor());
+        }
+        return new CursorPageBaseResp<>(cursor, isLast, data);
+    }
+
     private List<Long> getNeedRefreshUid(List<SummaryInfoReq.infoReq> reqList) {
         ArrayList<Long> needRefreshUids = new ArrayList<>();
         List<Long> modifyTime = userCache.getUserModifyTime(reqList.stream().map(SummaryInfoReq.infoReq::getUid).collect(Collectors.toList()));
         for (int i = 0; i < reqList.size(); i++) {
             SummaryInfoReq.infoReq infoReq = reqList.get(i);
             Long time = modifyTime.get(i);
+            // 如果请求没有最后更新时间 或者 请求中的最后更新时间小于数据库中用户的更新时间，那么说明需要更新
             if (Objects.isNull(infoReq.getLastModifyTime()) || (Objects.nonNull(time) && infoReq.getLastModifyTime() < time)) {
                 needRefreshUids.add(infoReq.getUid());
             }

@@ -2,15 +2,18 @@ package com.meteor.chat.chat.service.adapter;
 import java.util.Date;
 
 import com.meteor.chat.common.domain.dto.ChatRoomDTO;
-import com.meteor.chat.common.domain.entity.Room;
-import com.meteor.chat.common.domain.entity.RoomFriend;
+import com.meteor.chat.common.domain.entity.*;
 import com.meteor.chat.common.domain.enums.HotFlagEunm;
 import com.meteor.chat.common.domain.enums.RoomFriendStatusEnum;
 import com.meteor.chat.common.domain.enums.RoomTypeEnum;
 import com.meteor.chat.common.domain.vo.ChatRoomResp;
+import com.meteor.chat.common.domain.vo.GroupMemberListResp;
+import com.meteor.chat.common.domain.vo.GroupMemberResp;
 import org.springframework.beans.BeanUtils;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class RoomAdapter {
@@ -81,5 +84,28 @@ public class RoomAdapter {
      */
     public static Long getFriendUid(RoomFriend roomFriend, Long uid) {
         return uid.equals(roomFriend.getUid1()) ? roomFriend.getUid2() : roomFriend.getUid1();
+    }
+
+    public static List<GroupMemberResp> buildMemberResp(List<User> userList, List<GroupMember> memberList) {
+        Map<Long, Integer> roleMap = memberList.stream().collect(Collectors.toMap(GroupMember::getUid, GroupMember::getRole));
+        return userList.stream().map(user -> {
+            Integer role = roleMap.get(user.getId());
+            return GroupMemberResp.builder()
+                    .uid(user.getId())
+                    .activeStatus(user.getActiveStatus())
+                    .lastOptTime(user.getLastOptTime())
+                    .roleId(role)
+                    .build();
+        }).collect(Collectors.toList());
+    }
+
+    public static List<GroupMemberListResp> buildMemberListResp(List<User> userList) {
+        return userList.stream().map(user -> {
+            GroupMemberListResp listResp = new GroupMemberListResp();
+            listResp.setUid(user.getId());
+            listResp.setName(user.getName());
+            listResp.setAvatar(user.getAvatar());
+            return listResp;
+        }).collect(Collectors.toList());
     }
 }

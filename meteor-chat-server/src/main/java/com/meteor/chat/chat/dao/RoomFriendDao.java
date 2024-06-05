@@ -6,6 +6,8 @@ import com.meteor.chat.common.domain.enums.RoomFriendStatusEnum;
 import com.meteor.chat.common.mapper.RoomFriendMapper;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 public class RoomFriendDao extends ServiceImpl<RoomFriendMapper, RoomFriend> {
 
@@ -24,5 +26,10 @@ public class RoomFriendDao extends ServiceImpl<RoomFriendMapper, RoomFriend> {
         lambdaUpdate().eq(RoomFriend::getRoomKey, buildRoomKey)
                 .set(RoomFriend::getStatus, RoomFriendStatusEnum.FORBID.getCode())
                 .update();
+    }
+
+    public List<RoomFriend> listByRoomIds(List<Long> roomIds) {
+        return lambdaQuery().in(RoomFriend::getRoomId, roomIds)
+                .list();
     }
 }
