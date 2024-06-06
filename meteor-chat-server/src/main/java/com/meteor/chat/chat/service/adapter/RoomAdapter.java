@@ -3,6 +3,7 @@ import java.util.Date;
 
 import com.meteor.chat.common.domain.dto.ChatRoomDTO;
 import com.meteor.chat.common.domain.entity.*;
+import com.meteor.chat.common.domain.enums.GroupRoleAPPEnum;
 import com.meteor.chat.common.domain.enums.HotFlagEunm;
 import com.meteor.chat.common.domain.enums.RoomFriendStatusEnum;
 import com.meteor.chat.common.domain.enums.RoomTypeEnum;
@@ -107,5 +108,26 @@ public class RoomAdapter {
             listResp.setAvatar(user.getAvatar());
             return listResp;
         }).collect(Collectors.toList());
+    }
+
+    public static RoomGroup buildRoomGroup(User user, Room room) {
+        RoomGroup roomGroup = new RoomGroup();
+        roomGroup.setRoomId(room.getId());
+        roomGroup.setName(user.getName() + "的群聊");
+        roomGroup.setAvatar(user.getAvatar());
+        return roomGroup;
+    }
+
+    /**
+     * 创建一个的groupMember
+     * @param uid
+     * @return
+     */
+    public static GroupMember buildGroupMember(Long uid, RoomGroup roomGroup, GroupRoleAPPEnum role) {
+        GroupMember groupMember = new GroupMember();
+        groupMember.setGroupId(roomGroup.getId());
+        groupMember.setUid(uid);
+        groupMember.setRole(role.getCode());
+        return groupMember;
     }
 }

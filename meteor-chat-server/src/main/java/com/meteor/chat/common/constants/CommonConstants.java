@@ -10,4 +10,6 @@ public interface CommonConstants {
     int GET_IPINFO_RETRY = 3;
     // 解析ip归属地失败时间间隔
     long GET_IPINFO_RETRY_INTERVAL = 3 * 1000;
+
+    int MAX_ADMIN_NUM = 3;
 }

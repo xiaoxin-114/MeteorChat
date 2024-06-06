@@ -4,9 +4,7 @@ import com.meteor.chat.common.domain.vo.CursorPageBaseResp;
 import com.meteor.chat.common.domain.vo.GroupMemberListResp;
 import com.meteor.chat.common.domain.vo.GroupMemberResp;
 import com.meteor.chat.common.domain.vo.GroupResp;
-import com.meteor.chat.common.domain.vo.req.IdBaseReq;
-import com.meteor.chat.common.domain.vo.req.MemberCursorReq;
-import com.meteor.chat.common.domain.vo.req.MemberDelReq;
+import com.meteor.chat.common.domain.vo.req.*;
 
 import java.util.List;
 
@@ -55,4 +53,32 @@ public interface RoomService {
      * @param uid
      */
     void exitRoom(IdBaseReq req, Long uid);
+
+    /**
+     * 用户创建群聊
+     * @param req
+     * @param uid
+     */
+    Long createChatGroup(GroupAddReq req, Long uid);
+
+    /**
+     * 邀请好友
+     * @param req
+     * @param uid 用户id
+     */
+    void addGroupMembers(MemberAddReq req, Long uid);
+
+    /**
+     * 添加管理员
+     * @param req
+     * @param uid
+     */
+    void addAdmin(AdminChangeReq req, Long uid);
+
+    /**
+     * 移除管理员
+     * @param req
+     * @param uid
+     */
+    void removeAdmin(AdminChangeReq req, Long uid);
 }

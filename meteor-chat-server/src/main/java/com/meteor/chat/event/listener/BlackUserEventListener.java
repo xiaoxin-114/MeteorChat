@@ -10,9 +10,10 @@ import com.meteor.chat.websocket.domain.vo.WSBaseResp;
 import com.meteor.chat.websocket.domain.vo.WSBlack;
 import com.meteor.chat.websocket.service.WebSocketService;
 import org.springframework.context.event.EventListener;
+import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
-
+@Component
 public class BlackUserEventListener {
 
     @Resource

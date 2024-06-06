@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.meteor.chat.common.domain.entity.GroupMember;
 import com.meteor.chat.common.domain.entity.RoomGroup;
+import com.meteor.chat.common.domain.enums.GroupRoleAPPEnum;
 import com.meteor.chat.common.domain.vo.CursorPageBaseResp;
 import com.meteor.chat.common.domain.vo.GroupMemberResp;
 import com.meteor.chat.common.domain.vo.req.MemberCursorReq;
@@ -34,7 +35,7 @@ public class GroupMemberDao extends ServiceImpl<GroupMemberMapper, GroupMember> 
                 .list();
     }
 
-    public List<Long> getMemberList(Long groupId) {
+    public List<Long> getMemberUidList(Long groupId) {
         List<GroupMember> list = lambdaQuery().eq(GroupMember::getGroupId, groupId)
                 .select(GroupMember::getUid)
                 .list();
@@ -51,5 +52,35 @@ public class GroupMemberDao extends ServiceImpl<GroupMemberMapper, GroupMember> 
                 .eq(GroupMember::getGroupId, groupId)
                 .eq(Objects.nonNull(uid), GroupMember::getUid, uid);
         remove(queryWrapper);
+    }
+
+    /**
+     * 计算用户为群主的群聊数量
+     * @param uid 用户id
+     * @return
+     */
+    public int countLeader(Long uid) {
+        return lambdaQuery().eq(GroupMember::getUid, uid)
+                .eq(GroupMember::getRole, GroupRoleAPPEnum.LEADER.getCode())
+                .count();
+    }
+
+    public List<GroupMember> getMemberList(Long groupId) {
+        return lambdaQuery().eq(GroupMember::getGroupId, groupId)
+                .list();
+    }
+
+    public void addAdmin(List<Long> uidList, Long groupId) {
+        lambdaUpdate().eq(GroupMember::getGroupId, groupId)
+                .in(GroupMember::getUid, uidList)
+                .set(GroupMember::getRole, GroupRoleAPPEnum.MANAGER.getCode())
+                .update();
+    }
+
+    public void removeAdmin(List<Long> uidList, Long groupId) {
+        lambdaUpdate().eq(GroupMember::getGroupId, groupId)
+                .in(GroupMember::getUid, uidList)
+                .set(GroupMember::getRole, GroupRoleAPPEnum.MEMBER.getCode())
+                .update();
     }
 }

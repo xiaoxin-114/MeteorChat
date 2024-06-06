@@ -2,22 +2,13 @@ package com.meteor.chat.chat.controller;
 
 import com.meteor.chat.chat.service.RoomService;
 import com.meteor.chat.common.domain.result.ApiResult;
-import com.meteor.chat.common.domain.vo.CursorPageBaseResp;
-import com.meteor.chat.common.domain.vo.GroupMemberListResp;
-import com.meteor.chat.common.domain.vo.GroupMemberResp;
-import com.meteor.chat.common.domain.vo.GroupResp;
-import com.meteor.chat.common.domain.vo.req.IdBaseReq;
-import com.meteor.chat.common.domain.vo.req.MemberCursorReq;
-import com.meteor.chat.common.domain.vo.req.MemberDelReq;
+import com.meteor.chat.common.domain.vo.*;
+import com.meteor.chat.common.domain.vo.req.*;
 import com.meteor.chat.common.util.UserContext;
-import io.github.classgraph.json.Id;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.validation.Valid;
@@ -56,7 +47,7 @@ public class RoomController {
 
     @DeleteMapping("/group/member")
     @ApiOperation("移除成员")
-    public ApiResult removeMember(@Valid MemberDelReq req) {
+    public ApiResult<Void> removeMember(@Valid MemberDelReq req) {
         Long uid = UserContext.getUid();
         roomService.removeMember(req, uid);
         return ApiResult.success();
@@ -64,10 +55,41 @@ public class RoomController {
 
     @DeleteMapping("/group/member/exit")
     @ApiOperation("退出群聊")
-    public ApiResult exitChatGroup(@Valid IdBaseReq req) {
+    public ApiResult<Void> exitChatGroup(@Valid IdBaseReq req) {
         Long uid = UserContext.getUid();
         roomService.exitRoom(req, uid);
         return ApiResult.success();
     }
 
+    @PostMapping("/group")
+    @ApiOperation("新增群组")
+    public ApiResult<IdRespVO> createChatGroup(@RequestBody @Valid GroupAddReq req) {
+        Long uid = UserContext.getUid();
+        Long roomId = roomService.createChatGroup(req, uid);
+        return ApiResult.success(IdRespVO.id(roomId));
+    }
+
+    @PostMapping("/group/member")
+    @ApiOperation("邀请好友")
+    public ApiResult<Void> addGroupMembers(@RequestBody @Valid MemberAddReq req) {
+        Long uid = UserContext.getUid();
+        roomService.addGroupMembers(req, uid);
+        return ApiResult.success();
+    }
+
+    @PutMapping("/group/admin")
+    @ApiOperation("添加管理员")
+    public ApiResult<Void> addAdmin(@RequestBody @Valid AdminChangeReq req) {
+        Long uid = UserContext.getUid();
+        roomService.addAdmin(req, uid);
+        return ApiResult.success();
+    }
+
+    @DeleteMapping("/group/admin")
+    @ApiOperation("移除管理员")
+    public ApiResult<Void> removeAdmin(@RequestBody @Valid AdminChangeReq req) {
+        Long uid = UserContext.getUid();
+        roomService.removeAdmin(req, uid);
+        return ApiResult.success();
+    }
 }

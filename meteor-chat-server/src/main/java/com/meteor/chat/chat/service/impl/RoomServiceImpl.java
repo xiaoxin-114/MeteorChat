@@ -1,11 +1,12 @@
 package com.meteor.chat.chat.service.impl;
 
-import com.baomidou.mybatisplus.annotation.TableField;
 import com.meteor.chat.chat.dao.*;
 import com.meteor.chat.chat.service.cache.GroupMemberCache;
 import com.meteor.chat.chat.service.cache.HotRoomCache;
 import com.meteor.chat.chat.service.cache.RoomCache;
 import com.meteor.chat.chat.service.cache.RoomGroupCache;
+import com.meteor.chat.common.annotation.RedissonLock;
+import com.meteor.chat.common.constants.CommonConstants;
 import com.meteor.chat.common.domain.entity.*;
 import com.meteor.chat.common.domain.enums.GroupRoleAPPEnum;
 import com.meteor.chat.common.domain.enums.RoleEnum;
@@ -15,12 +16,11 @@ import com.meteor.chat.common.domain.vo.CursorPageBaseResp;
 import com.meteor.chat.common.domain.vo.GroupMemberListResp;
 import com.meteor.chat.common.domain.vo.GroupMemberResp;
 import com.meteor.chat.common.domain.vo.GroupResp;
-import com.meteor.chat.common.domain.vo.req.IdBaseReq;
-import com.meteor.chat.common.domain.vo.req.MemberCursorReq;
-import com.meteor.chat.common.domain.vo.req.MemberDelReq;
+import com.meteor.chat.common.domain.vo.req.*;
 import com.meteor.chat.common.exception.BusinessException;
 import com.meteor.chat.chat.service.RoomService;
 import com.meteor.chat.chat.service.adapter.RoomAdapter;
+import com.meteor.chat.event.GroupMemberAddEvent;
 import com.meteor.chat.user.dao.UserDao;
 import com.meteor.chat.user.dao.UserRoleDao;
 import com.meteor.chat.user.service.UserService;
@@ -28,6 +28,7 @@ import com.meteor.chat.user.service.cache.UserCache;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.junit.Assert;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -80,6 +81,9 @@ public class RoomServiceImpl implements RoomService {
 
     @Resource
     private UserRoleDao userRoleDao;
+
+    @Resource
+    private ApplicationEventPublisher applicationEventPublisher;
 
     @Override
     public GroupResp groupDetail(IdBaseReq req, Long uid) {
@@ -141,16 +145,16 @@ public class RoomServiceImpl implements RoomService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void removeMember(MemberDelReq req, Long uid) {
-        Assert.assertFalse("不能移除自己", req.getUid().equals(uid));
+        Assert.assertNotEquals("不能移除自己", req.getUid(), uid);
         Long roomId = req.getRoomId();
         Room room = roomCache.get(roomId);
         RoomGroup roomGroup = roomGroupCache.get(roomId);
         Assert.assertNotNull("聊天室id错误", roomGroup);
         GroupRoleAPPEnum deleteRole = getGroupRole(req.getUid(), room, roomGroup);
-        Assert.assertFalse("群主无法被移出群聊", GroupRoleAPPEnum.LEADER.equals(deleteRole));
+        Assert.assertNotEquals("群主无法被移出群聊", GroupRoleAPPEnum.LEADER, deleteRole);
         GroupRoleAPPEnum userRole = getGroupRole(uid, room, roomGroup);
         if (GroupRoleAPPEnum.MANAGER.equals(deleteRole)) {
-            Assert.assertTrue("管理员只能被群主移出群聊", GroupRoleAPPEnum.LEADER.equals(userRole));
+            Assert.assertEquals("管理员只能被群主移出群聊", GroupRoleAPPEnum.LEADER, userRole);
         } else if (GroupRoleAPPEnum.MEMBER.equals(deleteRole)) {
             Assert.assertTrue("登陆用户没有权限", hasPower(userRole, uid));
         } else {
@@ -193,6 +197,88 @@ public class RoomServiceImpl implements RoomService {
             groupMemberCache.evictMemberUidList(roomId);
             // todo 向所有成员推送用户退出群聊的消息
         }
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    @RedissonLock(prefixKey = "createGroup:#uid")
+    public Long createChatGroup(GroupAddReq req, Long uid) {
+        if (Objects.isNull(uid)) {
+            throw new BusinessException("用户未登陆，创建群聊失败");
+        }
+        int count = groupMemberDao.countLeader(uid);
+        Assert.assertTrue("该用户已经创建过群聊", count < 1);
+        RoomGroup roomGroup = buildGroupRoom(uid);
+        // 用户的群主角色
+        GroupMember leaderMember = RoomAdapter.buildGroupMember(uid,  roomGroup, GroupRoleAPPEnum.LEADER);
+        // 邀请好友的普通成员角色
+        List<GroupMember> groupMembers = req.getUidList().stream().map(id -> RoomAdapter.buildGroupMember(id, roomGroup, GroupRoleAPPEnum.MEMBER))
+                .collect(Collectors.toList());
+        groupMembers.add(leaderMember);
+        groupMemberDao.saveBatch(groupMembers);
+        applicationEventPublisher.publishEvent(new GroupMemberAddEvent(this, groupMembers, roomGroup, uid));
+        return roomGroup.getRoomId();
+    }
+
+    @Override
+    public void addGroupMembers(MemberAddReq req, Long uid) {
+        Long roomId = req.getRoomId();
+        Room room = roomCache.get(roomId);
+        Assert.assertNotNull("聊天室id异常", room);
+        RoomGroup roomGroup = roomGroupCache.get(roomId);
+        Assert.assertNotNull("聊天室id异常", roomGroup);
+        Assert.assertFalse("全员群不需要邀请成员", room.isHotRoom());
+        List<Long> memberUidList = groupMemberCache.getMemberUidList(roomId);
+        List<GroupMember> needAddGroupMember = req.getUidList().stream()
+                .filter(id -> !memberUidList.contains(id))
+                .map(id -> RoomAdapter.buildGroupMember(id, roomGroup, GroupRoleAPPEnum.MEMBER))
+                .collect(Collectors.toList());
+        groupMemberDao.saveBatch(needAddGroupMember);
+        groupMemberCache.evictMemberUidList(roomId);
+        applicationEventPublisher.publishEvent(new GroupMemberAddEvent(this, needAddGroupMember, roomGroup, uid));
+    }
+
+    @Override
+    public void addAdmin(AdminChangeReq req, Long uid) {
+        Long roomId = req.getRoomId();
+        Room room = roomCache.get(roomId);
+        Assert.assertNotNull("房间号id异常", room);
+        RoomGroup roomGroup = roomGroupCache.get(roomId);
+        Assert.assertNotNull("房间号id异常", roomGroup);
+        Assert.assertNotNull("用户未登陆", uid);
+        GroupRoleAPPEnum groupRole = getGroupRole(uid, room, roomGroup);
+        Assert.assertEquals("只有群主才能添加管理员", GroupRoleAPPEnum.LEADER, groupRole);
+        Map<Long, GroupMember> memberMap = groupMemberCache.getMemberList(roomId);
+        List<Long> uidList = req.getUidList();
+        Assert.assertTrue("请确保所有用户都在群聊内", memberMap.keySet().containsAll(uidList));
+        uidList = uidList.stream()
+                .filter(id -> memberMap.get(id).getRole().equals(GroupRoleAPPEnum.MEMBER.getCode()))
+                .collect(Collectors.toList());
+        long managerCount = memberMap.values().stream()
+                .filter(groupMember -> GroupRoleAPPEnum.MANAGER.getCode().equals(groupMember.getRole()))
+                .count();
+        Assert.assertTrue("群聊管理员不能超过" + CommonConstants.MAX_ADMIN_NUM + "个",
+                uidList.size() + managerCount <= CommonConstants.MAX_ADMIN_NUM);
+        if (CollectionUtils.isNotEmpty(uidList)) {
+            groupMemberDao.addAdmin(uidList, roomGroup.getId());
+        }
+        // todo 推送消息给所有用户
+    }
+
+    @Override
+    public void removeAdmin(AdminChangeReq req, Long uid) {
+        Long roomId = req.getRoomId();
+        Room room = roomCache.get(roomId);
+        Assert.assertNotNull("房间号id异常", room);
+        RoomGroup roomGroup = roomGroupCache.get(roomId);
+        Assert.assertNotNull("房间号id异常", roomGroup);
+        Assert.assertNotNull("用户未登陆", uid);
+        GroupRoleAPPEnum groupRole = getGroupRole(uid, room, roomGroup);
+        Assert.assertEquals("只有群主才能添加管理员", GroupRoleAPPEnum.LEADER, groupRole);
+        Map<Long, GroupMember> memberMap = groupMemberCache.getMemberList(roomId);
+        List<Long> uidList = req.getUidList();
+        Assert.assertTrue("请确保所有用户都在群聊内", memberMap.keySet().containsAll(uidList));
+        groupMemberDao.removeAdmin(uidList, roomGroup.getId());
     }
 
     @Override
@@ -256,5 +342,19 @@ public class RoomServiceImpl implements RoomService {
     private boolean hasPower(GroupRoleAPPEnum groupRole, Long uid) {
         boolean power = userRoleDao.hasPower(uid, RoleEnum.SUPERADMIN.getId());
         return power || GroupRoleAPPEnum.LEADER.equals(groupRole) || GroupRoleAPPEnum.MANAGER.equals(groupRole);
+    }
+
+    /**
+     * 创建群聊
+     * @param uid 创建人id
+     * @return 群聊room
+     */
+    private RoomGroup buildGroupRoom(Long uid) {
+        Room room = RoomAdapter.buildRoom(RoomTypeEnum.GROUP);
+        roomDao.save(room);
+        User user = userCache.getUserInfo(uid);
+        RoomGroup roomGroup = RoomAdapter.buildRoomGroup(user, room);
+        roomGroupDao.save(roomGroup);
+        return roomGroup;
     }
 }
