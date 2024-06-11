@@ -3,6 +3,7 @@ package com.meteor.chat.msg.service;
 import com.meteor.chat.common.domain.dto.MsgReadInfoDTO;
 import com.meteor.chat.common.domain.vo.ChatMessageReadResp;
 import com.meteor.chat.common.domain.vo.CursorPageBaseResp;
+import com.meteor.chat.common.domain.vo.req.ChatMessageReq;
 import com.meteor.chat.common.domain.vo.req.MessageReadCursorPageReq;
 import com.meteor.chat.common.domain.vo.req.MessageReadInfoReq;
 
@@ -22,4 +23,12 @@ public interface MessageService {
      * @return
      */
     List<MsgReadInfoDTO> countReadAndUnRead(MessageReadInfoReq req, Long uid);
+
+    /**
+     * 发送消息
+     * @param request
+     * @param uid
+     * @return 消息id
+     */
+    Long sendMsg(ChatMessageReq request, Long uid);
 }

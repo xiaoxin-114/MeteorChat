@@ -3,7 +3,8 @@ package com.meteor.chat.msg.service.adapter;
 import com.meteor.chat.common.domain.dto.MsgReadInfoDTO;
 import com.meteor.chat.common.domain.entity.Contact;
 import com.meteor.chat.common.domain.entity.Message;
-import org.apache.commons.collections.CollectionUtils;
+import com.meteor.chat.common.domain.enums.DeleteStatusEunm;
+import com.meteor.chat.common.domain.vo.req.ChatMessageReq;
 
 import java.util.List;
 
@@ -22,5 +23,14 @@ public class MsgAdapter {
                 .msgId(msg.getId())
                 .readCount(readCount)
                 .unReadCount(contacts.size() - readCount).build();
+    }
+
+    public static Message buildMessage(ChatMessageReq req, Long uid) {
+        Message message = new Message();
+        message.setRoomId(req.getRoomId());
+        message.setFromUid(uid);
+        message.setType(req.getMsgType());
+        message.setStatus(DeleteStatusEunm.NORAML.getCode());
+        return message;
     }
 }

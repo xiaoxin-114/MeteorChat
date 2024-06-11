@@ -115,4 +115,8 @@ public class RoomFriend implements Serializable {
         sb.append("]");
         return sb.toString();
     }
+
+    public boolean hasUser(Long uid) {
+        return uid1.equals(uid) || uid2.equals(uid);
+    }
 }

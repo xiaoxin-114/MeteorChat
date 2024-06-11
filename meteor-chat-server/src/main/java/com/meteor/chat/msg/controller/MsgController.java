@@ -3,7 +3,9 @@ package com.meteor.chat.msg.controller;
 import com.meteor.chat.common.domain.dto.MsgReadInfoDTO;
 import com.meteor.chat.common.domain.result.ApiResult;
 import com.meteor.chat.common.domain.vo.ChatMessageReadResp;
+import com.meteor.chat.common.domain.vo.ChatMessageResp;
 import com.meteor.chat.common.domain.vo.CursorPageBaseResp;
+import com.meteor.chat.common.domain.vo.req.ChatMessageReq;
 import com.meteor.chat.common.domain.vo.req.MessageReadCursorPageReq;
 import com.meteor.chat.common.domain.vo.req.MessageReadInfoReq;
 import com.meteor.chat.common.util.UserContext;
@@ -11,6 +13,8 @@ import com.meteor.chat.msg.service.MessageService;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import javax.annotation.Resource;
@@ -37,6 +41,14 @@ public class MsgController {
         Long uid = UserContext.getUid();
         List<MsgReadInfoDTO> result = messageService.countReadAndUnRead(req, uid);
         return ApiResult.success(result);
+    }
+
+    @PostMapping("/msg")
+    @ApiOperation("发送消息")
+    public ApiResult<ChatMessageResp> sendMsg(@Valid @RequestBody ChatMessageReq request) {
+        Long msgId = messageService.sendMsg(request, UserContext.getUid());
+        //返回完整消息格式，方便前端展示
+
     }
 
 }
