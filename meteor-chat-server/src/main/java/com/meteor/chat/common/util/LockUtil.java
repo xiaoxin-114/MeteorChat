@@ -9,7 +9,6 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 import java.util.concurrent.TimeUnit;
-import java.util.function.Supplier;
 
 @Component
 @Slf4j
@@ -30,10 +29,5 @@ public class LockUtil {
                 lock.unlock();
             }
         }
-    }
-
-    @FunctionalInterface
-    public interface SupplierThrow<T> {
-        T get() throws Throwable;
     }
 }

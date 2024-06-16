@@ -8,6 +8,7 @@ import com.meteor.chat.common.domain.vo.CursorPageBaseResp;
 import com.meteor.chat.common.domain.vo.req.ChatMessageReq;
 import com.meteor.chat.common.domain.vo.req.MessageReadCursorPageReq;
 import com.meteor.chat.common.domain.vo.req.MessageReadInfoReq;
+import com.meteor.chat.common.frequency.annotation.FrequencyControl;
 import com.meteor.chat.common.util.UserContext;
 import com.meteor.chat.msg.service.MessageService;
 import io.swagger.annotations.ApiModel;
@@ -43,12 +44,16 @@ public class MsgController {
         return ApiResult.success(result);
     }
 
+    @FrequencyControl(time = 5, count = 10, type = FrequencyControl.FrequencyTypeEnum.UID)
+    @FrequencyControl(time = 10, count = 15, type = FrequencyControl.FrequencyTypeEnum.UID)
     @PostMapping("/msg")
     @ApiOperation("发送消息")
     public ApiResult<ChatMessageResp> sendMsg(@Valid @RequestBody ChatMessageReq request) {
-        Long msgId = messageService.sendMsg(request, UserContext.getUid());
+        Long uid = UserContext.getUid();
+        Long msgId = messageService.sendMsg(request, uid);
         //返回完整消息格式，方便前端展示
-
+        ChatMessageResp chatMessageResp = messageService.getMessageResp(msgId);
+        return ApiResult.success(chatMessageResp);
     }
 
 }

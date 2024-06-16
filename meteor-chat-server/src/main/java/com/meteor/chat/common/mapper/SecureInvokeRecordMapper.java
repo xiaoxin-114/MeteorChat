@@ -1,7 +1,7 @@
 package com.meteor.chat.common.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.meteor.chat.common.domain.entity.SecureInvokeRecord;
+import com.meteor.chat.transaction.domian.SecureInvokeRecord;
 
 /**
 * @author meteor

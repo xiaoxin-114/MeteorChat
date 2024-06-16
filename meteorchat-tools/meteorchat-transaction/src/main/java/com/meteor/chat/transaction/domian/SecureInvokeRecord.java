@@ -1,9 +1,10 @@
-package com.meteor.chat.common.domain.entity;
+package com.meteor.chat.transaction.domian;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.extension.handlers.JacksonTypeHandler;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -25,7 +26,8 @@ public class SecureInvokeRecord implements Serializable {
     /**
      * 请求快照参数json
      */
-    private Object secureInvokeJson;
+    @TableField(value = "secure_invoke_json", typeHandler = JacksonTypeHandler.class)
+    private SecureInvokeDTO secureInvokeJson;
 
     /**
      * 状态 1待执行 2已失败

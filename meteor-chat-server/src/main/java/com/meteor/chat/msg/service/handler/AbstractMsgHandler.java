@@ -68,7 +68,13 @@ public abstract class AbstractMsgHandler<T> {
     }
 
     private final T getBody(ChatMessageReq req){
-        return BeanUtil.toBean(req.getBody(), bodyClass);
+        Object body = req.getBody();
+        // 为兼容String类型，因为如果使用使用的是String类型，Object转换成String在BeanUtil.toBean会报错
+        // String转只能作为对象的属性，但如果body此时已经是String了，自然就会报错
+        if (bodyClass.isAssignableFrom(body.getClass())) {
+            return (T) body;
+        }
+        return BeanUtil.toBean(body, bodyClass);
     }
 
     abstract void saveMessageExtra(Message message, T body);

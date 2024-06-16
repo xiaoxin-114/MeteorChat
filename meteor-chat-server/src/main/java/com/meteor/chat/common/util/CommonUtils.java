@@ -5,6 +5,8 @@ import com.meteor.chat.common.domain.enums.ChatActiveStatusEnum;
 import com.meteor.chat.common.domain.enums.IdempotenceCodeEnum;
 import org.apache.commons.lang3.StringUtils;
 
+import java.lang.reflect.Method;
+
 public class CommonUtils {
 
     private static final String SEPARATOR = "_";
@@ -33,5 +35,9 @@ public class CommonUtils {
 
     public static String generateMemberCursor(ChatActiveStatusEnum activeStatusEnum, String cursorStr) {
         return activeStatusEnum.getStatus() + SEPARATOR + cursorStr;
+    }
+
+    public static String getDefaultPrefix(Method method) {
+        return method.getDeclaringClass() + "#" + method.getName();
     }
 }

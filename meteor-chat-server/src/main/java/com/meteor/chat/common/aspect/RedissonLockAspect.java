@@ -2,6 +2,7 @@ package com.meteor.chat.common.aspect;
 
 import cn.hutool.extra.spring.SpringUtil;
 import com.meteor.chat.common.annotation.RedissonLock;
+import com.meteor.chat.common.util.CommonUtils;
 import com.meteor.chat.common.util.LockUtil;
 import com.meteor.chat.common.util.SpElUtils;
 import lombok.extern.slf4j.Slf4j;
@@ -58,7 +59,7 @@ public class RedissonLockAspect {
             Object[] args = joinPoint.getArgs();
             String prefixKey = annotation.prefixKey();
             if (StringUtils.isEmpty(prefixKey)) {
-                prefixKey = getDefaultPrefix(method);
+                prefixKey = CommonUtils.getDefaultPrefix(method);
             }
             key = SpElUtils.parseSpEl(method, key, args);
             long time = annotation.time();
@@ -67,9 +68,4 @@ public class RedissonLockAspect {
         }
         return null;
     }
-
-    private static String getDefaultPrefix(Method method) {
-        return method.getDeclaringClass() + "#" + method.getName();
-    }
-
 }

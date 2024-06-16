@@ -1,12 +1,16 @@
 package com.meteor.chat.msg.service.adapter;
+import java.util.Date;
+import com.meteor.chat.common.domain.vo.ChatMessageResp.MessageMark;
 
 import com.meteor.chat.common.domain.dto.MsgReadInfoDTO;
 import com.meteor.chat.common.domain.entity.Contact;
 import com.meteor.chat.common.domain.entity.Message;
 import com.meteor.chat.common.domain.enums.DeleteStatusEunm;
+import com.meteor.chat.common.domain.vo.ChatMessageResp;
 import com.meteor.chat.common.domain.vo.req.ChatMessageReq;
 
 import java.util.List;
+import java.util.Optional;
 
 public class MsgAdapter {
     /**
@@ -32,5 +36,26 @@ public class MsgAdapter {
         message.setType(req.getMsgType());
         message.setStatus(DeleteStatusEunm.NORAML.getCode());
         return message;
+    }
+
+    public static ChatMessageResp buildChatMessageResp(Message message, Integer likeCount, Integer unLikeCount) {
+        ChatMessageResp messageResp = new ChatMessageResp();
+        ChatMessageResp.UserInfo userInfo = new ChatMessageResp.UserInfo();
+        ChatMessageResp.Message messageInfo = new ChatMessageResp.Message();
+        ChatMessageResp.MessageMark messageMark = new ChatMessageResp.MessageMark();
+        messageResp.setFromUser(userInfo);
+        messageResp.setMessage(messageInfo);
+        userInfo.setUid(message.getFromUid());
+        messageInfo.setBody(message.getExtra());
+        messageInfo.setMessageMark(messageMark);
+        messageInfo.setId(message.getId());
+        messageInfo.setRoomId(message.getRoomId());
+        messageInfo.setSendTime(message.getCreateTime());
+        messageInfo.setType(message.getType());
+        messageMark.setLikeCount(likeCount);
+        messageMark.setDislikeCount(unLikeCount);
+        messageMark.setUserDislike(0);
+        messageMark.setUserLike(0);
+        return messageResp;
     }
 }

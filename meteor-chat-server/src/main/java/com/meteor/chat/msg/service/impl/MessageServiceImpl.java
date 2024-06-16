@@ -8,10 +8,12 @@ import com.meteor.chat.chat.service.cache.RoomCache;
 import com.meteor.chat.chat.service.cache.RoomGroupCache;
 import com.meteor.chat.common.domain.dto.MsgReadInfoDTO;
 import com.meteor.chat.common.domain.entity.*;
+import com.meteor.chat.common.domain.enums.MessageMarkTypeEnum;
 import com.meteor.chat.common.domain.enums.ReadEnum;
 import com.meteor.chat.common.domain.enums.RoomFriendStatusEnum;
 import com.meteor.chat.common.domain.enums.RoomTypeEnum;
 import com.meteor.chat.common.domain.vo.ChatMessageReadResp;
+import com.meteor.chat.common.domain.vo.ChatMessageResp;
 import com.meteor.chat.common.domain.vo.CursorPageBaseResp;
 import com.meteor.chat.common.domain.vo.req.ChatMessageReq;
 import com.meteor.chat.common.domain.vo.req.MessageReadCursorPageReq;
@@ -20,6 +22,7 @@ import com.meteor.chat.common.exception.BusinessException;
 import com.meteor.chat.common.exception.CommonErrorEnum;
 import com.meteor.chat.event.MessageSendEvent;
 import com.meteor.chat.msg.dao.MessageDao;
+import com.meteor.chat.msg.dao.MessageMarkDao;
 import com.meteor.chat.msg.service.MessageService;
 import com.meteor.chat.msg.service.adapter.MsgAdapter;
 import com.meteor.chat.msg.service.handler.AbstractMsgHandler;
@@ -58,6 +61,9 @@ public class MessageServiceImpl implements MessageService {
 
     @Resource
     private RoomFriendDao roomFriendDao;
+
+    @Resource
+    private MessageMarkDao messageMarkDao;
 
     @Override
     public CursorPageBaseResp<ChatMessageReadResp> cursorPageMsgReader(MessageReadCursorPageReq req) {
@@ -102,6 +108,15 @@ public class MessageServiceImpl implements MessageService {
         Long msgId = msgHandler.handlerMsg(request, uid);
         applicationEventPublisher.publishEvent(new MessageSendEvent(this, msgId));
         return msgId;
+    }
+
+    @Override
+    public ChatMessageResp getMessageResp(Long msgId) {
+        Message message = messageDao.getById(msgId);
+        Assert.assertNotNull("消息id异常", message);
+        Integer likeCount = messageMarkDao.countMsgLike(msgId);
+        Integer unLikeCount = messageMarkDao.countMsgUnLike(msgId);
+        return MsgAdapter.buildChatMessageResp(message, likeCount, unLikeCount);
     }
 
     private void checkMsg(ChatMessageReq request, Long uid) {
