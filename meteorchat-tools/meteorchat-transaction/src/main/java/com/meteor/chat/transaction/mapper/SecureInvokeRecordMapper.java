@@ -1,4 +1,4 @@
-package com.meteor.chat.common.mapper;
+package com.meteor.chat.transaction.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.meteor.chat.transaction.domian.SecureInvokeRecord;
