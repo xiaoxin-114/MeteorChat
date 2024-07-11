@@ -9,6 +9,7 @@ import com.meteor.chat.common.mapper.MessageMarkMapper;
 import org.springframework.stereotype.Repository;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Objects;
 
 @Repository
@@ -26,5 +27,10 @@ public class MessageMarkDao extends ServiceImpl<MessageMarkMapper, MessageMark> 
         return lambdaQuery().eq(MessageMark::getMsgId, msgId)
                 .eq(MessageMark::getType, type)
                 .count();
+    }
+
+    public List<MessageMark> listByMsgId(Long msgId) {
+        return lambdaQuery().eq(MessageMark::getMsgId, msgId)
+                .list();
     }
 }

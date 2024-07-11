@@ -1,5 +1,6 @@
 package com.meteor.chat.msg.service.impl;
 
+import cn.hutool.core.collection.CollUtil;
 import com.meteor.chat.chat.dao.ContactDao;
 import com.meteor.chat.chat.dao.RoomFriendDao;
 import com.meteor.chat.chat.service.adapter.RoomAdapter;
@@ -113,12 +114,12 @@ public class MessageServiceImpl implements MessageService {
     }
 
     @Override
-    public ChatMessageResp getMessageResp(Long msgId) {
+    public ChatMessageResp getMessageResp(Long msgId, Long receiveUid) {
         Message message = messageDao.getById(msgId);
         Assert.assertNotNull("消息id异常", message);
-        Integer likeCount = messageMarkDao.countMsgLike(msgId);
-        Integer unLikeCount = messageMarkDao.countMsgUnLike(msgId);
-        return MsgAdapter.buildChatMessageResp(message, likeCount, unLikeCount);
+        List<MessageMark> messageMarkList = messageMarkDao.listByMsgId(msgId);
+        List<ChatMessageResp> chatMessageResps = MsgAdapter.buildChatMessageResp(Collections.singletonList(message), messageMarkList, receiveUid);
+        return CollUtil.getFirst(chatMessageResps);
     }
 
     private void checkMsg(ChatMessageReq request, Long uid) {

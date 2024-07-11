@@ -36,7 +36,8 @@ public interface MessageService {
     /**
      * 根据消息id获取消息的所有详情
      * @param msgId
+     * @param receiveUid 接收到信息的用户id
      * @return
      */
-    ChatMessageResp getMessageResp(Long msgId);
+    ChatMessageResp getMessageResp(Long msgId, Long receiveUid);
 }

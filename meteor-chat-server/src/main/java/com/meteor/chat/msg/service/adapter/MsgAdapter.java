@@ -1,16 +1,21 @@
 package com.meteor.chat.msg.service.adapter;
-import java.util.Date;
-import com.meteor.chat.common.domain.vo.ChatMessageResp.MessageMark;
+
 
 import com.meteor.chat.common.domain.dto.MsgReadInfoDTO;
 import com.meteor.chat.common.domain.entity.Contact;
 import com.meteor.chat.common.domain.entity.Message;
+import com.meteor.chat.common.domain.entity.MessageMark;
 import com.meteor.chat.common.domain.enums.DeleteStatusEunm;
+import com.meteor.chat.common.domain.enums.MessageMarkTypeEnum;
 import com.meteor.chat.common.domain.vo.ChatMessageResp;
 import com.meteor.chat.common.domain.vo.req.ChatMessageReq;
+import org.apache.commons.collections.CollectionUtils;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 public class MsgAdapter {
     /**
@@ -38,24 +43,52 @@ public class MsgAdapter {
         return message;
     }
 
-    public static ChatMessageResp buildChatMessageResp(Message message, Integer likeCount, Integer unLikeCount) {
-        ChatMessageResp messageResp = new ChatMessageResp();
-        ChatMessageResp.UserInfo userInfo = new ChatMessageResp.UserInfo();
-        ChatMessageResp.Message messageInfo = new ChatMessageResp.Message();
+
+    public static List<ChatMessageResp> buildChatMessageResp(List<Message> messageList,
+                                                                  List<MessageMark> markList,
+                                                                  Long receiveUid) {
+        if (CollectionUtils.isEmpty(messageList)) {
+            return null;
+        }
+        Map<Long, List<MessageMark>> markMap = markList.stream().collect(Collectors.groupingBy(MessageMark::getMsgId));
+        return messageList.stream().map(message -> {
+            ChatMessageResp chatMessageResp = new ChatMessageResp();
+            chatMessageResp.setFromUser(buildFormUser(message));
+            List<MessageMark> messageMark = markMap.get(message.getId());
+            chatMessageResp.setMessage(buildChatMessage(message, messageMark, receiveUid));
+            return chatMessageResp;
+        }).collect(Collectors.toList());
+    }
+
+    private static ChatMessageResp.Message buildChatMessage(Message message, List<MessageMark> messageMark, Long receiveUid) {
+        ChatMessageResp.Message result = new ChatMessageResp.Message();
+        result.setId(message.getId());
+        result.setRoomId(message.getRoomId());
+        result.setType(message.getType());
+        result.setSendTime(message.getCreateTime());
+        result.setBody(message.getExtra());
+        result.setMessageMark(buildMessageMark(messageMark, receiveUid));
+        return result;
+    }
+
+    private static ChatMessageResp.MessageMark buildMessageMark(List<MessageMark> messageMarkList, Long receiveUid) {
+        if (CollectionUtils.isEmpty(messageMarkList)) {
+            return null;
+        }
         ChatMessageResp.MessageMark messageMark = new ChatMessageResp.MessageMark();
-        messageResp.setFromUser(userInfo);
-        messageResp.setMessage(messageInfo);
+        Map<Integer, List<MessageMark>> markMap = messageMarkList.stream().collect(Collectors.groupingBy(MessageMark::getType));
+        List<MessageMark> likeList = markMap.getOrDefault(MessageMarkTypeEnum.LIKE.getCode(), new ArrayList<>());
+        List<MessageMark> unLikeList = markMap.getOrDefault(MessageMarkTypeEnum.UNLIKE.getCode(), new ArrayList<>());
+        messageMark.setLikeCount(likeList.size());
+        messageMark.setUserLike(likeList.stream().anyMatch(mark -> mark.getUid().equals(receiveUid)) ? 1 : 0);
+        messageMark.setDislikeCount(unLikeList.size());
+        messageMark.setUserDislike(unLikeList.stream().anyMatch(mark -> mark.getUid().equals(receiveUid)) ? 1 : 0);
+        return messageMark;
+    }
+
+    private static ChatMessageResp.UserInfo buildFormUser(Message message) {
+        ChatMessageResp.UserInfo userInfo = new ChatMessageResp.UserInfo();
         userInfo.setUid(message.getFromUid());
-        messageInfo.setBody(message.getExtra());
-        messageInfo.setMessageMark(messageMark);
-        messageInfo.setId(message.getId());
-        messageInfo.setRoomId(message.getRoomId());
-        messageInfo.setSendTime(message.getCreateTime());
-        messageInfo.setType(message.getType());
-        messageMark.setLikeCount(likeCount);
-        messageMark.setDislikeCount(unLikeCount);
-        messageMark.setUserDislike(0);
-        messageMark.setUserLike(0);
-        return messageResp;
+        return userInfo;
     }
 }

@@ -64,7 +64,8 @@ public class MsgSendConsumer {
     @OnMessage
     public void pushMsg(MsgSendMessageDTO dto) {
         Long msgId = dto.getMsgId();
-        ChatMessageResp messageResp = messageService.getMessageResp(msgId);
+        // 此时是推送新消息的，不会有人点赞和点踩，所有不用关心接收用户
+        ChatMessageResp messageResp = messageService.getMessageResp(msgId, null);
         Message message = messageDao.getById(msgId);
         Long roomId = message.getRoomId();
         Room room = roomCache.get(roomId);
