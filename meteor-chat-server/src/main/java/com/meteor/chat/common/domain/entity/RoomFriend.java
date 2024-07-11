@@ -119,4 +119,11 @@ public class RoomFriend implements Serializable {
     public boolean hasUser(Long uid) {
         return uid1.equals(uid) || uid2.equals(uid);
     }
+
+    public Long getAnotherUid(Long uid) {
+        if (!uid1.equals(uid) && !uid2.equals(uid)) {
+            return null;
+        }
+        return uid.equals(uid1) ? uid2 : uid1;
+    }
 }

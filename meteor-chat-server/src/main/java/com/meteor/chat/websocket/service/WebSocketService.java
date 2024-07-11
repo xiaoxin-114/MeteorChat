@@ -56,6 +56,8 @@ public interface WebSocketService {
      */
     void sendToAllOnline(WSBaseResp<?> wsBaseResp, Long skipUid);
 
+    boolean haveUid(Long uid);
+
     /**
      * 推动消息给所有在线的人
      *

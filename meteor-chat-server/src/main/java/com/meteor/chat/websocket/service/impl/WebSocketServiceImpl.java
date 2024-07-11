@@ -169,7 +169,12 @@ public class WebSocketServiceImpl  implements WebSocketService {
 
     @Override
     public void sendToUid(WSBaseResp<?> wsBaseResp, Long uid) {
-
+        CopyOnWriteArrayList<Channel> channels = ONLINE_UID_MAP.get(uid);
+        if (CollectionUtils.isEmpty(channels)) {
+            log.error("用户不在线");
+            return;
+        }
+        channels.stream().forEach(channel -> sendMsgByExecutor(wsBaseResp, channel));
     }
 
     @Override
@@ -177,18 +182,23 @@ public class WebSocketServiceImpl  implements WebSocketService {
      * 使用线程池向所有在线用户发送信息
      */
     public void sendToAllOnline(WSBaseResp<?> wsBaseResp) {
-        ONLINE_WS_MAP.keySet().forEach(channel -> {
-            webSocketExecutor.execute(() -> sendMsg(channel, wsBaseResp));
-        });
+        ONLINE_WS_MAP.keySet().forEach(channel -> sendMsgByExecutor(wsBaseResp, channel));
     }
 
     @Override
     public void sendToAllOnline(WSBaseResp<?> wsBaseResp, Long skipUid) {
         CopyOnWriteArrayList<Channel> skipChannels = ONLINE_UID_MAP.get(skipUid);
         ConcurrentHashMap.KeySetView<Channel, WSChannelExtraDTO> channels = ONLINE_WS_MAP.keySet();
-        if (channels != null) {
-            channels.stream().filter(channel -> !skipChannels.contains(channel)).collect(Collectors.toSet());
-        }
+        channels.stream().filter(channel -> skipChannels != null && !skipChannels.contains(channel)).collect(Collectors.toSet());
+    }
+
+    @Override
+    public boolean haveUid(Long uid) {
+        return ONLINE_UID_MAP.keySet().contains(uid);
+    }
+
+    private void sendMsgByExecutor(WSBaseResp<?> wsBaseResp, Channel channel) {
+        webSocketExecutor.execute(() -> sendMsg(channel, wsBaseResp));
     }
 
     /**

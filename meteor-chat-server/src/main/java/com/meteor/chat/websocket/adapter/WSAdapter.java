@@ -1,6 +1,8 @@
 package com.meteor.chat.websocket.adapter;
 
+import com.meteor.chat.common.domain.entity.Message;
 import com.meteor.chat.common.domain.entity.User;
+import com.meteor.chat.common.domain.vo.ChatMessageResp;
 import com.meteor.chat.websocket.domain.enums.WSRespTypeEnum;
 import com.meteor.chat.websocket.domain.vo.WSBaseResp;
 import com.meteor.chat.websocket.domain.vo.WSLoginSuccess;
@@ -39,6 +41,13 @@ public class WSAdapter {
     public static WSBaseResp<?> buildTokenInvalidResp() {
         WSBaseResp<Object> wsBaseResp = new WSBaseResp<>();
         wsBaseResp.setType(WSRespTypeEnum.INVALIDATE_TOKEN.getType());
+        return wsBaseResp;
+    }
+
+    public static WSBaseResp<ChatMessageResp> buildMsgSend(ChatMessageResp messageResp) {
+        WSBaseResp<ChatMessageResp> wsBaseResp = new WSBaseResp<>();
+        wsBaseResp.setData(messageResp);
+        wsBaseResp.setType(WSRespTypeEnum.MESSAGE.getType());
         return wsBaseResp;
     }
 }

@@ -32,6 +32,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.junit.Assert;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.Collections;
@@ -102,6 +103,7 @@ public class MessageServiceImpl implements MessageService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public Long sendMsg(ChatMessageReq request, Long uid) {
         checkMsg(request, uid);
         AbstractMsgHandler msgHandler = MsgHandlerFactory.getStrategyOrNull(request.getMsgType());

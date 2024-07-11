@@ -1,7 +1,8 @@
 package com.meteor.chat.event;
 
+import lombok.Getter;
 import org.springframework.context.ApplicationEvent;
-
+@Getter
 public class MessageSendEvent extends ApplicationEvent {
 
     private Long msgId;

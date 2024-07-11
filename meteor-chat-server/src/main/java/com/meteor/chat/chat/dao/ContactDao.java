@@ -76,4 +76,12 @@ public class ContactDao extends ServiceImpl<ContactMapper, Contact> {
                 .eq(Contact::getRoomId, roomId);
         remove(queryWrapper);
     }
+
+    public void refreshActiveTime(Long roomId, Date sendTime, Long msgId) {
+        lambdaUpdate().set(Contact::getLastMsgId, msgId)
+                .set(Contact::getActiveTime, sendTime)
+                .eq(Contact::getRoomId, roomId)
+                .lt(Contact::getLastMsgId, msgId)
+                .update();
+    }
 }
