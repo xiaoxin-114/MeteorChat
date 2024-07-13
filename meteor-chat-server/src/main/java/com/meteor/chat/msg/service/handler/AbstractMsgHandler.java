@@ -80,4 +80,10 @@ public abstract class AbstractMsgHandler<T> {
     abstract void saveMessageExtra(Message message, T body);
 
     abstract MessageTypeEnum getMsgType();
+
+    /**
+     * 返回消息的显示内容
+     * @return
+     */
+    abstract String messageText(Message message);
 }

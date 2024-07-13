@@ -28,4 +28,19 @@ public class MessageDao extends ServiceImpl<MessageMapper, Message> {
                         .le(Objects.nonNull(lastMsgId), Message::getId, lastMsgId),
                 Message::getId);
     }
+
+    /**
+     * 计算消息与回复消息之间的间隔数量，不能简单的消息id之间相减
+     * 需要查询数据库中真实的这两条消息之间的消息，因为很可能有消息被删除了
+     * @param roomId 房间id
+     * @param msgId 消息id
+     * @param replyMsgId 被回复消息的id
+     * @return
+     */
+    public Integer countMsgGap(Long roomId, Long msgId, Long replyMsgId) {
+        return lambdaQuery().eq(Message::getRoomId, roomId)
+                .gt(Message::getId, replyMsgId)
+                .lt(Message::getId, msgId)
+                .count();
+    }
 }

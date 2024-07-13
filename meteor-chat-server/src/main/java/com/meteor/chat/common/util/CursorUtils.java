@@ -50,7 +50,7 @@ public class CursorUtils {
     public static <T> CursorPageBaseResp<T> cursorPage(CursorPageBaseReq request, IService<T> dao, Consumer<LambdaQueryWrapper<T>> consumer, SFunction<T, ?> cursorCollum) {
         int pageSize = request.getPageSize();
         String cursor = request.getCursor();
-        // todo 根据cursorColumn获取游标类型
+        // 根据cursorColumn获取游标类型
         Class cursorClass = LambdaUtils.getReturnType(cursorCollum);
         LambdaQueryWrapper<T> queryWrapper = new LambdaQueryWrapper<>();
         if (StringUtils.isNotEmpty(cursor)) {

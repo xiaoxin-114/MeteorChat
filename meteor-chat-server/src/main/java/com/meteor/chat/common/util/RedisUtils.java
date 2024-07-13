@@ -146,7 +146,7 @@ public class RedisUtils {
      * @param size       每页数目
      * @return /
      */
-    // todo redis实现分页
+    //redis实现分页
     public static List<String> findKeysForPage(String patternKey, int page, int size) {
         ScanOptions options = ScanOptions.scanOptions().match(patternKey).build();
         RedisConnectionFactory factory = stringRedisTemplate.getConnectionFactory();

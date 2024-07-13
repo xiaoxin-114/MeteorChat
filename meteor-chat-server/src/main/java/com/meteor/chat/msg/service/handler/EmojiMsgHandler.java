@@ -2,6 +2,7 @@ package com.meteor.chat.msg.service.handler;
 
 import com.meteor.chat.common.domain.dto.msg.EmojisMsgDTO;
 import com.meteor.chat.common.domain.entity.Message;
+import com.meteor.chat.common.domain.entity.MessageExtra;
 import com.meteor.chat.common.domain.enums.MessageTypeEnum;
 import com.meteor.chat.msg.dao.MessageDao;
 
@@ -16,11 +17,21 @@ public class EmojiMsgHandler extends AbstractMsgHandler<EmojisMsgDTO>{
 
     @Override
     void saveMessageExtra(Message message, EmojisMsgDTO body) {
-        Optional.ofNullable(message.getExtra()).orElse(new Message)
+        MessageExtra messageExtra = Optional.ofNullable(message.getExtra()).orElse(new MessageExtra());
+        Message update = new Message();
+        update.setId(message.getId());
+        messageExtra.setEmojisMsgDTO(body);
+        update.setExtra(messageExtra);
+        messageDao.updateById(update);
     }
 
     @Override
     MessageTypeEnum getMsgType() {
         return MESSAGE_TYPE;
+    }
+
+    @Override
+    String messageText(Message message) {
+        return "[表情]";
     }
 }

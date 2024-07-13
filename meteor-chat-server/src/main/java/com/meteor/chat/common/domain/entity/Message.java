@@ -58,7 +58,7 @@ public class Message implements Serializable {
     /**
      * 扩展信息
      */
-    private Object extra;
+    private MessageExtra extra;
 
     /**
      * 创建时间
