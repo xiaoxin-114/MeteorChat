@@ -84,4 +84,16 @@ public class ContactDao extends ServiceImpl<ContactMapper, Contact> {
                 .lt(Contact::getLastMsgId, msgId)
                 .update();
     }
+
+    /**
+     * 根据用户id和房间号获取信箱
+     * @param roomId
+     * @param uid
+     * @return
+     */
+    public Contact getByUidAndRoomId(Long roomId, Long uid) {
+        return lambdaQuery().eq(Contact::getRoomId, roomId)
+                .eq(Contact::getUid, uid)
+                .one();
+    }
 }

@@ -1,9 +1,6 @@
 package com.meteor.chat.common.domain.entity;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.annotation.*;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -45,6 +42,7 @@ public class Message implements Serializable {
     /**
      * 消息状态 0正常 1删除
      */
+    @TableLogic(value = "0", delval = "1")
     private Integer status;
 
     /**

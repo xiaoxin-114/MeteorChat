@@ -17,10 +17,12 @@ import com.meteor.chat.common.domain.vo.ChatMessageReadResp;
 import com.meteor.chat.common.domain.vo.ChatMessageResp;
 import com.meteor.chat.common.domain.vo.CursorPageBaseResp;
 import com.meteor.chat.common.domain.vo.req.ChatMessageReq;
+import com.meteor.chat.common.domain.vo.req.MessageCursorReq;
 import com.meteor.chat.common.domain.vo.req.MessageReadCursorPageReq;
 import com.meteor.chat.common.domain.vo.req.MessageReadInfoReq;
 import com.meteor.chat.common.exception.BusinessException;
 import com.meteor.chat.common.exception.CommonErrorEnum;
+import com.meteor.chat.common.util.CursorUtils;
 import com.meteor.chat.event.MessageSendEvent;
 import com.meteor.chat.msg.dao.MessageDao;
 import com.meteor.chat.msg.dao.MessageMarkDao;
@@ -106,11 +108,28 @@ public class MessageServiceImpl implements MessageService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public Long sendMsg(ChatMessageReq request, Long uid) {
-        checkMsg(request, uid);
+        checkSendMsg(request, uid);
         AbstractMsgHandler msgHandler = MsgHandlerFactory.getStrategyOrNull(request.getMsgType());
         Long msgId = msgHandler.handlerMsg(request, uid);
         applicationEventPublisher.publishEvent(new MessageSendEvent(this, msgId));
         return msgId;
+    }
+
+    @Override
+    public CursorPageBaseResp<ChatMessageResp> cursorChatMessageResp(MessageCursorReq req, Long uid) {
+        Long roomId = req.getRoomId();
+        boolean inRoom = inRoom(roomId, uid);
+        Long lastMsgId = null;
+        if (!inRoom) {
+            // 如果用户不在群聊，则只会显示历史信息，不会显示最新消息
+            Contact contact = contactDao.getByUidAndRoomId(roomId, uid);
+            Assert.assertNotNull("数据异常", contact);
+            lastMsgId = contact.getLastMsgId();
+        }
+        CursorPageBaseResp<Message> messageCursorPage = messageDao.cursorMessage(req, uid, lastMsgId);
+        List<Message> messageList = messageCursorPage.getData();
+        List<MessageMark> messageMarkList = messageMarkDao.listByMsgIdList(messageList.stream().map(Message::getId).collect(Collectors.toList()));
+        return CursorPageBaseResp.init(messageCursorPage, MsgAdapter.buildChatMessageResp(messageList, messageMarkList, uid));
     }
 
     @Override
@@ -122,7 +141,7 @@ public class MessageServiceImpl implements MessageService {
         return CollUtil.getFirst(chatMessageResps);
     }
 
-    private void checkMsg(ChatMessageReq request, Long uid) {
+    private void checkSendMsg(ChatMessageReq request, Long uid) {
         Long roomId = request.getRoomId();
         Room room = roomCache.get(roomId);
         Assert.assertNotNull("房间号有误", room);
@@ -142,5 +161,26 @@ public class MessageServiceImpl implements MessageService {
             Assert.assertTrue("您已被对方拉黑", roomFriend.hasUser(uid));
         }
 
+    }
+
+    private boolean inRoom(Long roomId, Long uid) {
+        Room room = roomCache.get(roomId);
+        Assert.assertNotNull("房间号有误", room);
+        if (room.isHotRoom()) {
+            // 全员群所有用户都在
+            return true;
+        }
+        if (RoomTypeEnum.GROUP.getCode().equals(room.getType())) {
+            // 群聊需要校验用户是否在群里
+            List<Long> memberUidList = groupMemberCache.getMemberUidList(roomId);
+            Assert.assertNotNull("数据异常", memberUidList);
+            return memberUidList.contains(uid);
+        }else if (RoomTypeEnum.SINGLE.getCode().equals(room.getType())) {
+            List<RoomFriend> roomFriends = roomFriendDao.listByRoomIds(Collections.singletonList(roomId));
+            Assert.assertTrue("数据异常", roomFriends.size() > 1);
+            RoomFriend roomFriend = roomFriends.get(0);
+            return RoomFriendStatusEnum.NORAML.getCode().equals(roomFriend.getStatus()) || roomFriend.hasUser(uid);
+        }
+        throw new BusinessException("数据异常");
     }
 }

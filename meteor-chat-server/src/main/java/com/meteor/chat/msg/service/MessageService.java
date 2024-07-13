@@ -5,6 +5,7 @@ import com.meteor.chat.common.domain.vo.ChatMessageReadResp;
 import com.meteor.chat.common.domain.vo.ChatMessageResp;
 import com.meteor.chat.common.domain.vo.CursorPageBaseResp;
 import com.meteor.chat.common.domain.vo.req.ChatMessageReq;
+import com.meteor.chat.common.domain.vo.req.MessageCursorReq;
 import com.meteor.chat.common.domain.vo.req.MessageReadCursorPageReq;
 import com.meteor.chat.common.domain.vo.req.MessageReadInfoReq;
 
@@ -40,4 +41,12 @@ public interface MessageService {
      * @return
      */
     ChatMessageResp getMessageResp(Long msgId, Long receiveUid);
+
+    /**
+     * 游标分页获取消息列表
+     * @param req
+     * @param uid
+     * @return
+     */
+    CursorPageBaseResp<ChatMessageResp> cursorChatMessageResp(MessageCursorReq req, Long uid);
 }
