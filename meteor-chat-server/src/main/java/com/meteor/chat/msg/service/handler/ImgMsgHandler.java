@@ -33,7 +33,7 @@ public class ImgMsgHandler extends AbstractMsgHandler<ImgMsgDTO> {
     }
 
     @Override
-    String messageText(Message message) {
+    public String messageText(Message message) {
         return "[图片]";
     }
 }

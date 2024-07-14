@@ -30,7 +30,7 @@ public class SystemMsgHandler extends AbstractMsgHandler<String> {
     }
 
     @Override
-    String messageText(Message message) {
+    public String messageText(Message message) {
         return message.getContent();
     }
 }

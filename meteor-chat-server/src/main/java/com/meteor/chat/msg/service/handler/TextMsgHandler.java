@@ -46,7 +46,7 @@ public class TextMsgHandler extends AbstractMsgHandler<TextMsgDTO> {
     }
 
     @Override
-    String messageText(Message message) {
+    public String messageText(Message message) {
         return message.getContent();
     }
 }

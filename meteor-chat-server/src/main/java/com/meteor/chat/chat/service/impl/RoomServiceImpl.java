@@ -21,10 +21,15 @@ import com.meteor.chat.common.exception.BusinessException;
 import com.meteor.chat.chat.service.RoomService;
 import com.meteor.chat.chat.service.adapter.RoomAdapter;
 import com.meteor.chat.event.GroupMemberAddEvent;
+import com.meteor.chat.msg.dao.MessageDao;
+import com.meteor.chat.route.service.PushService;
 import com.meteor.chat.user.dao.UserDao;
 import com.meteor.chat.user.dao.UserRoleDao;
 import com.meteor.chat.user.service.UserService;
 import com.meteor.chat.user.service.cache.UserCache;
+import com.meteor.chat.websocket.adapter.WSAdapter;
+import com.meteor.chat.websocket.domain.vo.WSBaseResp;
+import com.meteor.chat.websocket.domain.vo.WSMemberChange;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.junit.Assert;
@@ -84,6 +89,12 @@ public class RoomServiceImpl implements RoomService {
 
     @Resource
     private ApplicationEventPublisher applicationEventPublisher;
+
+    @Resource
+    private PushService pushService;
+
+    @Resource
+    private MessageDao messageDao;
 
     @Override
     public GroupResp groupDetail(IdBaseReq req, Long uid) {
@@ -162,9 +173,10 @@ public class RoomServiceImpl implements RoomService {
         }
         groupMemberDao.removeMember(roomGroup.getId(), req.getUid());
         contactDao.removeContact(roomId, req.getUid());
-        // todo 向所有用户发送用户被移除的消息
+        // 向所有用户发送用户被移除的消息
         List<Long> uidList = groupMemberCache.getMemberUidList(roomId);
-
+        WSBaseResp<WSMemberChange> wsBaseResp = WSAdapter.buildGroupMemberRemove(roomId, req.getUid());
+        pushService.pushMsg(wsBaseResp, uidList);
         groupMemberCache.evictMemberUidList(roomId);
     }
 
@@ -180,22 +192,23 @@ public class RoomServiceImpl implements RoomService {
         Assert.assertEquals("当前用户不在群聊内", GroupRoleAPPEnum.REMOVE, groupRole);
         if (GroupRoleAPPEnum.LEADER.equals(groupRole)) {
             // 如果是群主就直接解散群聊
-            groupMemberCache.getMemberUidList(roomId);
+            List<Long> memberUidList = groupMemberCache.getMemberUidList(roomId);
             groupMemberDao.removeMember(roomGroup.getId(), null);
             contactDao.removeByRoomId(roomId);
             groupMemberCache.evictMemberUidList(roomId);
             roomGroupDao.removeById(roomGroup.getId());
             roomDao.removeById(roomId);
-            // todo 向所有群成员推送群已经被解释的消息
+            // todo 向所有群成员推送群已经被解散的消息
 
-            // todo 删除群聊的消息记录
-
+            // 删除群聊的消息记录
+            messageDao.removeByRoomId(roomId);
         } else {
-            groupMemberCache.getMemberUidList(roomId);
+            List<Long> memberUidList = groupMemberCache.getMemberUidList(roomId);
             groupMemberDao.removeMember(roomGroup.getId(), uid);
             contactDao.removeContact(roomId, uid);
             groupMemberCache.evictMemberUidList(roomId);
-            // todo 向所有成员推送用户退出群聊的消息
+            // 向所有成员推送用户退出群聊的消息
+            pushService.pushMsg(WSAdapter.buildGroupMemberRemove(roomId, uid), memberUidList);
         }
     }
 
@@ -262,7 +275,6 @@ public class RoomServiceImpl implements RoomService {
         if (CollectionUtils.isNotEmpty(uidList)) {
             groupMemberDao.addAdmin(uidList, roomGroup.getId());
         }
-        // todo 推送消息给所有用户
     }
 
     @Override

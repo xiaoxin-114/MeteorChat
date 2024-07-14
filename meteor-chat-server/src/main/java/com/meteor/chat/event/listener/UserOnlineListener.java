@@ -5,9 +5,11 @@ import com.meteor.chat.common.domain.entity.User;
 import com.meteor.chat.common.domain.enums.ChatActiveStatusEnum;
 import com.meteor.chat.common.util.IPUtils;
 import com.meteor.chat.event.UserOnlineEvent;
+import com.meteor.chat.route.service.PushService;
 import com.meteor.chat.user.dao.UserDao;
 import com.meteor.chat.user.dao.UserRoleDao;
 import com.meteor.chat.user.service.cache.UserCache;
+import com.meteor.chat.websocket.adapter.WSAdapter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.event.EventListener;
@@ -30,13 +32,16 @@ public class UserOnlineListener {
     private UserRoleDao userRoleDao;
     @Resource
     private IPUtils ipUtils;
+    @Resource
+    private PushService pushService;
 
     @Async
     @EventListener(classes = UserOnlineEvent.class)
     public void saveRedisAndPush(UserOnlineEvent event) {
         User user = event.getUser();
         userCache.online(user.getId(), user.getLastOptTime());
-        //todo 向所有在线用户推送，该用户登入成功的消息
+        // 向所有在线用户推送，该用户登入成功的消息
+        pushService.pushMsg(WSAdapter.buildUserOfflineResp(user, userCache.getOnlineNum()));
     }
 
     @Async

@@ -36,6 +36,8 @@ public class GroupMemberCache {
         return null;
     }
 
+
+    // todo 添加缓存注解，并且添加相关的清除缓存的方法
     public Map<Long, GroupMember> getMemberList(Long roomId) {
         RoomGroup roomGroup = roomGroupDao.getByRoomId(roomId);
         if (Objects.isNull(roomGroup)) {

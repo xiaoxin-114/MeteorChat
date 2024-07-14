@@ -19,6 +19,8 @@ import com.meteor.chat.common.domain.vo.req.CursorPageBaseReq;
 import com.meteor.chat.common.domain.vo.req.IdBaseReq;
 import com.meteor.chat.common.exception.BusinessException;
 import com.meteor.chat.msg.dao.MessageDao;
+import com.meteor.chat.msg.service.handler.AbstractMsgHandler;
+import com.meteor.chat.msg.service.handler.MsgHandlerFactory;
 import com.meteor.chat.user.service.cache.UserCache;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.stereotype.Service;
@@ -98,8 +100,12 @@ public class ContactServiceImpl implements ContactService {
             ChatRoomResp chatRoomResp = RoomAdapter.buildResp(dto);
             Message message = messageMap.get(dto.getLastMsgId());
             User sender = senderInfoMap.get(message.getFromUid());
-            // todo 消息转换器，将消息转换成对应的显示内容
-
+            // 消息转换器，将消息转换成对应的显示内容
+            AbstractMsgHandler msgHandler = MsgHandlerFactory.getStrategyOrNull(message.getType());
+            if (Objects.nonNull(msgHandler)) {
+                String text = msgHandler.messageText(message);
+                chatRoomResp.setText(String.format("%s：%s", sender.getName(), text));
+            }
             // 获取群聊的消息未读数
             Contact contact = contactMap.get(dto.getRoomId());
             int count = messageDao.countUnReadMsg(dto.getRoomId(), Optional.of(contact).map(Contact::getReadTime).orElse(null));

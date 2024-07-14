@@ -33,7 +33,7 @@ public class FileMsgHandler extends AbstractMsgHandler<FileMsgDTO> {
     }
 
     @Override
-    String messageText(Message message) {
+    public String messageText(Message message) {
         return "[文件]" + message.getExtra();
     }
 }

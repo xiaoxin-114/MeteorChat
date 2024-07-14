@@ -34,7 +34,7 @@ public class SoundMsgHandler extends AbstractMsgHandler<SoundMsgDTO> {
     }
 
     @Override
-    String messageText(Message message) {
+    public String messageText(Message message) {
         return "[语音]";
     }
 }

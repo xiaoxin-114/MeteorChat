@@ -189,7 +189,8 @@ public class WebSocketServiceImpl  implements WebSocketService {
     public void sendToAllOnline(WSBaseResp<?> wsBaseResp, Long skipUid) {
         CopyOnWriteArrayList<Channel> skipChannels = ONLINE_UID_MAP.get(skipUid);
         ConcurrentHashMap.KeySetView<Channel, WSChannelExtraDTO> channels = ONLINE_WS_MAP.keySet();
-        channels.stream().filter(channel -> skipChannels != null && !skipChannels.contains(channel)).collect(Collectors.toSet());
+        Set<Channel> channelSet = channels.stream().filter(channel -> skipChannels != null && !skipChannels.contains(channel)).collect(Collectors.toSet());
+        channelSet.stream().forEach(channel -> sendMsgByExecutor(wsBaseResp, channel));
     }
 
     @Override

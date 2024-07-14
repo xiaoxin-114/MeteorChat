@@ -3,6 +3,7 @@ package com.meteor.chat.event.listener;
 import com.meteor.chat.common.domain.entity.User;
 import com.meteor.chat.common.domain.enums.ChatActiveStatusEnum;
 import com.meteor.chat.event.UserOfflineEvent;
+import com.meteor.chat.route.service.PushService;
 import com.meteor.chat.user.dao.UserDao;
 import com.meteor.chat.user.service.cache.UserCache;
 import com.meteor.chat.websocket.adapter.WSAdapter;
@@ -24,15 +25,14 @@ public class UserOfflineListener {
     @Resource
     private UserDao userDao;
     @Resource
-    private WebSocketService webSocketService;
-    @Resource
-    private WSAdapter wsAdapter;
+    private PushService pushService;
 
     @EventListener(classes = UserOfflineEvent.class)
     public void saveRedisAndPush(UserOfflineEvent event){
         User user = event.getUser();
         userCache.offline(user.getId(), user.getLastOptTime());
-        //todo 向所有在线用户推送，该用户断开连接的消息
+        // 向所有在线用户推送，该用户断开连接的消息
+        pushService.pushMsg(WSAdapter.build);
     }
 
     @EventListener(classes = UserOfflineEvent.class)

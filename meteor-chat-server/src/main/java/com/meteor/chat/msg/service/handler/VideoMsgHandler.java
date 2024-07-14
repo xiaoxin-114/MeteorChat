@@ -34,7 +34,7 @@ public class VideoMsgHandler extends AbstractMsgHandler<VideoMsgDTO> {
     }
 
     @Override
-    String messageText(Message message) {
+    public String messageText(Message message) {
         return "[视频]";
     }
 }

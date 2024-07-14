@@ -43,4 +43,10 @@ public class MessageDao extends ServiceImpl<MessageMapper, Message> {
                 .lt(Message::getId, msgId)
                 .count();
     }
+
+    public void removeByRoomId(Long roomId) {
+        LambdaQueryWrapper<Message> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(Message::getRoomId, roomId);
+        this.remove(queryWrapper);
+    }
 }

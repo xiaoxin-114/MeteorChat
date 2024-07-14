@@ -1,9 +1,13 @@
 package com.meteor.chat.websocket.domain.vo;
 
+import com.meteor.chat.common.domain.vo.GroupMemberResp;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Description:用户上下线变动的推送类
@@ -15,7 +19,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class WSOnlineOfflineNotify {
-    //todo 补充
-//    private List<ChatMemberResp> changeList = new ArrayList<>();//新的上下线用户
-    private Long onlineNum;//在线人数
+    //新的上下线用户
+    private List<GroupMemberResp> changeList = new ArrayList<>();
+    //在线人数
+    private Long onlineNum;
 }

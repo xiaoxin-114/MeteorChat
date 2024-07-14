@@ -85,5 +85,5 @@ public abstract class AbstractMsgHandler<T> {
      * 返回消息的显示内容
      * @return
      */
-    abstract String messageText(Message message);
+    public abstract String messageText(Message message);
 }
