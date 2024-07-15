@@ -4,13 +4,16 @@ import com.meteor.chat.common.domain.dto.msg.TextMsgDTO;
 import com.meteor.chat.common.domain.dto.msg.VideoMsgDTO;
 import com.meteor.chat.common.domain.entity.Message;
 import com.meteor.chat.common.domain.entity.MessageExtra;
+import com.meteor.chat.common.domain.entity.UrlInfo;
 import com.meteor.chat.common.domain.enums.MessageTypeEnum;
+import com.meteor.chat.common.util.discover.PrioritizedUrlDiscover;
 import com.meteor.chat.msg.dao.MessageDao;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -18,6 +21,9 @@ import java.util.Optional;
 public class TextMsgHandler extends AbstractMsgHandler<TextMsgDTO> {
     @Resource
     private MessageDao messageDao;
+
+    @Resource
+    private PrioritizedUrlDiscover prioritizedUrlDiscover;
 
     private final MessageTypeEnum MESSAGE_TYPE = MessageTypeEnum.TEXT;
 
@@ -41,7 +47,11 @@ public class TextMsgHandler extends AbstractMsgHandler<TextMsgDTO> {
         if (CollectionUtils.isNotEmpty(atUidList)) {
             extra.setAtUidList(atUidList);
         }
-        // todo 识别消息是否连接，插入连接相关消息
+        // 识别消息是否包含连接，插入连接相关消息
+        Map<String, UrlInfo> urlContentMap = prioritizedUrlDiscover.getUrlContentMap(message.getContent());
+        MessageExtra messageExtra = Optional.ofNullable(message.getExtra()).orElse(new MessageExtra());
+        messageExtra.setUrlContentMap(urlContentMap);
+        update.setExtra(messageExtra);
         messageDao.updateById(update);
     }
 
