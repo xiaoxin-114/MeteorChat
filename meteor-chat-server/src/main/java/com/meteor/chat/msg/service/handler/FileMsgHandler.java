@@ -34,6 +34,16 @@ public class FileMsgHandler extends AbstractMsgHandler<FileMsgDTO> {
 
     @Override
     public String messageText(Message message) {
-        return "[文件]" + message.getExtra();
+        return "[文件]" + message.getExtra().getFileMsgDTO().getFileName();
+    }
+
+    @Override
+    public String replyMsgText(Message message) {
+        return "文件：" + message.getExtra().getFileMsgDTO().getFileName();
+    }
+
+    @Override
+    public Object buildMessageBody(Message message) {
+        return message.getExtra().getFileMsgDTO();
     }
 }

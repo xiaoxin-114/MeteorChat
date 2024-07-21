@@ -33,4 +33,14 @@ public class SystemMsgHandler extends AbstractMsgHandler<String> {
     public String messageText(Message message) {
         return message.getContent();
     }
+
+    @Override
+    public String replyMsgText(Message message) {
+        return message.getContent();
+    }
+
+    @Override
+    public Object buildMessageBody(Message message) {
+        return message.getContent();
+    }
 }

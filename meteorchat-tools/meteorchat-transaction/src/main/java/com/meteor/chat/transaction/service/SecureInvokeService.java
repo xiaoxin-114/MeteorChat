@@ -30,7 +30,7 @@ public class SecureInvokeService {
     private Executor executor;
     private SecureInvokeDao secureInvokeDao;
 
-    @Scheduled(cron = "* */5 * * * ?")
+//    @Scheduled(cron = "* */5 * * * ?")
     private void scheduleInvoke() {
         List<SecureInvokeRecord> records = secureInvokeDao.getRecords();
         for (SecureInvokeRecord record : records) {

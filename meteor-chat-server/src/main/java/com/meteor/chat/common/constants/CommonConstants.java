@@ -12,4 +12,6 @@ public interface CommonConstants {
     long GET_IPINFO_RETRY_INTERVAL = 3 * 1000;
 
     int MAX_ADMIN_NUM = 3;
+
+    int CAN_CALLBACK_GAP_MAX_COUNT = 100;
 }

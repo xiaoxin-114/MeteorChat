@@ -14,7 +14,7 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class TextMsgDTO implements Serializable {
+public class TextMsgReq implements Serializable {
     private static final long serialVersionUID = -2518553076936996053L;
 
     @NotBlank(message = "内容不能为空")

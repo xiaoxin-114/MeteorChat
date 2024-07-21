@@ -33,7 +33,7 @@ public class MessageExtra implements Serializable {
 
     private SoundMsgDTO soundMsgDTO;
 
-    private TextMsgDTO textMsgDTO;
+    private TextMsgResp textMsgResp;
 
     private VideoMsgDTO videoMsgDTO;
 }

@@ -32,6 +32,16 @@ public class EmojiMsgHandler extends AbstractMsgHandler<EmojisMsgDTO>{
 
     @Override
     public String messageText(Message message) {
-        return "[表情]";
+        return "[表情包]";
+    }
+
+    @Override
+    public String replyMsgText(Message message) {
+        return "表情";
+    }
+
+    @Override
+    public Object buildMessageBody(Message message) {
+        return message.getExtra().getEmojisMsgDTO();
     }
 }

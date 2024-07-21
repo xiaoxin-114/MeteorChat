@@ -9,12 +9,11 @@ import com.meteor.chat.common.domain.enums.DeleteStatusEunm;
 import com.meteor.chat.common.domain.enums.MessageMarkTypeEnum;
 import com.meteor.chat.common.domain.vo.ChatMessageResp;
 import com.meteor.chat.common.domain.vo.req.ChatMessageReq;
+import com.meteor.chat.msg.service.handler.AbstractMsgHandler;
+import com.meteor.chat.msg.service.handler.MsgHandlerFactory;
 import org.apache.commons.collections.CollectionUtils;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class MsgAdapter {
@@ -66,7 +65,8 @@ public class MsgAdapter {
         result.setRoomId(message.getRoomId());
         result.setType(message.getType());
         result.setSendTime(message.getCreateTime());
-        result.setBody(message.getExtra());
+        AbstractMsgHandler msgHandler = MsgHandlerFactory.getStrategyNotNull(message.getType());
+        result.setBody(msgHandler.buildMessageBody(message));
         result.setMessageMark(buildMessageMark(messageMark, receiveUid));
         return result;
     }

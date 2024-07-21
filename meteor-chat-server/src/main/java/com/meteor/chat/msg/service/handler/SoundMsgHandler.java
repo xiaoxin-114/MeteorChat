@@ -37,4 +37,14 @@ public class SoundMsgHandler extends AbstractMsgHandler<SoundMsgDTO> {
     public String messageText(Message message) {
         return "[语音]";
     }
+
+    @Override
+    public String replyMsgText(Message message) {
+        return "语音";
+    }
+
+    @Override
+    public Object buildMessageBody(Message message) {
+        return message.getExtra().getSoundMsgDTO();
+    }
 }

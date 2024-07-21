@@ -37,4 +37,14 @@ public class VideoMsgHandler extends AbstractMsgHandler<VideoMsgDTO> {
     public String messageText(Message message) {
         return "[视频]";
     }
+
+    @Override
+    public String replyMsgText(Message message) {
+        return "视频";
+    }
+
+    @Override
+    public Object buildMessageBody(Message message) {
+        return message.getExtra().getVideoMsgDTO();
+    }
 }

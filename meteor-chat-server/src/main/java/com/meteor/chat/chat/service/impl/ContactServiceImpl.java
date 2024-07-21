@@ -104,11 +104,9 @@ public class ContactServiceImpl implements ContactService {
             Message message = messageMap.get(dto.getLastMsgId());
             User sender = senderInfoMap.get(message.getFromUid());
             // 消息转换器，将消息转换成对应的显示内容
-            AbstractMsgHandler msgHandler = MsgHandlerFactory.getStrategyOrNull(message.getType());
-            if (Objects.nonNull(msgHandler)) {
-                String text = msgHandler.messageText(message);
-                chatRoomResp.setText(String.format("%s：%s", sender.getName(), text));
-            }
+            AbstractMsgHandler msgHandler = MsgHandlerFactory.getStrategyNotNull(message.getType());
+            String text = msgHandler.messageText(message);
+            chatRoomResp.setText(String.format("%s：%s", sender.getName(), text));
             // 获取群聊的消息未读数
             Contact contact = contactMap.get(dto.getRoomId());
             int count = messageDao.countUnReadMsg(dto.getRoomId(), Optional.ofNullable(contact).map(Contact::getReadTime).orElse(null));

@@ -29,6 +29,12 @@ public abstract class AbstractMsgHandler<T> {
         MsgHandlerFactory.regsiter(getMsgType().getType(), this);
     }
 
+    /**
+     * 消息发送请求，对消息进行校验，保存等处理
+     * @param req
+     * @param uid
+     * @return
+     */
     public final Long handlerMsg(ChatMessageReq req, Long uid) {
         // 获取信息的内容
         T msgBody = getBody(req);
@@ -86,4 +92,8 @@ public abstract class AbstractMsgHandler<T> {
      * @return
      */
     public abstract String messageText(Message message);
+
+    public abstract Object buildMessageBody(Message message);
+
+    public abstract String replyMsgText(Message message);
 }

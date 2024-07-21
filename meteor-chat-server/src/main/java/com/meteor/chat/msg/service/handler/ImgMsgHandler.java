@@ -36,4 +36,14 @@ public class ImgMsgHandler extends AbstractMsgHandler<ImgMsgDTO> {
     public String messageText(Message message) {
         return "[图片]";
     }
+
+    @Override
+    public String replyMsgText(Message message) {
+        return "图片";
+    }
+
+    @Override
+    public Object buildMessageBody(Message message) {
+        return message.getExtra().getImgMsgDTO();
+    }
 }

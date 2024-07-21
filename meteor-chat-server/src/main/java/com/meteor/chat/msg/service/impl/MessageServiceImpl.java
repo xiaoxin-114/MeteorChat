@@ -109,7 +109,7 @@ public class MessageServiceImpl implements MessageService {
     @Transactional(rollbackFor = Exception.class)
     public Long sendMsg(ChatMessageReq request, Long uid) {
         checkSendMsg(request, uid);
-        AbstractMsgHandler msgHandler = MsgHandlerFactory.getStrategyOrNull(request.getMsgType());
+        AbstractMsgHandler msgHandler = MsgHandlerFactory.getStrategyNotNull(request.getMsgType());
         Long msgId = msgHandler.handlerMsg(request, uid);
         applicationEventPublisher.publishEvent(new MessageSendEvent(this, msgId));
         return msgId;

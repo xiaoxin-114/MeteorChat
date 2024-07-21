@@ -15,7 +15,7 @@ public class MsgHandlerFactory {
         STRATEGY_MAP.put(type, handler);
     }
 
-    public static AbstractMsgHandler getStrategyOrNull(Integer code) {
+    public static AbstractMsgHandler getStrategyNotNull(Integer code) {
         AbstractMsgHandler msgHandler = STRATEGY_MAP.get(code);
         Assert.assertNotNull(CommonErrorEnum.PARAM_VALID.getErrMsg(), msgHandler);
         return msgHandler;
