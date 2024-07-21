@@ -6,6 +6,7 @@ import com.meteor.chat.common.domain.entity.GroupMember;
 import com.meteor.chat.common.domain.entity.RoomGroup;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
@@ -31,13 +32,14 @@ public class GroupMemberCache {
         return groupMemberDao.getMemberUidList(roomGroup.getId());
     }
 
-    @CacheEvict(cacheNames = "member", key = "'groupMember'+#roomId")
+    @Caching(evict = {@CacheEvict(cacheNames = "member", key = "'groupMember'+#roomId"),
+            @CacheEvict(cacheNames = "member", key = "'groupMemberMap' + #roomId")})
     public List<Long> evictMemberUidList(Long roomId) {
         return null;
     }
 
 
-    // todo 添加缓存注解，并且添加相关的清除缓存的方法
+    @Cacheable(cacheNames = "member", key = "'groupMemberMap'+#roomId")
     public Map<Long, GroupMember> getMemberList(Long roomId) {
         RoomGroup roomGroup = roomGroupDao.getByRoomId(roomId);
         if (Objects.isNull(roomGroup)) {

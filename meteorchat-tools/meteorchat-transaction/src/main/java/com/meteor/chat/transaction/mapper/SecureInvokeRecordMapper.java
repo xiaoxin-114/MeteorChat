@@ -2,6 +2,7 @@ package com.meteor.chat.transaction.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.meteor.chat.transaction.domian.SecureInvokeRecord;
+import org.apache.ibatis.annotations.Mapper;
 
 /**
 * @author meteor
@@ -9,6 +10,7 @@ import com.meteor.chat.transaction.domian.SecureInvokeRecord;
 * @createDate 2024-03-29 17:21:14
 * @Entity generator.domain.SecureInvokeRecord
 */
+@Mapper
 public interface SecureInvokeRecordMapper extends BaseMapper<SecureInvokeRecord> {
 
 }

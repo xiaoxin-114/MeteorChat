@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.meteor.chat.common.domain.enums.HotFlagEunm;
 import lombok.Data;
 
@@ -61,8 +62,9 @@ public class Room implements Serializable {
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;
 
+    @JsonIgnore
     public boolean isHotRoom() {
-        return HotFlagEunm.HOT_ROOM.equals(this.hotFlag);
+        return HotFlagEunm.HOT_ROOM.getCode() == this.hotFlag;
     }
 
     @Override

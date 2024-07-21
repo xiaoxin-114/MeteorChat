@@ -38,6 +38,8 @@ public class RoomAdapter {
         chatRoomResp.setType(room.getType());
         chatRoomResp.setHot_Flag(room.getHot_Flag());
         chatRoomResp.setActiveTime(room.getActiveTime());
+        chatRoomResp.setName(room.getName());
+        chatRoomResp.setAvatar(room.getAvatar());
         return chatRoomResp;
     }
 

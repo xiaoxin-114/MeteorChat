@@ -66,7 +66,7 @@ public class UserController {
         return ApiResult.success();
     }
 
-    @PostMapping("/public/summary/userinfo/batch")
+    @PostMapping("/public/summary/userInfo/batch")
     @ApiOperation("批量懒加载更新用户数据")
     public ApiResult<List<SummaryInfoDTO>> batchRefreshUserInfo(@RequestBody @Valid SummaryInfoReq req) {
         return ApiResult.success(userService.getSummaryInfoDTOList(req));

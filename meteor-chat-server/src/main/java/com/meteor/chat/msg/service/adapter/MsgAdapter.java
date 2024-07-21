@@ -54,7 +54,7 @@ public class MsgAdapter {
         return messageList.stream().map(message -> {
             ChatMessageResp chatMessageResp = new ChatMessageResp();
             chatMessageResp.setFromUser(buildFormUser(message));
-            List<MessageMark> messageMark = markMap.get(message.getId());
+            List<MessageMark> messageMark = markMap.getOrDefault(message.getId(), new ArrayList<>());
             chatMessageResp.setMessage(buildChatMessage(message, messageMark, receiveUid));
             return chatMessageResp;
         }).collect(Collectors.toList());
@@ -72,9 +72,6 @@ public class MsgAdapter {
     }
 
     private static ChatMessageResp.MessageMark buildMessageMark(List<MessageMark> messageMarkList, Long receiveUid) {
-        if (CollectionUtils.isEmpty(messageMarkList)) {
-            return null;
-        }
         ChatMessageResp.MessageMark messageMark = new ChatMessageResp.MessageMark();
         Map<Integer, List<MessageMark>> markMap = messageMarkList.stream().collect(Collectors.groupingBy(MessageMark::getType));
         List<MessageMark> likeList = markMap.getOrDefault(MessageMarkTypeEnum.LIKE.getCode(), new ArrayList<>());

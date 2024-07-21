@@ -128,12 +128,12 @@ public class RoomServiceImpl implements RoomService {
             uidList = groupMemberCache.getMemberUidList(roomGroup.getId());
         }
         CursorPageBaseResp<User> userPage = userService.cursorPageUser(req, uidList);
-        if (CollectionUtils.isEmpty(userPage.getData())) {
+        if (CollectionUtils.isEmpty(userPage.getList())) {
             return CursorPageBaseResp.empty();
         }
         List<GroupMember> memberList = groupMemberDao.listByGroupIdAndUids(roomGroup.getId(),
-                userPage.getData().stream().map(User::getId).collect(Collectors.toList()));
-        List<GroupMemberResp> groupMemberList = RoomAdapter.buildMemberResp(userPage.getData(), memberList);
+                userPage.getList().stream().map(User::getId).collect(Collectors.toList()));
+        List<GroupMemberResp> groupMemberList = RoomAdapter.buildMemberResp(userPage.getList(), memberList);
         return CursorPageBaseResp.init(userPage, groupMemberList);
     }
 
@@ -318,7 +318,7 @@ public class RoomServiceImpl implements RoomService {
      * @param roomFriend
      */
     private void restoreRoomFriend(RoomFriend roomFriend) {
-        if (RoomFriendStatusEnum.FORBID.getCode() == roomFriend.getStatus()) {
+        if (RoomFriendStatusEnum.FORBID.getCode().equals(roomFriend.getStatus())) {
             roomFriendDao.updateRoomStatus(roomFriend.getId(), RoomFriendStatusEnum.NORAML);
         }
     }

@@ -13,7 +13,7 @@
             <result property="status" column="status" jdbcType="INTEGER"/>
             <result property="gapCount" column="gap_count" jdbcType="INTEGER"/>
             <result property="type" column="type" jdbcType="INTEGER"/>
-            <result property="extra" column="extra" jdbcType="OTHER"/>
+            <result property="extra" column="extra" javaType="com.meteor.chat.common.domain.entity.MessageExtra" typeHandler="com.baomidou.mybatisplus.extension.handlers.JacksonTypeHandler"/>
             <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
             <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
     </resultMap>

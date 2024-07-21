@@ -1,7 +1,10 @@
 package com.meteor.chat.common.domain.entity;
 
 import com.baomidou.mybatisplus.annotation.*;
+import com.baomidou.mybatisplus.extension.handlers.JacksonTypeHandler;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -10,8 +13,10 @@ import java.util.Date;
  * 消息表
  * @TableName message
  */
-@TableName(value ="message")
+@TableName(value ="message", autoResultMap = true)
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class Message implements Serializable {
     /**
      * id
@@ -58,6 +63,7 @@ public class Message implements Serializable {
     /**
      * 扩展信息
      */
+    @TableField(value = "extra", typeHandler = JacksonTypeHandler.class)
     private MessageExtra extra;
 
     /**

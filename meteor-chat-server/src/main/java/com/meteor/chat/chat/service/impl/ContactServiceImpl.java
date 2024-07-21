@@ -1,4 +1,5 @@
 package com.meteor.chat.chat.service.impl;
+import java.util.Date;
 
 import cn.hutool.core.lang.Pair;
 import com.meteor.chat.chat.dao.ContactDao;
@@ -62,26 +63,28 @@ public class ContactServiceImpl implements ContactService {
         List<Pair<Long, Double>> roomList = new ArrayList<>();
         // 获取热点群聊
         CursorPageBaseResp<Pair<Long, Double>> hotRoom = hotRoomCache.cursorPage(request);
-        roomList.addAll(hotRoom.getData());
+        roomList.addAll(hotRoom.getList());
         CursorPageBaseResp<Contact> privateRoom = CursorPageBaseResp.empty();
         // 如果用户登陆了，还需要展示用户个人群聊
         if (Objects.nonNull(uid)) {
             privateRoom = contactDao.cursorPageByUid(request, uid);
-            List<Pair<Long, Double>> privateRoomIds = privateRoom.getData().stream().map(room -> Pair.of(room.getRoomId(), (double) room.getActiveTime().getTime())).collect(Collectors.toList());
+            List<Pair<Long, Double>> privateRoomIds = privateRoom.getList().stream().map(room -> Pair.of(room.getRoomId(), (double) room.getActiveTime().getTime())).collect(Collectors.toList());
             roomList.addAll(privateRoomIds);
         }
         if (CollectionUtils.isEmpty(roomList)) {
             return CursorPageBaseResp.empty();
         }
+        // 将两个房间列表合并后，根据最后活跃时间排序
         roomList.sort((o1, o2) -> o2.getValue().compareTo(o1.getValue()));
-        List<Long> roomIds = roomList.subList(0, request.getPageSize()).stream().map(Pair::getKey).collect(Collectors.toList());
-        List<ChatRoomResp> result = buildChatRoomResp(roomIds, uid);
         // 判断是否最后一页
         // 如果热点或私人群聊其中一个不是最后一页，那么聚合后肯定也不是最后一页
         // 只有当两类群聊都是最后一页，且聚合后数据量小于等于请求的pageSize时，才是最后一页
         // 当只有一类数据时，且这类数量刚好是pageSize+ 1时，只用数量判断的话无法判断
         boolean isLast = hotRoom.getIsLast() && privateRoom.getIsLast() && roomList.size() <= request.getPageSize();
-        return new CursorPageBaseResp<>(result.get(result.size()).getActiveTime().getTime() + "", isLast, result);
+        List<Long> roomIds = roomList.stream().map(Pair::getKey).collect(Collectors.toList());
+        roomIds = isLast ? roomIds : roomIds.subList(0, request.getPageSize());
+        List<ChatRoomResp> result = buildChatRoomResp(roomIds, uid);
+        return new CursorPageBaseResp<>(result.get(result.size() - 1).getActiveTime().getTime() + "", isLast, result);
     }
 
     @Override
@@ -108,7 +111,7 @@ public class ContactServiceImpl implements ContactService {
             }
             // 获取群聊的消息未读数
             Contact contact = contactMap.get(dto.getRoomId());
-            int count = messageDao.countUnReadMsg(dto.getRoomId(), Optional.of(contact).map(Contact::getReadTime).orElse(null));
+            int count = messageDao.countUnReadMsg(dto.getRoomId(), Optional.ofNullable(contact).map(Contact::getReadTime).orElse(null));
             chatRoomResp.setUnreadCount(count);
             return chatRoomResp;
         }).collect(Collectors.toList());

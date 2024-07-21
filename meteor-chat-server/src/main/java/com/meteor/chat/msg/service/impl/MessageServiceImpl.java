@@ -80,7 +80,7 @@ public class MessageServiceImpl implements MessageService {
         }else {
             contactPage = contactDao.cursorReadPage(req, message.getRoomId(), message.getCreateTime());
         }
-        List<Long> uidList = contactPage.getData().stream().map(Contact::getUid)
+        List<Long> uidList = contactPage.getList().stream().map(Contact::getUid)
                 .filter(id -> !message.getFromUid().equals(id)).collect(Collectors.toList());
         return CursorPageBaseResp.init(contactPage, uidList);
     }
@@ -126,8 +126,11 @@ public class MessageServiceImpl implements MessageService {
             Assert.assertNotNull("数据异常", contact);
             lastMsgId = contact.getLastMsgId();
         }
-        CursorPageBaseResp<Message> messageCursorPage = messageDao.cursorMessage(req, uid, lastMsgId);
-        List<Message> messageList = messageCursorPage.getData();
+        CursorPageBaseResp<Message> messageCursorPage = messageDao.cursorMessage(req, roomId, lastMsgId);
+        if (messageCursorPage.isEmpty()) {
+            return CursorPageBaseResp.empty();
+        }
+        List<Message> messageList = messageCursorPage.getList();
         List<MessageMark> messageMarkList = messageMarkDao.listByMsgIdList(messageList.stream().map(Message::getId).collect(Collectors.toList()));
         return CursorPageBaseResp.init(messageCursorPage, MsgAdapter.buildChatMessageResp(messageList, messageMarkList, uid));
     }

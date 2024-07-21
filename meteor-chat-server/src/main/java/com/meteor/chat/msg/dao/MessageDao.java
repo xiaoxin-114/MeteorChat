@@ -20,10 +20,10 @@ public class MessageDao extends ServiceImpl<MessageMapper, Message> {
                 .count();
     }
 
-    public CursorPageBaseResp<Message> cursorMessage(MessageCursorReq req, Long uid, Long lastMsgId) {
+    public CursorPageBaseResp<Message> cursorMessage(MessageCursorReq req, Long roomId, Long lastMsgId) {
         return CursorUtils.cursorPage(req, this,
                 (lambdaQuery) ->
-                        lambdaQuery.eq(Message::getRoomId, req.getCursor())
+                        lambdaQuery.eq(Message::getRoomId, roomId)
                         // 如果用户不在群聊了，只能显示历史消息，不能显示最新消息
                         .le(Objects.nonNull(lastMsgId), Message::getId, lastMsgId),
                 Message::getId);

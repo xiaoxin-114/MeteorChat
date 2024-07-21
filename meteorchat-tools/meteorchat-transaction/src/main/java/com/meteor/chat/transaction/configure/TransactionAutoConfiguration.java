@@ -6,6 +6,7 @@ import com.meteor.chat.transaction.service.MQProducer;
 import com.meteor.chat.transaction.service.SecureInvokeService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
+import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -24,6 +25,7 @@ import java.util.stream.Collectors;
 @Slf4j
 @ComponentScan("com.meteor.chat.transaction")
 @EnableScheduling
+@MapperScan(basePackages = "com.meteor.chat.transaction.mapper")
 public class TransactionAutoConfiguration {
     private Executor executor;
 

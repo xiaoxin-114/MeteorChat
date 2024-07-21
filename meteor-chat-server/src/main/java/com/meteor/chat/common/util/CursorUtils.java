@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.meteor.chat.common.domain.vo.CursorPageBaseResp;
 import com.meteor.chat.common.domain.vo.req.CursorPageBaseReq;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.redis.core.ZSetOperations;
 
@@ -38,12 +39,16 @@ public class CursorUtils {
         }else {
             typedTuples = RedisUtils.zReverseRangeByScoreWithScores(redisKey, Double.parseDouble(request.getCursor()), request.getPageSize());
         }
+        if (CollectionUtils.isEmpty(typedTuples)) {
+            return CursorPageBaseResp.empty();
+        }
         List<Pair<T, Double>> pairs = typedTuples.stream()
                 .map(t -> Pair.of(function.apply(t.getValue()), t.getScore()))
                 .sorted((o1, o2) -> o2.getValue().compareTo(o1.getValue()))
                 .collect(Collectors.toList());
         String cursor = pairs.get(pairs.size() - 1).getValue().toString();
-        return new CursorPageBaseResp<Pair<T, Double>>(cursor, pairs.size() == request.getPageSize() + 1, pairs.subList(0, request.getPageSize()));
+        boolean isLast = pairs.size() != request.getPageSize() + 1;
+        return new CursorPageBaseResp<Pair<T, Double>>(cursor, isLast, isLast ? pairs : pairs.subList(0, request.getPageSize()));
 
     }
 
@@ -67,6 +72,9 @@ public class CursorUtils {
         // 查询数据
         Page<T> result = dao.page(page, queryWrapper);
         List<T> records = result.getRecords();
+        if (CollectionUtils.isEmpty(records)) {
+            return CursorPageBaseResp.empty();
+        }
         String newCursor = Optional.ofNullable(records)
                 // 因为多查询了一条记录，但是我们要获取返回给前端的最后一条记录的游标
                 // 需要判断是否取到pageSize+1条记录，取到了就取倒数第二条，没取到就要取最后一条
@@ -76,7 +84,8 @@ public class CursorUtils {
                 .orElse(null);
         // 因为比实际前端要求多查询了一条，所以如果查询到pageSize+1条，说明还有下一页。如果没查到说明就是最后一页
         boolean isLast = records.size() != pageSize + 1;
-        return new CursorPageBaseResp<>(newCursor, isLast, records.subList(0, pageSize));
+        // ArrayList.subList 如果最后的toIndex大于 列表长度，就会报错IndexOutOfBoundsException
+        return new CursorPageBaseResp<>(newCursor, isLast, isLast ? records : records.subList(0, pageSize));
     }
 
     /**

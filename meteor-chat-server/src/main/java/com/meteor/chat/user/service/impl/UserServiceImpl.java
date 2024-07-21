@@ -170,16 +170,16 @@ public class UserServiceImpl implements UserService {
         String timeCursor = cursorPair.getValue();
         // 游标分页获取数据
         CursorPageBaseResp<User> userPage = userDao.cursorPage(new CursorPageBaseReq(req.getPageSize(), timeCursor), cursorPair.getKey(), uidList);
-        List<User> data = userPage.getData();
+        List<User> data = userPage.getList();
         boolean isLast = userPage.getIsLast();
         String cursor = CommonUtils.generateMemberCursor(cursorPair.getKey(), userPage.getCursor());
-        if (cursorPair.getKey() == ChatActiveStatusEnum.ONLINE && userPage.getData().size() < req.getPageSize()) {
+        if (cursorPair.getKey() == ChatActiveStatusEnum.ONLINE && userPage.getList().size() < req.getPageSize()) {
             // 如果是获取在线的分页，且数量不足，需要补充离线的用户数据
             // 先计算需要补充多少条记录
-            int count = req.getPageSize() - userPage.getData().size();
+            int count = req.getPageSize() - userPage.getList().size();
             // 获取离线的补充数据
             CursorPageBaseResp<User> offlinePage = userDao.cursorPage(new CursorPageBaseReq(count, null), ChatActiveStatusEnum.OFFLINE, uidList);
-            data.addAll(offlinePage.getData());
+            data.addAll(offlinePage.getList());
             // 根据离线的分页数据，重置分页的属性：是否最后一页，游标信息
             isLast = offlinePage.getIsLast();
             cursor = CommonUtils.generateMemberCursor(ChatActiveStatusEnum.OFFLINE, offlinePage.getCursor());

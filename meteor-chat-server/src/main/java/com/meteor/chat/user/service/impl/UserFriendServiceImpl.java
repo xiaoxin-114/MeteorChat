@@ -55,7 +55,7 @@ public class UserFriendServiceImpl implements UserFriendService {
     @Override
     public CursorPageBaseResp<FriendResp> pageFriendList(Long uid, CursorPageBaseReq request) {
         CursorPageBaseResp<UserFriend> userFriendList = userFriendDao.pageFriendList(uid, request);
-        List<UserFriend> userFriends = userFriendList.getData();
+        List<UserFriend> userFriends = userFriendList.getList();
         // 转换成前端需要的格式
         if (CollectionUtils.isEmpty(userFriends)) {
             return null;

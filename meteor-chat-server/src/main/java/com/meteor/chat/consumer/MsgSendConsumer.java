@@ -20,6 +20,7 @@ import com.meteor.chat.route.service.PushService;
 import com.meteor.chat.websocket.adapter.WSAdapter;
 import org.apache.rocketmq.spring.annotation.MessageModel;
 import org.apache.rocketmq.spring.annotation.RocketMQMessageListener;
+import org.apache.rocketmq.spring.core.RocketMQListener;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
@@ -29,7 +30,7 @@ import java.util.List;
 
 @RocketMQMessageListener(consumerGroup = MQConstant.SEND_MSG_GROUP,topic = MQConstant.SEND_MSG_TOPIC, messageModel = MessageModel.BROADCASTING)
 @Component
-public class MsgSendConsumer {
+public class MsgSendConsumer implements RocketMQListener<MsgSendMessageDTO> {
 
     @Resource
     private MessageDao messageDao;
@@ -61,8 +62,8 @@ public class MsgSendConsumer {
     @Resource
     private RoomFriendCache roomFriendCache;
 
-    @OnMessage
-    public void pushMsg(MsgSendMessageDTO dto) {
+    @Override
+    public void onMessage(MsgSendMessageDTO dto) {
         Long msgId = dto.getMsgId();
         // 此时是推送新消息的，不会有人点赞和点踩，所有不用关心接收用户
         ChatMessageResp messageResp = messageService.getMessageResp(msgId, null);

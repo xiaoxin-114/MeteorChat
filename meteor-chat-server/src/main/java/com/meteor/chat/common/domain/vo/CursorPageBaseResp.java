@@ -20,14 +20,14 @@ public class CursorPageBaseResp <T> {
     @ApiModelProperty("是否是最后一页")
     private Boolean isLast = Boolean.FALSE;
     @ApiModelProperty("查询到的数据")
-    private List<T> data;
+    private List<T> list;
 
     public static CursorPageBaseResp empty() {
         return new CursorPageBaseResp(null, true, new ArrayList());
     }
 
     public boolean isEmpty() {
-        return CollectionUtils.isEmpty(data);
+        return CollectionUtils.isEmpty(list);
     }
 
     public static CursorPageBaseResp init(CursorPageBaseResp resp, List data) {
