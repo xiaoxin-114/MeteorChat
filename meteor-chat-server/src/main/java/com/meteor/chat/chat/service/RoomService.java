@@ -38,7 +38,7 @@ public interface RoomService {
      * @param req 包含会话id
      * @return
      */
-    List<GroupMemberListResp> getMemberList(IdBaseReq req);
+    List<GroupMemberListResp> getMemberList(ChatMessageMemberReq req);
 
     /**
      * 移除群成员
@@ -52,7 +52,7 @@ public interface RoomService {
      * @param req
      * @param uid
      */
-    void exitRoom(IdBaseReq req, Long uid);
+    void exitRoom(MemberExitReq req, Long uid);
 
     /**
      * 用户创建群聊

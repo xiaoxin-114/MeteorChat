@@ -40,7 +40,7 @@ public class RoomController {
 
     @GetMapping("/group/member/list")
     @ApiOperation("房间内的所有群成员列表-@专用")
-    public ApiResult<List<GroupMemberListResp>> getMemberList(@Valid IdBaseReq req) {
+    public ApiResult<List<GroupMemberListResp>> getMemberList(@Valid ChatMessageMemberReq req) {
         List<GroupMemberListResp> result = roomService.getMemberList(req);
         return ApiResult.success(result);
     }
@@ -55,7 +55,7 @@ public class RoomController {
 
     @DeleteMapping("/group/member/exit")
     @ApiOperation("退出群聊")
-    public ApiResult<Void> exitChatGroup(@Valid IdBaseReq req) {
+    public ApiResult<Void> exitChatGroup(@Valid @RequestBody MemberExitReq req) {
         Long uid = UserContext.getUid();
         roomService.exitRoom(req, uid);
         return ApiResult.success();

@@ -19,12 +19,12 @@ import java.util.Optional;
  */
 @Component
 @Slf4j
-@Order(-2)
 public class TokenInterceptor implements HandlerInterceptor {
 
     public static final String ATTRIBUTE_UID = "uid";
     public static final String AUTHORIZATION_HEADER = "Authorization";
-    public static final String AUTHORIZATION_SCHEMA = "Bearer";
+    // 看清楚，空格必须加上，否则token解析错误
+    public static final String AUTHORIZATION_SCHEMA = "Bearer ";
 
     @Resource
     private LoginService loginService;

@@ -7,6 +7,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.rocketmq.spring.annotation.MessageModel;
 import org.apache.rocketmq.spring.annotation.RocketMQMessageListener;
 import org.apache.rocketmq.spring.core.RocketMQListener;
+import org.junit.Assert;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
@@ -23,11 +24,16 @@ public class PushMessageConsumer implements RocketMQListener<PushMessageDTO> {
 
     @Override
     public void onMessage(PushMessageDTO pushMessageDTO) {
-        List<Long> uidList = pushMessageDTO.getUidList();
-        // 过滤掉当前服务器不存在的用户
-        uidList = uidList.stream().filter(uid -> webSocketService.haveUid(uid)).collect(Collectors.toList());
-        if (CollectionUtils.isNotEmpty(uidList)) {
-            uidList.forEach(uid -> webSocketService.sendToUid(pushMessageDTO.getWsBaseResp(), uid));
+        if (PushMessageDTO.ALL.equals(pushMessageDTO.getType())) {
+            webSocketService.sendToAllOnline(pushMessageDTO.getWsBaseResp());
+        } else {
+            List<Long> uidList = pushMessageDTO.getUidList();
+            Assert.assertTrue("消息异常，推送消息无用户id", CollectionUtils.isNotEmpty(uidList));
+            // 过滤掉当前服务器不存在的用户
+            uidList = uidList.stream().filter(uid -> webSocketService.haveUid(uid)).collect(Collectors.toList());
+            if (CollectionUtils.isNotEmpty(uidList)) {
+                uidList.forEach(uid -> webSocketService.sendToUid(pushMessageDTO.getWsBaseResp(), uid));
+            }
         }
     }
 }

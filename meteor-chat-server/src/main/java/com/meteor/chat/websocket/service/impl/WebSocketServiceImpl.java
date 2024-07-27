@@ -85,6 +85,7 @@ public class WebSocketServiceImpl  implements WebSocketService {
     private UserCache userCache;
     @Autowired
     private ApplicationEventPublisher applicationEventPublisher;
+    @Autowired
     @Qualifier(value = ThreadConfig.WB_EXECUTRO)
     private ThreadPoolTaskExecutor webSocketExecutor;
 

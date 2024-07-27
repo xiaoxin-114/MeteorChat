@@ -138,8 +138,8 @@ public class RoomServiceImpl implements RoomService {
     }
 
     @Override
-    public List<GroupMemberListResp> getMemberList(IdBaseReq req) {
-        Long roomId = req.getId();
+    public List<GroupMemberListResp> getMemberList(ChatMessageMemberReq req) {
+        Long roomId = req.getRoomId();
         Room room = roomCache.get(roomId);
         Assert.assertNotNull("聊天室不存在", room);
         if (room.isHotRoom()) {
@@ -182,8 +182,8 @@ public class RoomServiceImpl implements RoomService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void exitRoom(IdBaseReq req, Long uid) {
-        Long roomId = req.getId();
+    public void exitRoom(MemberExitReq req, Long uid) {
+        Long roomId = req.getRoomId();
         Room room = roomCache.get(roomId);
         Assert.assertNotNull("聊天室id错误", room);
         RoomGroup roomGroup = roomGroupCache.get(roomId);

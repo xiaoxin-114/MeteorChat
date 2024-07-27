@@ -24,7 +24,7 @@ public class InterceptorConfig implements WebMvcConfigurer {
                 .addPathPatterns("/capi/**");
 
         registry.addInterceptor(tokenInterceptor)
-                .addPathPatterns("/capi/**");
+                .addPathPatterns("/capi/**").order(-2);
 
         registry.addInterceptor(blackInterceptor)
                 .addPathPatterns("/capi/**");

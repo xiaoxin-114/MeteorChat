@@ -94,7 +94,7 @@ public class MessageServiceImpl implements MessageService {
                 throw new BusinessException("只能查询自己发送的消息阅读数");
             }
         });
-        List<Long> roomIds = msgList.stream().map(Message::getRoomId).collect(Collectors.toList());
+        List<Long> roomIds = msgList.stream().map(Message::getRoomId).distinct().collect(Collectors.toList());
         Assert.assertTrue("只能查询同一会话下的消息", roomIds.size() == 1);
         List<Contact> contactList = contactDao.listByRoomId(roomIds.get(0), uid);
         if (CollectionUtils.isEmpty(contactList)) {
