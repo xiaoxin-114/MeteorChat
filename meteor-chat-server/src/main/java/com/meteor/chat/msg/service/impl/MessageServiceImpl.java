@@ -1,28 +1,29 @@
 package com.meteor.chat.msg.service.impl;
 
 import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.date.DateTime;
+import cn.hutool.core.date.DateUtil;
+import cn.hutool.core.io.unit.DataUnit;
 import com.meteor.chat.chat.dao.ContactDao;
 import com.meteor.chat.chat.dao.RoomFriendDao;
+import com.meteor.chat.chat.service.RoomService;
 import com.meteor.chat.chat.service.adapter.RoomAdapter;
 import com.meteor.chat.chat.service.cache.GroupMemberCache;
 import com.meteor.chat.chat.service.cache.RoomCache;
 import com.meteor.chat.chat.service.cache.RoomGroupCache;
+import com.meteor.chat.common.annotation.RedissonLock;
+import com.meteor.chat.common.domain.dto.MessageRecallDTO;
 import com.meteor.chat.common.domain.dto.MsgReadInfoDTO;
 import com.meteor.chat.common.domain.entity.*;
-import com.meteor.chat.common.domain.enums.MessageMarkTypeEnum;
-import com.meteor.chat.common.domain.enums.ReadEnum;
-import com.meteor.chat.common.domain.enums.RoomFriendStatusEnum;
-import com.meteor.chat.common.domain.enums.RoomTypeEnum;
+import com.meteor.chat.common.domain.enums.*;
 import com.meteor.chat.common.domain.vo.ChatMessageReadResp;
 import com.meteor.chat.common.domain.vo.ChatMessageResp;
 import com.meteor.chat.common.domain.vo.CursorPageBaseResp;
-import com.meteor.chat.common.domain.vo.req.ChatMessageReq;
-import com.meteor.chat.common.domain.vo.req.MessageCursorReq;
-import com.meteor.chat.common.domain.vo.req.MessageReadCursorPageReq;
-import com.meteor.chat.common.domain.vo.req.MessageReadInfoReq;
+import com.meteor.chat.common.domain.vo.req.*;
 import com.meteor.chat.common.exception.BusinessException;
 import com.meteor.chat.common.exception.CommonErrorEnum;
 import com.meteor.chat.common.util.CursorUtils;
+import com.meteor.chat.event.MessageRecallEvent;
 import com.meteor.chat.event.MessageSendEvent;
 import com.meteor.chat.msg.dao.MessageDao;
 import com.meteor.chat.msg.dao.MessageMarkDao;
@@ -39,7 +40,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 @Service
 @Slf4j
@@ -68,6 +71,9 @@ public class MessageServiceImpl implements MessageService {
 
     @Resource
     private MessageMarkDao messageMarkDao;
+
+    @Resource
+    private RoomService roomService;
 
     @Override
     public CursorPageBaseResp<ChatMessageReadResp> cursorPageMsgReader(MessageReadCursorPageReq req) {
@@ -142,6 +148,48 @@ public class MessageServiceImpl implements MessageService {
         List<MessageMark> messageMarkList = messageMarkDao.listByMsgId(msgId);
         List<ChatMessageResp> chatMessageResps = MsgAdapter.buildChatMessageResp(Collections.singletonList(message), messageMarkList, receiveUid);
         return CollUtil.getFirst(chatMessageResps);
+    }
+
+
+    @Override
+    public void recall(MsgRecallReq req, Long uid) {
+        Message message = messageDao.getById(req.getMsgId());
+        // 如果不是消息发送者撤回消息，就必须得是管理员
+        if (!Objects.equals(message.getFromUid(), uid)) {
+            boolean hasRoomPower = roomService.hasRoomPower(uid, req.getRoomId());
+            Assert.assertTrue("用户没有权限操作", hasRoomPower);
+        }
+        Assert.assertTrue("发出超出2分钟的消息无法撤回", message.getCreateTime().before(DateUtil.offsetMinute(new Date(), -2)));
+        // 修改消息信息
+        MessageExtra extra = message.getExtra();
+        MsgRecall msgRecall = MsgRecall.builder().recallUid(uid).recallTime(new Date()).build();
+        extra.setRecall(msgRecall);
+        Message update = new Message();
+        update.setId(message.getId());
+        update.setType(MessageTypeEnum.RECALL.getType());
+        update.setExtra(extra);
+        messageDao.updateById(update);
+        applicationEventPublisher.publishEvent(new MessageRecallEvent(new MessageRecallDTO(req.getMsgId(), req.getRoomId(), uid), this));
+    }
+
+    @Override
+    @RedissonLock(key = "#uid")
+    public void readMsg(ChatMessageMemberReq req, Long uid) {
+        Long roomId = req.getRoomId();
+        Contact contact = contactDao.getByUidAndRoomId(roomId, uid);
+        if (Objects.isNull(contact)) {
+            Contact insert = new Contact();
+            insert.setUid(uid);
+            insert.setRoomId(roomId);
+            insert.setReadTime(new Date());
+            // 其余消息在群聊发送消息后自然会更新
+            contactDao.save(insert);
+        } else {
+            Contact update = new Contact();
+            update.setId(contact.getId());
+            update.setReadTime(new Date());
+            contactDao.updateById(update);
+        }
     }
 
     private void checkSendMsg(ChatMessageReq request, Long uid) {

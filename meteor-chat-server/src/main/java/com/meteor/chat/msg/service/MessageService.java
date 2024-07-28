@@ -4,10 +4,7 @@ import com.meteor.chat.common.domain.dto.MsgReadInfoDTO;
 import com.meteor.chat.common.domain.vo.ChatMessageReadResp;
 import com.meteor.chat.common.domain.vo.ChatMessageResp;
 import com.meteor.chat.common.domain.vo.CursorPageBaseResp;
-import com.meteor.chat.common.domain.vo.req.ChatMessageReq;
-import com.meteor.chat.common.domain.vo.req.MessageCursorReq;
-import com.meteor.chat.common.domain.vo.req.MessageReadCursorPageReq;
-import com.meteor.chat.common.domain.vo.req.MessageReadInfoReq;
+import com.meteor.chat.common.domain.vo.req.*;
 
 import java.util.List;
 
@@ -49,4 +46,17 @@ public interface MessageService {
      * @return
      */
     CursorPageBaseResp<ChatMessageResp> cursorChatMessageResp(MessageCursorReq req, Long uid);
+
+    /**
+     * 撤回消息
+     * @param req
+     */
+    void recall(MsgRecallReq req, Long uid);
+
+    /**
+     * 读取消息
+     * @param req
+     * @param uid
+     */
+    void readMsg(ChatMessageMemberReq req, Long uid);
 }

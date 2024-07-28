@@ -1,5 +1,8 @@
 package com.meteor.chat.chat.service;
 
+import com.meteor.chat.common.domain.entity.Room;
+import com.meteor.chat.common.domain.entity.RoomGroup;
+import com.meteor.chat.common.domain.enums.GroupRoleAPPEnum;
 import com.meteor.chat.common.domain.vo.CursorPageBaseResp;
 import com.meteor.chat.common.domain.vo.GroupMemberListResp;
 import com.meteor.chat.common.domain.vo.GroupMemberResp;
@@ -81,4 +84,6 @@ public interface RoomService {
      * @param uid
      */
     void removeAdmin(AdminChangeReq req, Long uid);
+
+    boolean hasRoomPower(Long uid, Long roomId);
 }

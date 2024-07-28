@@ -37,6 +37,7 @@ public class SecureInvokeRecord implements Serializable {
     /**
      * 状态 1待执行 2已失败
      */
+    @Builder.Default
     private Integer status = SecureInvokeRecord.STATUS_WAIT;
 
     /**
@@ -47,7 +48,8 @@ public class SecureInvokeRecord implements Serializable {
     /**
      * 已经重试的次数
      */
-    private Integer retryTimes;
+    @Builder.Default
+    private Integer retryTimes = 0;
 
     /**
      * 最大重试次数

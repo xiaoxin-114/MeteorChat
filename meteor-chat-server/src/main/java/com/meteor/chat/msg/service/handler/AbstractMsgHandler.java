@@ -41,16 +41,16 @@ public abstract class AbstractMsgHandler<T> {
         // 对信息进行统一校验
         commonCheck(msgBody);
         // 进行子类对信息的补充校验
-        checkMsg();
+        checkMsg(msgBody, req.getRoomId(), uid);
         Message message = MsgAdapter.buildMessage(req, uid);
-        // 统一保存信息
+        // 统一保存信息，此时保存的信息只有房间号，发送人id，消息类型
         messageDao.save(message);
         // 子类保存信息额外数据
         saveMessageExtra(message, msgBody);
         return message.getId();
     }
 
-    protected void checkMsg() {
+    protected void checkMsg(T body, Long roomId, Long uid) {
 
     }
 

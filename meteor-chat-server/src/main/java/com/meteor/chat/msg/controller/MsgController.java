@@ -5,10 +5,7 @@ import com.meteor.chat.common.domain.result.ApiResult;
 import com.meteor.chat.common.domain.vo.ChatMessageReadResp;
 import com.meteor.chat.common.domain.vo.ChatMessageResp;
 import com.meteor.chat.common.domain.vo.CursorPageBaseResp;
-import com.meteor.chat.common.domain.vo.req.ChatMessageReq;
-import com.meteor.chat.common.domain.vo.req.MessageCursorReq;
-import com.meteor.chat.common.domain.vo.req.MessageReadCursorPageReq;
-import com.meteor.chat.common.domain.vo.req.MessageReadInfoReq;
+import com.meteor.chat.common.domain.vo.req.*;
 import com.meteor.chat.common.frequency.annotation.FrequencyControl;
 import com.meteor.chat.common.util.UserContext;
 import com.meteor.chat.msg.service.MessageService;
@@ -64,4 +61,17 @@ public class MsgController {
         return ApiResult.success(chatMessageRespCursorPage);
     }
 
+    @PutMapping("/msg/recall")
+    @ApiOperation("撤回消息")
+    public ApiResult<Void> recallMsg(@Valid @RequestBody MsgRecallReq req) {
+        messageService.recall(req, UserContext.getUid());
+        return ApiResult.success();
+    }
+
+    @PutMapping("/msg/read")
+    @ApiOperation("消息阅读上报")
+    public ApiResult<Void> readMsg(@Valid @RequestBody ChatMessageMemberReq req) {
+        messageService.readMsg(req, UserContext.getUid());
+        return ApiResult.success();
+    }
 }

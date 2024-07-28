@@ -3,6 +3,7 @@ import java.util.Collections;
 import java.util.Date;
 
 import com.meteor.chat.chat.service.adapter.RoomAdapter;
+import com.meteor.chat.common.domain.dto.MessageRecallDTO;
 import com.meteor.chat.common.domain.entity.GroupMember;
 import com.meteor.chat.common.domain.entity.Message;
 import com.meteor.chat.common.domain.entity.User;
@@ -106,4 +107,11 @@ public class WSAdapter {
         return wsResp;
     }
 
+    public static WSBaseResp<WSMsgRecall> buildMsgRecall(MessageRecallDTO dto) {
+        WSMsgRecall wsMsgRecall = new WSMsgRecall();
+        wsMsgRecall.setMsgId(dto.getMsgId());
+        wsMsgRecall.setRoomId(dto.getRoomId());
+        wsMsgRecall.setRecallUid(dto.getRecallUid());
+        return new WSBaseResp<>(WSRespTypeEnum.RECALL.getType(), wsMsgRecall);
+    }
 }

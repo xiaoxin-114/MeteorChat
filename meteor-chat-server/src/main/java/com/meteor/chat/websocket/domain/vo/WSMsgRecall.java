@@ -1,4 +1,10 @@
 package com.meteor.chat.websocket.domain.vo;
 
-public class WSMsgRecall {
+import com.meteor.chat.common.domain.dto.MessageRecallDTO;
+import lombok.Data;
+
+@Data
+public class WSMsgRecall extends MessageRecallDTO {
+
+
 }

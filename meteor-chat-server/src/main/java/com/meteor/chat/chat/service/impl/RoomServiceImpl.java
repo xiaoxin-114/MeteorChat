@@ -286,7 +286,7 @@ public class RoomServiceImpl implements RoomService {
         Assert.assertNotNull("房间号id异常", roomGroup);
         Assert.assertNotNull("用户未登陆", uid);
         GroupRoleAPPEnum groupRole = getGroupRole(uid, room, roomGroup);
-        Assert.assertEquals("只有群主才能添加管理员", GroupRoleAPPEnum.LEADER, groupRole);
+        Assert.assertEquals("只有群主才能移除管理员", GroupRoleAPPEnum.LEADER, groupRole);
         Map<Long, GroupMember> memberMap = groupMemberCache.getMemberList(roomId);
         List<Long> uidList = req.getUidList();
         Assert.assertTrue("请确保所有用户都在群聊内", memberMap.keySet().containsAll(uidList));
@@ -354,6 +354,37 @@ public class RoomServiceImpl implements RoomService {
     private boolean hasPower(GroupRoleAPPEnum groupRole, Long uid) {
         boolean power = userRoleDao.hasPower(uid, RoleEnum.SUPERADMIN.getId());
         return power || GroupRoleAPPEnum.LEADER.equals(groupRole) || GroupRoleAPPEnum.MANAGER.equals(groupRole);
+    }
+
+    /**
+     * 判断用户在群聊中是否有管理权限
+     * @param uid 用户id
+     * @param roomId 群聊id
+     * @return
+     */
+    @Override
+    public boolean hasRoomPower(Long uid, Long roomId) {
+        Room room = roomCache.get(roomId);
+        Assert.assertNotNull("房间号有误", room);
+        UserRole userRole = userRoleDao.getUserRoleByUid(uid);
+        Assert.assertNotNull("用户数据异常", userRole);
+        boolean systemAdmin = userRole.getRoleId().equals(RoleEnum.SUPERADMIN.getId()) || userRole.getRoleId().equals(RoleEnum.CHAT_ADMIN.getId());
+        if (room.isHotRoom()) {
+            // 如果是热门群聊，取决于用户是否是系统管理员
+            return systemAdmin;
+        } else {
+            if (systemAdmin) {
+                // 系统管理员同样用于其他群聊的管理权限，但是没有群主权限
+                return true;
+            } else {
+                Map<Long, GroupMember> groupMemberMap = groupMemberCache.getMemberList(roomId);
+                Assert.assertTrue("群聊数据异常", groupMemberMap != null && groupMemberMap.size() > 0);
+                GroupMember groupMember = groupMemberMap.get(uid);
+                Assert.assertNotNull("用户不在群聊", groupMember);
+                Integer role = groupMember.getRole();
+                return GroupRoleAPPEnum.LEADER.getCode().equals(role) || GroupRoleAPPEnum.MANAGER.getCode().equals(role);
+            }
+        }
     }
 
     /**

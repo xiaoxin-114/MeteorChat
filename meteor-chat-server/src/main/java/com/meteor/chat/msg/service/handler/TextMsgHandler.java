@@ -1,4 +1,6 @@
 package com.meteor.chat.msg.service.handler;
+import com.meteor.chat.chat.service.RoomService;
+import com.meteor.chat.chat.service.cache.GroupMemberCache;
 import com.meteor.chat.common.constants.CommonConstants;
 import com.meteor.chat.common.domain.dto.msg.TextMsgResp.ReplyMsg;
 import com.meteor.chat.common.domain.dto.msg.TextMsgReq;
@@ -13,13 +15,13 @@ import com.meteor.chat.common.util.discover.PrioritizedUrlDiscover;
 import com.meteor.chat.msg.dao.MessageDao;
 import com.meteor.chat.user.service.cache.UserCache;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.junit.Assert;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Component
 public class TextMsgHandler extends AbstractMsgHandler<TextMsgReq> {
@@ -33,6 +35,12 @@ public class TextMsgHandler extends AbstractMsgHandler<TextMsgReq> {
 
     @Resource
     private UserCache userCache;
+
+    @Resource
+    private GroupMemberCache groupMemberCache;
+
+    @Resource
+    private RoomService roomService;
 
     @Override
     MessageTypeEnum getMsgType() {
@@ -55,10 +63,33 @@ public class TextMsgHandler extends AbstractMsgHandler<TextMsgReq> {
             extra.setAtUidList(atUidList);
         }
         // 识别消息是否包含连接，插入连接相关消息
-        Map<String, UrlInfo> urlContentMap = prioritizedUrlDiscover.getUrlContentMap(message.getContent());
+        Map<String, UrlInfo> urlContentMap = prioritizedUrlDiscover.getUrlContentMap(update.getContent());
         extra.setUrlContentMap(urlContentMap);
         update.setExtra(extra);
         messageDao.updateById(update);
+    }
+
+    @Override
+    protected void checkMsg(TextMsgReq body, Long roomId, Long uid) {
+        // 校验@的列表
+        if (CollectionUtils.isNotEmpty(body.getAtUidList())) {
+            List<Long> atList = body.getAtUidList().stream().distinct().collect(Collectors.toList());
+            if (atList.contains(0)) {
+                Assert.assertTrue("只有管理员才能@全员", roomService.hasRoomPower(uid, roomId));
+                atList = Collections.singletonList(0L);
+            } else {
+                // 确保at的成员都在群聊中
+                List<Long> memberUidList = groupMemberCache.getMemberUidList(roomId);
+                Assert.assertTrue("@的用户已不在群聊", atList.stream().allMatch(id -> memberUidList.contains(id)));
+            }
+            body.setAtUidList(atList);
+        }
+        // 校验回复的id
+        if (body.getReplyMsgId() != null) {
+            Message replyMsg = messageDao.getById(body.getReplyMsgId());
+            Assert.assertNotNull("回复消息不存在", replyMsg);
+            Assert.assertTrue("只能回复处于同一会话的消息", Objects.equals(replyMsg.getRoomId(), roomId));
+        }
     }
 
     @Override
