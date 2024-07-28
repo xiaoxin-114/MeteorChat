@@ -38,7 +38,7 @@ public class ContactController {
         return ApiResult.success(result);
     }
 
-    @GetMapping("/public/contact/detail")
+    @GetMapping("/detail")
     @ApiOperation("会话详情")
     public ApiResult<ChatRoomResp> detail(@Valid IdBaseReq req) {
         Long uid = UserContext.getUid();
@@ -46,7 +46,7 @@ public class ContactController {
         return ApiResult.success(chatRoomResp);
     }
 
-    @GetMapping("/public/contact/detail/friend")
+    @GetMapping("/detail/friend")
     @ApiOperation("会话详情(联系人列表发消息用)")
     public ApiResult<ChatRoomResp> detailFriend(@Valid ContactFriendReq req) {
         Long uid = UserContext.getUid();

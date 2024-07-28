@@ -40,6 +40,7 @@ public class Contact implements Serializable {
     /**
      * 会话内消息最后更新的时间(只有普通会话需要维护，全员会话不需要维护)
      */
+    @TableField(value = "active_time")
     private Date activeTime;
 
     /**

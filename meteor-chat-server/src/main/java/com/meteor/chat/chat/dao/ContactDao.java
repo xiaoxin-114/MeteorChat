@@ -11,6 +11,7 @@ import com.meteor.chat.common.domain.vo.req.MessageReadCursorPageReq;
 import com.meteor.chat.common.mapper.ContactMapper;
 import com.meteor.chat.common.mapper.RoomMapper;
 import com.meteor.chat.common.util.CursorUtils;
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.stereotype.Repository;
 
 import java.util.Date;

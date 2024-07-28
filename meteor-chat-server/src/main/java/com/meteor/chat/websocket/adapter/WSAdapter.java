@@ -114,4 +114,9 @@ public class WSAdapter {
         wsMsgRecall.setRecallUid(dto.getRecallUid());
         return new WSBaseResp<>(WSRespTypeEnum.RECALL.getType(), wsMsgRecall);
     }
+
+    public static WSBaseResp<WSFriendApply> buildFriendApply(Long uid, Integer unreadCount) {
+        WSFriendApply wsFriendApply = new WSFriendApply(uid, unreadCount);
+        return new WSBaseResp<WSFriendApply>(WSRespTypeEnum.APPLY.getType(), wsFriendApply);
+    }
 }

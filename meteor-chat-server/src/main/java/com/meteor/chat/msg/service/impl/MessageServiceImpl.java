@@ -176,12 +176,15 @@ public class MessageServiceImpl implements MessageService {
     @RedissonLock(key = "#uid")
     public void readMsg(ChatMessageMemberReq req, Long uid) {
         Long roomId = req.getRoomId();
+        Room room = roomCache.get(roomId);
+        Assert.assertNotNull("房间号异常", room);
         Contact contact = contactDao.getByUidAndRoomId(roomId, uid);
         if (Objects.isNull(contact)) {
             Contact insert = new Contact();
             insert.setUid(uid);
             insert.setRoomId(roomId);
             insert.setReadTime(new Date());
+            insert.setActiveTime(room.getActiveTime());
             // 其余消息在群聊发送消息后自然会更新
             contactDao.save(insert);
         } else {
@@ -206,7 +209,7 @@ public class MessageServiceImpl implements MessageService {
             Assert.assertTrue("您已被移出群聊", memberUidList.contains(uid));
         }else if (RoomTypeEnum.SINGLE.getCode().equals(room.getType())) {
             List<RoomFriend> roomFriends = roomFriendDao.listByRoomIds(Collections.singletonList(roomId));
-            Assert.assertTrue("数据异常", roomFriends.size() > 1);
+            Assert.assertTrue("数据异常", roomFriends.size() == 1);
             RoomFriend roomFriend = roomFriends.get(0);
             Assert.assertEquals("您已被对方拉黑", RoomFriendStatusEnum.NORAML.getCode(), roomFriend.getStatus());
             Assert.assertTrue("您已被对方拉黑", roomFriend.hasUser(uid));
@@ -228,7 +231,7 @@ public class MessageServiceImpl implements MessageService {
             return memberUidList.contains(uid);
         }else if (RoomTypeEnum.SINGLE.getCode().equals(room.getType())) {
             List<RoomFriend> roomFriends = roomFriendDao.listByRoomIds(Collections.singletonList(roomId));
-            Assert.assertTrue("数据异常", roomFriends.size() > 1);
+            Assert.assertTrue("数据异常", roomFriends.size() == 1);
             RoomFriend roomFriend = roomFriends.get(0);
             return RoomFriendStatusEnum.NORAML.getCode().equals(roomFriend.getStatus()) || roomFriend.hasUser(uid);
         }

@@ -117,7 +117,10 @@ public class UserCache {
      */
     public Map<Long, User> getUserInfoBatch(List<Long> idList) {
         //获取到对于的redis中的key
+        // 必须对于idList去重，不然会有两个重复的元素，两个同样的key也会从redis中读取出两条一样的数据
+        // 导致后续出错
         List<String> keys = idList.stream()
+                .distinct()
                 .map(id -> RedisKey.getKey(RedisKey.USER_INFO_STRING, id))
                 .collect(Collectors.toList());
         // 从redis中获取用户信息数据

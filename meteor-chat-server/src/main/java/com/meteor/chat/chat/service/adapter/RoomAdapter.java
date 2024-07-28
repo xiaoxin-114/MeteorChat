@@ -71,7 +71,12 @@ public class RoomAdapter {
     public static Room buildRoom(RoomTypeEnum roomTypeEnum) {
         Room room = new Room();
         room.setType(roomTypeEnum.getCode());
+        room.setActiveTime(new Date());
         room.setHotFlag(HotFlagEunm.NORAML.getCode());
+        // 定义0为聊天室最新消息的id，为了保证更新聊天室最新活跃时间和最新消息id能够成功
+        // 如果为空，有个比较消息id和最新发送消息id的条件无法满足
+        // 也可以通过数据库表定义语句default来定义，contact表格也同理
+//        room.setLastMsgId(0L);
         return room;
     }
 

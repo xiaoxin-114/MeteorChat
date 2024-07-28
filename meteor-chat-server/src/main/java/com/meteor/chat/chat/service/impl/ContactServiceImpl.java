@@ -24,6 +24,7 @@ import com.meteor.chat.msg.service.handler.AbstractMsgHandler;
 import com.meteor.chat.msg.service.handler.MsgHandlerFactory;
 import com.meteor.chat.user.service.cache.UserCache;
 import org.apache.commons.collections.CollectionUtils;
+import org.springframework.data.redis.core.ZSetOperations;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -68,7 +69,8 @@ public class ContactServiceImpl implements ContactService {
         // 如果用户登陆了，还需要展示用户个人群聊
         if (Objects.nonNull(uid)) {
             privateRoom = contactDao.cursorPageByUid(request, uid);
-            List<Pair<Long, Double>> privateRoomIds = privateRoom.getList().stream().map(room -> Pair.of(room.getRoomId(), (double) room.getActiveTime().getTime())).collect(Collectors.toList());
+            // 过滤掉activeTime为空的聊天室，这些聊天室都是热点聊天室
+            List<Pair<Long, Double>> privateRoomIds = privateRoom.getList().stream().filter(room -> Objects.nonNull(room.getActiveTime())).map(room -> Pair.of(room.getRoomId(), (double) room.getActiveTime().getTime())).collect(Collectors.toList());
             roomList.addAll(privateRoomIds);
         }
         if (CollectionUtils.isEmpty(roomList)) {
@@ -102,11 +104,14 @@ public class ContactServiceImpl implements ContactService {
         return chatRoomDTOList.stream().map(dto -> {
             ChatRoomResp chatRoomResp = RoomAdapter.buildResp(dto);
             Message message = messageMap.get(dto.getLastMsgId());
-            User sender = senderInfoMap.get(message.getFromUid());
-            // 消息转换器，将消息转换成对应的显示内容
-            AbstractMsgHandler msgHandler = MsgHandlerFactory.getStrategyNotNull(message.getType());
-            String text = msgHandler.messageText(message);
-            chatRoomResp.setText(String.format("%s：%s", sender.getName(), text));
+            // 如果没消息，比如新创建的群聊
+            if (Objects.nonNull(message)) {
+                User sender = senderInfoMap.get(message.getFromUid());
+                // 消息转换器，将消息转换成对应的显示内容
+                AbstractMsgHandler msgHandler = MsgHandlerFactory.getStrategyNotNull(message.getType());
+                String text = msgHandler.messageText(message);
+                chatRoomResp.setText(String.format("%s：%s", sender.getName(), text));
+            }
             // 获取群聊的消息未读数
             Contact contact = contactMap.get(dto.getRoomId());
             int count = messageDao.countUnReadMsg(dto.getRoomId(), Optional.ofNullable(contact).map(Contact::getReadTime).orElse(null));

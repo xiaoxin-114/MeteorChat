@@ -27,7 +27,7 @@ public class UserApplyDao extends ServiceImpl<UserApplyMapper, UserApply> {
         return count(
                 new LambdaQueryWrapper<UserApply>()
                         .eq(UserApply::getTargetId, uid)
-                        .eq(UserApply::getStatus, UserApplyStatusEnum.WAITING.getCode()));
+                        .eq(UserApply::getReadStatus, ReadEnum.UNREAD.getCode()));
     }
 
     /**

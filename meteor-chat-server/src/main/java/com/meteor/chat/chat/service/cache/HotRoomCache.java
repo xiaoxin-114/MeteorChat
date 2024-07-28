@@ -35,7 +35,7 @@ public class HotRoomCache {
         return resp;
     }
 
-    public Set<ZSetOperations.TypedTuple<String>> rangeByScore(double min, double max) {
+    public Set<ZSetOperations.TypedTuple<String>> rangeByScore(Double min, Double max) {
         return RedisUtils.zRangeByScoreWithScores(RedisKey.HOT_ROOM_ZET, min, max);
     }
 

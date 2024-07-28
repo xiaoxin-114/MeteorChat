@@ -1,6 +1,7 @@
 package com.meteor.chat.user.service.impl;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.meteor.chat.common.constants.CommonConstants;
 import com.meteor.chat.common.domain.entity.User;
 import com.meteor.chat.common.domain.entity.UserApply;
 import com.meteor.chat.common.domain.entity.UserFriend;
@@ -8,11 +9,12 @@ import com.meteor.chat.common.domain.enums.UserApplyStatusEnum;
 import com.meteor.chat.common.domain.vo.*;
 import com.meteor.chat.common.domain.vo.req.*;
 import com.meteor.chat.common.exception.BusinessException;
-import com.meteor.chat.event.NewFriendEvent;
 import com.meteor.chat.event.NewUserApplyEvent;
 import com.meteor.chat.chat.dao.RoomFriendDao;
 import com.meteor.chat.chat.service.RoomService;
 import com.meteor.chat.chat.service.adapter.RoomAdapter;
+import com.meteor.chat.msg.service.MessageService;
+import com.meteor.chat.msg.service.adapter.MsgAdapter;
 import com.meteor.chat.user.dao.UserApplyDao;
 import com.meteor.chat.user.dao.UserFriendDao;
 import com.meteor.chat.user.service.UserFriendService;
@@ -20,6 +22,7 @@ import com.meteor.chat.user.service.adapter.FriendAdapter;
 import com.meteor.chat.user.service.cache.UserCache;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.Assert;
 import org.springframework.aop.framework.AopContext;
 import org.springframework.context.ApplicationEventPublisher;
@@ -51,6 +54,9 @@ public class UserFriendServiceImpl implements UserFriendService {
 
     @Resource
     private RoomFriendDao roomFriendDao;
+
+    @Resource
+    private MessageService messageService;
 
     @Override
     public CursorPageBaseResp<FriendResp> pageFriendList(Long uid, CursorPageBaseReq request) {
@@ -129,7 +135,8 @@ public class UserFriendServiceImpl implements UserFriendService {
         addFriend(userApply.getUid(), userApply.getTargetId());
         // 创建单聊会话，这里添加好友和创建单聊会话不能通过时间监听机制，因为要保证事务统一性
         Long roomId = roomService.buildSingleRoom(userApply.getUid(), userApply.getTargetId());
-        applicationEventPublisher.publishEvent(new NewFriendEvent(this, userApply, roomId));
+        // 自动发送消息
+        messageService.sendMsg(MsgAdapter.buildApprovalMsg(roomId, StringUtils.isEmpty(userApply.getMsg()) ? CommonConstants.USER_APPROVAL_MSG_CONTENT : userApply.getMsg()), userApply.getUid());
     }
 
     @Override

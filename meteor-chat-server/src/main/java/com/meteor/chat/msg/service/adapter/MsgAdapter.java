@@ -2,11 +2,13 @@ package com.meteor.chat.msg.service.adapter;
 
 
 import com.meteor.chat.common.domain.dto.MsgReadInfoDTO;
+import com.meteor.chat.common.domain.dto.msg.TextMsgReq;
 import com.meteor.chat.common.domain.entity.Contact;
 import com.meteor.chat.common.domain.entity.Message;
 import com.meteor.chat.common.domain.entity.MessageMark;
 import com.meteor.chat.common.domain.enums.DeleteStatusEunm;
 import com.meteor.chat.common.domain.enums.MessageMarkTypeEnum;
+import com.meteor.chat.common.domain.enums.MessageTypeEnum;
 import com.meteor.chat.common.domain.vo.ChatMessageResp;
 import com.meteor.chat.common.domain.vo.req.ChatMessageReq;
 import com.meteor.chat.msg.service.handler.AbstractMsgHandler;
@@ -33,6 +35,12 @@ public class MsgAdapter {
                 .unReadCount(contacts.size() - readCount).build();
     }
 
+    /**
+     * 生成消息的基本信息
+     * @param req
+     * @param uid
+     * @return
+     */
     public static Message buildMessage(ChatMessageReq req, Long uid) {
         Message message = new Message();
         message.setRoomId(req.getRoomId());
@@ -42,7 +50,33 @@ public class MsgAdapter {
         return message;
     }
 
+    /**
+     * 构建好友同意后的自动发送的消息
+     * 不需要发送目标，是因为roomid已经可以查询到目标了
+     * 不需要发送者，因为当前线程就包含了发送者消息
+     * @param roomId 房间号
+     * @param content 同意内容，如果好友申请有消息则返回好友申请中的消息，没有则默认
+     *                ”已通过好友申请，开始和我聊天把“
+     * @return
+     */
+    public static ChatMessageReq buildApprovalMsg(Long roomId, String content) {
+        ChatMessageReq chatMessageReq = new ChatMessageReq();
+        chatMessageReq.setRoomId(roomId);
+        chatMessageReq.setMsgType(MessageTypeEnum.TEXT.getType());
+        TextMsgReq textMsgReq = new TextMsgReq();
+        chatMessageReq.setBody(textMsgReq);
+        textMsgReq.setContent(content);
+        return chatMessageReq;
+    }
 
+
+    /**
+     * 封装消息数据，返回给前端
+     * @param messageList
+     * @param markList
+     * @param receiveUid
+     * @return
+     */
     public static List<ChatMessageResp> buildChatMessageResp(List<Message> messageList,
                                                                   List<MessageMark> markList,
                                                                   Long receiveUid) {

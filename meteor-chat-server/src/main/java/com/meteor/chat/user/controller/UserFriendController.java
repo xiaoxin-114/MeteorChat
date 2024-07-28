@@ -56,7 +56,7 @@ public class UserFriendController {
 
     @PutMapping("/apply")
     @ApiOperation("同意申请")
-    public ApiResult processApply(@Valid FriendApproveReq req) {
+    public ApiResult processApply(@Valid @RequestBody FriendApproveReq req) {
         friendService.processApply(req);
         return ApiResult.success();
     }
