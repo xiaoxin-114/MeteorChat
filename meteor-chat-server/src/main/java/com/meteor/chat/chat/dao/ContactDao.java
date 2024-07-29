@@ -78,12 +78,15 @@ public class ContactDao extends ServiceImpl<ContactMapper, Contact> {
         remove(queryWrapper);
     }
 
-    public void refreshActiveTime(Long roomId, Date sendTime, Long msgId) {
-        lambdaUpdate().set(Contact::getLastMsgId, msgId)
-                .set(Contact::getActiveTime, sendTime)
-                .eq(Contact::getRoomId, roomId)
-                .lt(Contact::getLastMsgId, msgId)
-                .update();
+    /**
+     * 更新contact表格的最新消息id和活跃时间，如果数据库中没有记录则新增，有则修改
+     * @param roomId
+     * @param uidList
+     * @param sendTime
+     * @param msgId
+     */
+    public void refreshActiveTime(Long roomId, List<Long> uidList, Date sendTime, Long msgId) {
+        super.getBaseMapper().refreshActiveTime(roomId, uidList, sendTime, msgId);
     }
 
     /**
