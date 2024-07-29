@@ -19,5 +19,5 @@ public class MessageReadCursorPageReq extends CursorPageBaseReq {
 
     @ApiModelProperty("查询类型 1已读 2未读")
     @NotNull
-    private Long searchType;
+    private Integer searchType;
 }

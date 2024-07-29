@@ -8,8 +8,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Getter
 public enum ReadEnum {
-    UNREAD(1, "未读"),
-    READED(2, "已读");
+    UNREAD(2, "未读"),
+    READED(1, "已读");
     private Integer code;
     private String desc;
 }
