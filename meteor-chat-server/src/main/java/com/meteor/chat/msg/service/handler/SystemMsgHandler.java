@@ -14,7 +14,7 @@ public class SystemMsgHandler extends AbstractMsgHandler<String> {
     @Resource
     private MessageDao messageDao;
 
-    private final MessageTypeEnum MESSAGE_TYPE = MessageTypeEnum.VIDEO;
+    private final MessageTypeEnum MESSAGE_TYPE = MessageTypeEnum.SYSTEM;
 
     @Override
     MessageTypeEnum getMsgType() {

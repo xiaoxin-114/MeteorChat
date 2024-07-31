@@ -105,7 +105,7 @@ public class RoomServiceImpl implements RoomService {
         if (room.isHotRoom()) {
             onlineCount = userCache.getOnlineNum();
         }else {
-            List<Long> uidList = groupMemberCache.getMemberUidList(roomGroup.getId());
+            List<Long> uidList = groupMemberCache.getMemberUidList(req.getId());
             onlineCount = uidList.stream()
                     .filter(id -> userCache.isOnline(id)).count();
         }
@@ -125,7 +125,7 @@ public class RoomServiceImpl implements RoomService {
         RoomGroup roomGroup = roomGroupCache.get(req.getRoomId());
         List<Long> uidList = null;
         if (!room.isHotRoom()) {
-            uidList = groupMemberCache.getMemberUidList(roomGroup.getId());
+            uidList = groupMemberCache.getMemberUidList(req.getRoomId());
         }
         CursorPageBaseResp<User> userPage = userService.cursorPageUser(req, uidList);
         if (CollectionUtils.isEmpty(userPage.getList())) {
@@ -146,8 +146,7 @@ public class RoomServiceImpl implements RoomService {
              List<User> userList = userDao.getMemberList();
              return RoomAdapter.buildMemberListResp(userList);
         } else {
-            RoomGroup roomGroup = roomGroupCache.get(roomId);
-            List<Long> uidList = groupMemberCache.getMemberUidList(roomGroup.getId());
+            List<Long> uidList = groupMemberCache.getMemberUidList(roomId);
             Map<Long, User> userMap = userCache.getUserInfoBatch(uidList);
             return RoomAdapter.buildMemberListResp(new ArrayList<>(userMap.values()));
         }
@@ -173,7 +172,7 @@ public class RoomServiceImpl implements RoomService {
         }
         groupMemberDao.removeMember(roomGroup.getId(), req.getUid());
         contactDao.removeContact(roomId, req.getUid());
-        // 向所有用户发送用户被移除的消息
+        // 向所有用户端推送用户被移除的消息
         List<Long> uidList = groupMemberCache.getMemberUidList(roomId);
         WSBaseResp<WSMemberChange> wsBaseResp = WSAdapter.buildGroupMemberRemove(roomId, req.getUid());
         pushService.pushMsg(wsBaseResp, uidList);
@@ -214,13 +213,13 @@ public class RoomServiceImpl implements RoomService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    @RedissonLock(prefixKey = "createGroup:#uid")
+    @RedissonLock(key = "'createGroup:'+#uid")
     public Long createChatGroup(GroupAddReq req, Long uid) {
         if (Objects.isNull(uid)) {
             throw new BusinessException("用户未登陆，创建群聊失败");
         }
         int count = groupMemberDao.countLeader(uid);
-        Assert.assertTrue("该用户已经创建过群聊", count < 1);
+//        Assert.assertTrue("该用户已经创建过群聊", count < 1);
         RoomGroup roomGroup = buildGroupRoom(uid);
         // 用户的群主角色
         GroupMember leaderMember = RoomAdapter.buildGroupMember(uid,  roomGroup, GroupRoleAPPEnum.LEADER);
@@ -247,7 +246,6 @@ public class RoomServiceImpl implements RoomService {
                 .map(id -> RoomAdapter.buildGroupMember(id, roomGroup, GroupRoleAPPEnum.MEMBER))
                 .collect(Collectors.toList());
         groupMemberDao.saveBatch(needAddGroupMember);
-        groupMemberCache.evictMemberUidList(roomId);
         applicationEventPublisher.publishEvent(new GroupMemberAddEvent(this, needAddGroupMember, roomGroup, uid));
     }
 

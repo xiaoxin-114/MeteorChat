@@ -5,10 +5,11 @@ import com.meteor.chat.common.domain.entity.Message;
 import com.meteor.chat.common.domain.entity.MessageExtra;
 import com.meteor.chat.common.domain.enums.MessageTypeEnum;
 import com.meteor.chat.msg.dao.MessageDao;
+import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 import java.util.Optional;
-
+@Component
 public class EmojiMsgHandler extends AbstractMsgHandler<EmojisMsgDTO>{
     @Resource
     private MessageDao messageDao;

@@ -12,6 +12,7 @@ import com.meteor.chat.chat.service.cache.GroupMemberCache;
 import com.meteor.chat.chat.service.cache.RoomCache;
 import com.meteor.chat.chat.service.cache.RoomGroupCache;
 import com.meteor.chat.common.annotation.RedissonLock;
+import com.meteor.chat.common.constants.CommonConstants;
 import com.meteor.chat.common.domain.dto.MessageRecallDTO;
 import com.meteor.chat.common.domain.dto.MsgReadInfoDTO;
 import com.meteor.chat.common.domain.entity.*;
@@ -116,7 +117,10 @@ public class MessageServiceImpl implements MessageService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public Long sendMsg(ChatMessageReq request, Long uid) {
-        checkSendMsg(request, uid);
+        if (!CommonConstants.SYSTEM_UID.equals(uid)) {
+            // 系统消息以外的需要校验
+            checkSendMsg(request, uid);
+        }
         AbstractMsgHandler msgHandler = MsgHandlerFactory.getStrategyNotNull(request.getMsgType());
         Long msgId = msgHandler.handlerMsg(request, uid);
         applicationEventPublisher.publishEvent(new MessageSendEvent(this, msgId));

@@ -47,7 +47,7 @@ public class RoomController {
 
     @DeleteMapping("/group/member")
     @ApiOperation("移除成员")
-    public ApiResult<Void> removeMember(@Valid MemberDelReq req) {
+    public ApiResult<Void> removeMember(@Valid @RequestBody MemberDelReq req) {
         Long uid = UserContext.getUid();
         roomService.removeMember(req, uid);
         return ApiResult.success();

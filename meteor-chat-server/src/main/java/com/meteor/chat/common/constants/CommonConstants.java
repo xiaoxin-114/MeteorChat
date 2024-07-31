@@ -15,4 +15,8 @@ public interface CommonConstants {
     int MAX_ADMIN_NUM = 3;
 
     int CAN_CALLBACK_GAP_MAX_COUNT = 100;
+    /**
+     * 系统消息的发送用户
+     */
+    Long SYSTEM_UID = 1L;
 }

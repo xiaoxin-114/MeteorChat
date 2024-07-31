@@ -22,9 +22,10 @@ public abstract class AbstractRedisStringCache<K, V> implements BatchCache<K, V>
         if (CollectionUtils.isEmpty(list)){
             return new HashMap<>();
         }
+        // 先去重
+        list = list.stream().distinct().collect(Collectors.toList());
         // 将list转换成redis里的key列表
         List<String> keys = list.stream()
-                .distinct()
                 .map(k -> getKey(k))
                 .collect(Collectors.toList());
         // 从redis中加载数据，返回的结果是以key顺序得到的值，如果redis没有那么对应位置是null

@@ -69,6 +69,19 @@ public class MsgAdapter {
         return chatMessageReq;
     }
 
+    /**
+     * 创建新增成员的系统信息
+     * @param roomId 聊天室id
+     * @param content 消息的内容
+     * @return
+     */
+    public static ChatMessageReq buildMemberChange(Long roomId, String content) {
+        return ChatMessageReq.builder()
+                .roomId(roomId)
+                .body(content)
+                .msgType(MessageTypeEnum.SYSTEM.getType())
+                .build();
+    }
 
     /**
      * 封装消息数据，返回给前端

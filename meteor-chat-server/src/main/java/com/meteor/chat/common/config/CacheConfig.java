@@ -1,7 +1,6 @@
 package com.meteor.chat.common.config;
 
 import com.github.benmanes.caffeine.cache.Caffeine;
-import org.apache.ibatis.annotations.Param;
 import org.redisson.spring.cache.CacheConfigSupport;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.EnableCaching;
