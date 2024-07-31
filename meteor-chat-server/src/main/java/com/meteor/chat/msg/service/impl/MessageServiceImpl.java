@@ -86,8 +86,10 @@ public class MessageServiceImpl implements MessageService {
         }else {
             contactPage = contactDao.cursorReadPage(req, message.getRoomId(), message.getCreateTime());
         }
-        List<Long> uidList = contactPage.getList().stream().map(Contact::getUid)
-                .filter(id -> !message.getFromUid().equals(id)).collect(Collectors.toList());
+        List<ChatMessageReadResp> uidList = contactPage.getList().stream()
+                .filter(contact -> !message.getFromUid().equals(contact.getUid()))
+                .map(contact -> new ChatMessageReadResp(contact.getUid()))
+                .collect(Collectors.toList());
         return CursorPageBaseResp.init(contactPage, uidList);
     }
 
