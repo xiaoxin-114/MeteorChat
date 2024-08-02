@@ -190,7 +190,6 @@ public class MessageServiceImpl implements MessageService {
             insert.setUid(uid);
             insert.setRoomId(roomId);
             insert.setReadTime(new Date());
-            insert.setActiveTime(room.getActiveTime());
             // 其余消息在群聊发送消息后自然会更新
             contactDao.save(insert);
         } else {

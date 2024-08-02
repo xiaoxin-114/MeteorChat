@@ -22,6 +22,7 @@ import org.apache.rocketmq.spring.annotation.MessageModel;
 import org.apache.rocketmq.spring.annotation.RocketMQMessageListener;
 import org.apache.rocketmq.spring.core.RocketMQListener;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import javax.websocket.OnMessage;
@@ -63,6 +64,7 @@ public class MsgSendConsumer implements RocketMQListener<MsgSendMessageDTO> {
     private RoomFriendCache roomFriendCache;
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void onMessage(MsgSendMessageDTO dto) {
         Long msgId = dto.getMsgId();
         // 此时是推送新消息的，不会有人点赞和点踩，所有不用关心接收用户
