@@ -9,6 +9,7 @@ import com.meteor.chat.common.domain.vo.req.*;
 import com.meteor.chat.common.frequency.annotation.FrequencyControl;
 import com.meteor.chat.common.util.UserContext;
 import com.meteor.chat.msg.service.MessageService;
+import com.meteor.chat.oss.MinIOTemplate;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.stereotype.Controller;
