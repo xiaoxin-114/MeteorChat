@@ -32,4 +32,12 @@ public class GlobalExceptionHandler {
         log.error(e.getMessage(), e);
         return ApiResult.fail(e.getCode(), e.getMessage());
     }
+
+    @ExceptionHandler(value = AssertionError.class)
+    @ResponseStatus(code = HttpStatus.BAD_REQUEST)
+    public ApiResult assertErrorHandler(AssertionError error) {
+        log.error(error.getMessage(), error);
+        return ApiResult.fail(CommonErrorEnum.PARAM_ERROR.getErrCode(), error.getMessage());
+    }
+
 }

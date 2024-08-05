@@ -8,11 +8,11 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 
-@Configuration
+@Configuration(proxyBeanMethods = false)
 @AllArgsConstructor
 @EnableConfigurationProperties(OssProperties.class)
 @ComponentScan(basePackages = "com.meteor.chat.oss")
-@ConditionalOnExpression("${oss.enable}")
+@ConditionalOnExpression("${oss.enabled}")
 @ConditionalOnProperty(value = "oss.type", havingValue = "minio")
 public class MinioConfiguration {
 
