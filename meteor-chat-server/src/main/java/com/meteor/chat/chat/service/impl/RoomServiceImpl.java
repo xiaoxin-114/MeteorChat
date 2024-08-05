@@ -159,6 +159,7 @@ public class RoomServiceImpl implements RoomService {
         Long roomId = req.getRoomId();
         Room room = roomCache.get(roomId);
         RoomGroup roomGroup = roomGroupCache.get(roomId);
+        Assert.assertFalse("全员群不支持移除群成员", room.isHotRoom());
         Assert.assertNotNull("聊天室id错误", roomGroup);
         GroupRoleAPPEnum deleteRole = getGroupRole(req.getUid(), room, roomGroup);
         Assert.assertNotEquals("群主无法被移出群聊", GroupRoleAPPEnum.LEADER, deleteRole);
@@ -185,13 +186,14 @@ public class RoomServiceImpl implements RoomService {
         Long roomId = req.getRoomId();
         Room room = roomCache.get(roomId);
         Assert.assertNotNull("聊天室id错误", room);
+        Assert.assertFalse("全员群不允许退出", room.isHotRoom());
         RoomGroup roomGroup = roomGroupCache.get(roomId);
         Assert.assertNotNull("聊天室id错误", roomGroup);
         GroupRoleAPPEnum groupRole = getGroupRole(uid, room, roomGroup);
         Assert.assertEquals("当前用户不在群聊内", GroupRoleAPPEnum.REMOVE, groupRole);
+        List<Long> memberUidList = groupMemberCache.getMemberUidList(roomId);
         if (GroupRoleAPPEnum.LEADER.equals(groupRole)) {
             // 如果是群主就直接解散群聊
-            List<Long> memberUidList = groupMemberCache.getMemberUidList(roomId);
             groupMemberDao.removeMember(roomGroup.getId(), null);
             contactDao.removeByRoomId(roomId);
             groupMemberCache.evictMemberUidList(roomId);
@@ -202,7 +204,6 @@ public class RoomServiceImpl implements RoomService {
             // 删除群聊的消息记录
             messageDao.removeByRoomId(roomId);
         } else {
-            List<Long> memberUidList = groupMemberCache.getMemberUidList(roomId);
             groupMemberDao.removeMember(roomGroup.getId(), uid);
             contactDao.removeContact(roomId, uid);
             groupMemberCache.evictMemberUidList(roomId);

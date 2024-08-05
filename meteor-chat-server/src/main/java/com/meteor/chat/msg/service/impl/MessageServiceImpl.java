@@ -165,7 +165,7 @@ public class MessageServiceImpl implements MessageService {
             boolean hasRoomPower = roomService.hasRoomPower(uid, req.getRoomId());
             Assert.assertTrue("用户没有权限操作", hasRoomPower);
         }
-        Assert.assertTrue("发出超出2分钟的消息无法撤回", message.getCreateTime().before(DateUtil.offsetMinute(new Date(), -2)));
+        Assert.assertFalse("发出超出2分钟的消息无法撤回", message.getCreateTime().before(DateUtil.offsetMinute(new Date(), -2)));
         // 修改消息信息
         MessageExtra extra = message.getExtra();
         MsgRecall msgRecall = MsgRecall.builder().recallUid(uid).recallTime(new Date()).build();

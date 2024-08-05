@@ -1,6 +1,7 @@
 package com.meteor.chat.msg.service.handler;
 import com.meteor.chat.chat.service.RoomService;
 import com.meteor.chat.chat.service.cache.GroupMemberCache;
+import com.meteor.chat.chat.service.cache.RoomCache;
 import com.meteor.chat.common.constants.CommonConstants;
 import com.meteor.chat.common.domain.dto.msg.TextMsgResp.ReplyMsg;
 import com.meteor.chat.common.domain.dto.msg.TextMsgReq;
@@ -42,6 +43,9 @@ public class TextMsgHandler extends AbstractMsgHandler<TextMsgReq> {
     @Resource
     private RoomService roomService;
 
+    @Resource
+    private RoomCache roomCache;
+
     @Override
     MessageTypeEnum getMsgType() {
         return MESSAGE_TYPE;
@@ -78,9 +82,11 @@ public class TextMsgHandler extends AbstractMsgHandler<TextMsgReq> {
                 Assert.assertTrue("只有管理员才能@全员", roomService.hasRoomPower(uid, roomId));
                 atList = Collections.singletonList(0L);
             } else {
-                // 确保at的成员都在群聊中
-                List<Long> memberUidList = groupMemberCache.getMemberUidList(roomId);
-                Assert.assertTrue("@的用户已不在群聊", atList.stream().allMatch(id -> memberUidList.contains(id)));
+                if (!roomCache.get(roomId).isHotRoom()) {
+                    // 确保at的成员都在群聊中
+                    List<Long> memberUidList = groupMemberCache.getMemberUidList(roomId);
+                    Assert.assertTrue("@的用户已不在群聊", atList.stream().allMatch(id -> memberUidList.contains(id)));
+                }
             }
             body.setAtUidList(atList);
         }
