@@ -11,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
@@ -188,9 +189,12 @@ public class UserCache {
         return RedisKey.getKey(key);
     }
 
-    @Cacheable(value = "user", key = "'blackList'")
+    @Cacheable(value = "user", key = "'blackMap'")
     public Map<Integer, Set<String>> getBlackMap() {
         List<Black> blackList = blackDao.list();
+        if (CollectionUtils.isEmpty(blackList)) {
+            return new HashMap<>();
+        }
         Map<Integer, List<Black>> map = blackList.stream().collect(Collectors.groupingBy(Black::getType));
         Map<Integer, Set<String>> result = new HashMap<>();
         map.forEach((key, list) -> result.put(key,
@@ -198,7 +202,16 @@ public class UserCache {
         return result;
     }
 
-    @CacheEvict(value = "user", key = "'blackList'")
+    @Cacheable(value = "user", key = "'blackList'")
+    public Set<String> getBlackList() {
+        List<Black> blackList = blackDao.list();
+        if (CollectionUtils.isEmpty(blackList)) {
+            return new HashSet<>();
+        }
+        return blackList.stream().map(Black::getTarget).collect(Collectors.toSet());
+    }
+
+    @Caching(evict = {@CacheEvict(value = "user", key = "'blackMap'"), @CacheEvict(value = "user", key = "'blackList'")})
     public void clearBlackMap() {
 
     }

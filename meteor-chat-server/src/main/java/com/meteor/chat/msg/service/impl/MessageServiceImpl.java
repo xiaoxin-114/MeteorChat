@@ -32,6 +32,7 @@ import com.meteor.chat.msg.service.MessageService;
 import com.meteor.chat.msg.service.adapter.MsgAdapter;
 import com.meteor.chat.msg.service.handler.AbstractMsgHandler;
 import com.meteor.chat.msg.service.handler.MsgHandlerFactory;
+import com.meteor.chat.user.service.cache.UserCache;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.junit.Assert;
@@ -40,10 +41,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 @Service
 @Slf4j
@@ -76,6 +74,9 @@ public class MessageServiceImpl implements MessageService {
     @Resource
     private RoomService roomService;
 
+    @Resource
+    private UserCache userCache;
+
     @Override
     public CursorPageBaseResp<ChatMessageReadResp> cursorPageMsgReader(MessageReadCursorPageReq req) {
         Long msgId = req.getMsgId();
@@ -88,6 +89,7 @@ public class MessageServiceImpl implements MessageService {
             contactPage = contactDao.cursorReadPage(req, message.getRoomId(), message.getCreateTime());
         }
         List<ChatMessageReadResp> uidList = contactPage.getList().stream()
+                // 过滤掉发送消息的用户
                 .filter(contact -> !message.getFromUid().equals(contact.getUid()))
                 .map(contact -> new ChatMessageReadResp(contact.getUid()))
                 .collect(Collectors.toList());
@@ -98,11 +100,7 @@ public class MessageServiceImpl implements MessageService {
     public List<MsgReadInfoDTO> countReadAndUnRead(MessageReadInfoReq req, Long uid) {
         List<Long> idList = req.getMsgIds();
         List<Message> msgList = messageDao.listByIds(idList);
-        msgList.forEach(msg -> {
-            if (!uid.equals(msg.getFromUid())) {
-                throw new BusinessException("只能查询自己发送的消息阅读数");
-            }
-        });
+        Assert.assertTrue("只能查询自己发送的消息阅读数", msgList.stream().allMatch(msg -> uid.equals(msg.getFromUid())));
         List<Long> roomIds = msgList.stream().map(Message::getRoomId).distinct().collect(Collectors.toList());
         Assert.assertTrue("只能查询同一会话下的消息", roomIds.size() == 1);
         List<Contact> contactList = contactDao.listByRoomId(roomIds.get(0), uid);
@@ -142,7 +140,10 @@ public class MessageServiceImpl implements MessageService {
         if (messageCursorPage.isEmpty()) {
             return CursorPageBaseResp.empty();
         }
+        Set<String> blackList = userCache.getBlackList();
         List<Message> messageList = messageCursorPage.getList();
+        // 过滤掉被拉黑用户的信息
+        messageList = messageList.stream().filter(message -> !blackList.contains(message.getFromUid())).collect(Collectors.toList());
         List<MessageMark> messageMarkList = messageMarkDao.listByMsgIdList(messageList.stream().map(Message::getId).collect(Collectors.toList()));
         return CursorPageBaseResp.init(messageCursorPage, MsgAdapter.buildChatMessageResp(messageList, messageMarkList, uid));
     }

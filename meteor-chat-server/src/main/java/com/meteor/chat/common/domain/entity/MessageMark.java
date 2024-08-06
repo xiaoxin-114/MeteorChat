@@ -38,7 +38,7 @@ public class MessageMark implements Serializable {
     private Integer type;
 
     /**
-     * 消息状态 0正常 1取消
+     * 消息状态 1正常 0取消
      */
     private Integer status;
 
