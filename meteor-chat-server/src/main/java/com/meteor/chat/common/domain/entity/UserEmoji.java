@@ -1,6 +1,7 @@
 package com.meteor.chat.common.domain.entity;
 
 import com.baomidou.mybatisplus.annotation.*;
+import com.meteor.chat.common.domain.vo.UserEmojiResp;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -47,6 +48,10 @@ public class UserEmoji implements Serializable {
 
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;
+
+    public UserEmojiResp toResp() {
+        return UserEmojiResp.builder().id(id).expressionUrl(expressionUrl).build();
+    }
 
     @Override
     public boolean equals(Object that) {

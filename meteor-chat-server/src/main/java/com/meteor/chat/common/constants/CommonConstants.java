@@ -5,6 +5,7 @@ public interface CommonConstants {
     String USER_APPROVAL_MSG_CONTENT = "我们已经成为好友了，开始聊天吧";
     int USER_BACK_PACK_USED = 1;
     int USER_BACK_PACK_NOT_USED = 0;
+    int USER_EMOJI_MAX_NUM = 30;
     // 解析ip归属地线程名称
     String IP_EXECUTOR = "refresh-ipDetail";
     // 解析ip归属地最大重试次数
