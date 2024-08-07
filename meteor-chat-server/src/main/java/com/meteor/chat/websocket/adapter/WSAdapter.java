@@ -4,6 +4,7 @@ import java.util.Date;
 
 import com.meteor.chat.chat.service.adapter.RoomAdapter;
 import com.meteor.chat.common.domain.dto.MessageRecallDTO;
+import com.meteor.chat.common.domain.dto.MsgMarkDTO;
 import com.meteor.chat.common.domain.entity.GroupMember;
 import com.meteor.chat.common.domain.entity.Message;
 import com.meteor.chat.common.domain.entity.User;
@@ -118,5 +119,17 @@ public class WSAdapter {
     public static WSBaseResp<WSFriendApply> buildFriendApply(Long uid, Integer unreadCount) {
         WSFriendApply wsFriendApply = new WSFriendApply(uid, unreadCount);
         return new WSBaseResp<WSFriendApply>(WSRespTypeEnum.APPLY.getType(), wsFriendApply);
+    }
+
+    public static WSBaseResp<WSMsgMark> buildMsgMarkResp(MsgMarkDTO msgMarkDTO, Integer markCount) {
+        WSMsgMark wsMsgMark = new WSMsgMark();
+        WSMsgMark.WSMsgMarkItem wsMsgMarkItem = new WSMsgMark.WSMsgMarkItem();
+        wsMsgMarkItem.setUid(msgMarkDTO.getUid());
+        wsMsgMarkItem.setMarkType(msgMarkDTO.getMarkType());
+        wsMsgMarkItem.setMarkCount(markCount);
+        wsMsgMarkItem.setActType(msgMarkDTO.getActType());
+        wsMsgMarkItem.setMsgId(msgMarkDTO.getMsgId());
+        wsMsgMark.setMarkList(Collections.singletonList(wsMsgMarkItem));
+        return new WSBaseResp<>(WSRespTypeEnum.MARK.getType(), wsMsgMark);
     }
 }

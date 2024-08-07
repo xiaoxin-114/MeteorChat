@@ -1,6 +1,6 @@
-package com.meteor.chat.msg.service.handler;
+package com.meteor.chat.msg.service.handler.msg;
 
-import com.meteor.chat.common.domain.dto.msg.EmojisMsgDTO;
+import com.meteor.chat.common.domain.dto.msg.VideoMsgDTO;
 import com.meteor.chat.common.domain.entity.Message;
 import com.meteor.chat.common.domain.entity.MessageExtra;
 import com.meteor.chat.common.domain.enums.MessageTypeEnum;
@@ -9,22 +9,13 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 import java.util.Optional;
+
 @Component
-public class EmojiMsgHandler extends AbstractMsgHandler<EmojisMsgDTO>{
+public class VideoMsgHandler extends AbstractMsgHandler<VideoMsgDTO> {
     @Resource
     private MessageDao messageDao;
 
-    private final MessageTypeEnum MESSAGE_TYPE = MessageTypeEnum.EMOJI;
-
-    @Override
-    void saveMessageExtra(Message message, EmojisMsgDTO body) {
-        MessageExtra messageExtra = Optional.ofNullable(message.getExtra()).orElse(new MessageExtra());
-        Message update = new Message();
-        update.setId(message.getId());
-        messageExtra.setEmojisMsgDTO(body);
-        update.setExtra(messageExtra);
-        messageDao.updateById(update);
-    }
+    private final MessageTypeEnum MESSAGE_TYPE = MessageTypeEnum.VIDEO;
 
     @Override
     MessageTypeEnum getMsgType() {
@@ -32,17 +23,27 @@ public class EmojiMsgHandler extends AbstractMsgHandler<EmojisMsgDTO>{
     }
 
     @Override
+    void saveMessageExtra(Message message, VideoMsgDTO body) {
+        MessageExtra messageExtra = Optional.ofNullable(message.getExtra()).orElse(new MessageExtra());
+        Message update = new Message();
+        update.setId(message.getId());
+        messageExtra.setVideoMsgDTO(body);
+        update.setExtra(messageExtra);
+        messageDao.updateById(update);
+    }
+
+    @Override
     public String messageText(Message message) {
-        return "[表情包]";
+        return "[视频]";
     }
 
     @Override
     public String replyMsgText(Message message) {
-        return "表情";
+        return "视频";
     }
 
     @Override
     public Object buildMessageBody(Message message) {
-        return message.getExtra().getEmojisMsgDTO();
+        return message.getExtra().getVideoMsgDTO();
     }
 }

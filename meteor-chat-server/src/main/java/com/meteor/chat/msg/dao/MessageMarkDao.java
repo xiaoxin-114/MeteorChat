@@ -20,7 +20,7 @@ public class MessageMarkDao extends ServiceImpl<MessageMarkMapper, MessageMark> 
         return countMsgType(msgId, MessageMarkTypeEnum.UNLIKE.getCode());
     }
 
-    private Integer countMsgType(Long msgId, Integer type) {
+    public Integer countMsgType(Long msgId, Integer type) {
         return lambdaQuery().eq(MessageMark::getMsgId, msgId)
                 .eq(MessageMark::getType, type)
                 .eq(MessageMark::getStatus, YesOrNoEnum.YES.getCode())
@@ -36,5 +36,19 @@ public class MessageMarkDao extends ServiceImpl<MessageMarkMapper, MessageMark> 
     public List<MessageMark> listByMsgIdList(List<Long> msgIds) {
         return lambdaQuery().in(MessageMark::getMsgId, msgIds)
                 .eq(MessageMark::getStatus, YesOrNoEnum.YES.getCode()).list();
+    }
+
+    /**
+     * 根据用户id，消息id，标记类型获取一个对象
+     * @param markType
+     * @param msgId
+     * @param uid
+     * @return
+     */
+    public MessageMark getByTypeAndMsgIdAndUid(Integer markType, Long msgId, Long uid) {
+        return lambdaQuery().eq(MessageMark::getMsgId, msgId)
+                .eq(MessageMark::getUid, uid)
+                .eq(MessageMark::getType, markType)
+                .one();
     }
 }

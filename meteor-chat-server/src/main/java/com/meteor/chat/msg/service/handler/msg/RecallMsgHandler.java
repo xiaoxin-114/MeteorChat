@@ -1,4 +1,4 @@
-package com.meteor.chat.msg.service.handler;
+package com.meteor.chat.msg.service.handler.msg;
 
 import com.meteor.chat.common.domain.entity.Message;
 import com.meteor.chat.common.domain.entity.MsgRecall;
@@ -11,7 +11,6 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 import java.util.Objects;
-import java.util.Optional;
 
 @Component
 @Slf4j

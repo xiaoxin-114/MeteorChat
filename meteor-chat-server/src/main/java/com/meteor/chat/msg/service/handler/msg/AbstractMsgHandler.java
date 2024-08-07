@@ -1,4 +1,4 @@
-package com.meteor.chat.msg.service.handler;
+package com.meteor.chat.msg.service.handler.msg;
 
 import cn.hutool.core.bean.BeanUtil;
 import com.meteor.chat.common.domain.entity.Message;

@@ -1,4 +1,4 @@
-package com.meteor.chat.msg.service.handler;
+package com.meteor.chat.msg.service.handler.msg;
 
 import com.meteor.chat.common.domain.enums.MessageTypeEnum;
 import com.meteor.chat.common.exception.CommonErrorEnum;

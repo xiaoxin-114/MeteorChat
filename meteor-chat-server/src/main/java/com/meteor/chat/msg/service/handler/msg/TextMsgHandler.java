@@ -1,4 +1,4 @@
-package com.meteor.chat.msg.service.handler;
+package com.meteor.chat.msg.service.handler.msg;
 import com.meteor.chat.chat.service.RoomService;
 import com.meteor.chat.chat.service.cache.GroupMemberCache;
 import com.meteor.chat.chat.service.cache.RoomCache;
@@ -16,7 +16,6 @@ import com.meteor.chat.common.util.discover.PrioritizedUrlDiscover;
 import com.meteor.chat.msg.dao.MessageDao;
 import com.meteor.chat.user.service.cache.UserCache;
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.junit.Assert;
 import org.springframework.stereotype.Component;
 

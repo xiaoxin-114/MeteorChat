@@ -1,5 +1,6 @@
-package com.meteor.chat.msg.service.handler;
+package com.meteor.chat.msg.service.handler.msg;
 
+import com.meteor.chat.common.domain.dto.msg.FileMsgDTO;
 import com.meteor.chat.common.domain.entity.Message;
 import com.meteor.chat.common.domain.entity.MessageExtra;
 import com.meteor.chat.common.domain.enums.MessageTypeEnum;
@@ -10,11 +11,11 @@ import javax.annotation.Resource;
 import java.util.Optional;
 
 @Component
-public class SystemMsgHandler extends AbstractMsgHandler<String> {
+public class FileMsgHandler extends AbstractMsgHandler<FileMsgDTO> {
     @Resource
     private MessageDao messageDao;
 
-    private final MessageTypeEnum MESSAGE_TYPE = MessageTypeEnum.SYSTEM;
+    private final MessageTypeEnum MESSAGE_TYPE = MessageTypeEnum.FILE;
 
     @Override
     MessageTypeEnum getMsgType() {
@@ -22,25 +23,27 @@ public class SystemMsgHandler extends AbstractMsgHandler<String> {
     }
 
     @Override
-    void saveMessageExtra(Message message, String body) {
+    void saveMessageExtra(Message message, FileMsgDTO body) {
+        MessageExtra messageExtra = Optional.ofNullable(message.getExtra()).orElse(new MessageExtra());
         Message update = new Message();
         update.setId(message.getId());
-        update.setContent(body);
+        messageExtra.setFileMsgDTO(body);
+        update.setExtra(messageExtra);
         messageDao.updateById(update);
     }
 
     @Override
     public String messageText(Message message) {
-        return message.getContent();
+        return "[文件]" + message.getExtra().getFileMsgDTO().getFileName();
     }
 
     @Override
     public String replyMsgText(Message message) {
-        return message.getContent();
+        return "文件：" + message.getExtra().getFileMsgDTO().getFileName();
     }
 
     @Override
     public Object buildMessageBody(Message message) {
-        return message.getContent();
+        return message.getExtra().getFileMsgDTO();
     }
 }

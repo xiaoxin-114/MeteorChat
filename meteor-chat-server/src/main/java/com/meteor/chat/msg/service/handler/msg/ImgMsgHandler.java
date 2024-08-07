@@ -1,4 +1,4 @@
-package com.meteor.chat.msg.service.handler;
+package com.meteor.chat.msg.service.handler.msg;
 
 import com.meteor.chat.common.domain.dto.msg.ImgMsgDTO;
 import com.meteor.chat.common.domain.entity.Message;

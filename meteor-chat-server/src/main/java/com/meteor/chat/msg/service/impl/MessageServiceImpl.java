@@ -1,13 +1,10 @@
 package com.meteor.chat.msg.service.impl;
 
 import cn.hutool.core.collection.CollUtil;
-import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
-import cn.hutool.core.io.unit.DataUnit;
 import com.meteor.chat.chat.dao.ContactDao;
 import com.meteor.chat.chat.dao.RoomFriendDao;
 import com.meteor.chat.chat.service.RoomService;
-import com.meteor.chat.chat.service.adapter.RoomAdapter;
 import com.meteor.chat.chat.service.cache.GroupMemberCache;
 import com.meteor.chat.chat.service.cache.RoomCache;
 import com.meteor.chat.chat.service.cache.RoomGroupCache;
@@ -22,16 +19,16 @@ import com.meteor.chat.common.domain.vo.ChatMessageResp;
 import com.meteor.chat.common.domain.vo.CursorPageBaseResp;
 import com.meteor.chat.common.domain.vo.req.*;
 import com.meteor.chat.common.exception.BusinessException;
-import com.meteor.chat.common.exception.CommonErrorEnum;
-import com.meteor.chat.common.util.CursorUtils;
 import com.meteor.chat.event.MessageRecallEvent;
 import com.meteor.chat.event.MessageSendEvent;
 import com.meteor.chat.msg.dao.MessageDao;
 import com.meteor.chat.msg.dao.MessageMarkDao;
 import com.meteor.chat.msg.service.MessageService;
 import com.meteor.chat.msg.service.adapter.MsgAdapter;
-import com.meteor.chat.msg.service.handler.AbstractMsgHandler;
-import com.meteor.chat.msg.service.handler.MsgHandlerFactory;
+import com.meteor.chat.msg.service.handler.msg.AbstractMsgHandler;
+import com.meteor.chat.msg.service.handler.msg.MsgHandlerFactory;
+import com.meteor.chat.msg.service.handler.msgmark.AbstractMsgMarkHandler;
+import com.meteor.chat.msg.service.handler.msgmark.MsgMarkHandlerFacroty;
 import com.meteor.chat.user.service.cache.UserCache;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
@@ -199,6 +196,14 @@ public class MessageServiceImpl implements MessageService {
             update.setReadTime(new Date());
             contactDao.updateById(update);
         }
+    }
+
+    @Override
+    @RedissonLock(key = "#uid_#req.msgId")
+    public void markMsg(MsgMarkReq req, Long uid) {
+        AbstractMsgMarkHandler handler = MsgMarkHandlerFacroty.getOrDefault(req.getMarkType());
+        Assert.assertNotNull("标记类型异常", handler);
+        handler.doMark(req, uid);
     }
 
     private void checkSendMsg(ChatMessageReq request, Long uid) {

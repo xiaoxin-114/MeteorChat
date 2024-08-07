@@ -59,4 +59,6 @@ public interface MessageService {
      * @param uid
      */
     void readMsg(ChatMessageMemberReq req, Long uid);
+
+    void markMsg(MsgMarkReq req, Long uid);
 }

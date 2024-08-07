@@ -4,8 +4,9 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-import lombok.Data;
+import lombok.*;
 
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -15,6 +16,9 @@ import java.util.Date;
  */
 @TableName(value ="message_mark")
 @Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class MessageMark implements Serializable {
     /**
      * id

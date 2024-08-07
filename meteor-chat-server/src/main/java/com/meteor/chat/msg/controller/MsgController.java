@@ -77,4 +77,12 @@ public class MsgController {
         messageService.readMsg(req, UserContext.getUid());
         return success();
     }
+
+    @PutMapping("/msg/mark")
+    @ApiOperation("消息标记")
+    @FrequencyControl(type = FrequencyControl.FrequencyTypeEnum.UID, time = 5, count = 10)
+    public ApiResult<Void> markMsg(@Valid @RequestBody MsgMarkReq req) {
+        messageService.markMsg(req, UserContext.getUid());
+        return success();
+    }
 }

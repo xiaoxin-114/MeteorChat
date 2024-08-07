@@ -1,22 +1,18 @@
-package com.meteor.chat.msg.service.handler;
+package com.meteor.chat.msg.service.handler.msg;
 
-import com.meteor.chat.common.domain.dto.msg.FileMsgDTO;
-import com.meteor.chat.common.domain.dto.msg.VideoMsgDTO;
 import com.meteor.chat.common.domain.entity.Message;
-import com.meteor.chat.common.domain.entity.MessageExtra;
 import com.meteor.chat.common.domain.enums.MessageTypeEnum;
 import com.meteor.chat.msg.dao.MessageDao;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
-import java.util.Optional;
 
 @Component
-public class VideoMsgHandler extends AbstractMsgHandler<VideoMsgDTO> {
+public class SystemMsgHandler extends AbstractMsgHandler<String> {
     @Resource
     private MessageDao messageDao;
 
-    private final MessageTypeEnum MESSAGE_TYPE = MessageTypeEnum.VIDEO;
+    private final MessageTypeEnum MESSAGE_TYPE = MessageTypeEnum.SYSTEM;
 
     @Override
     MessageTypeEnum getMsgType() {
@@ -24,27 +20,25 @@ public class VideoMsgHandler extends AbstractMsgHandler<VideoMsgDTO> {
     }
 
     @Override
-    void saveMessageExtra(Message message, VideoMsgDTO body) {
-        MessageExtra messageExtra = Optional.ofNullable(message.getExtra()).orElse(new MessageExtra());
+    void saveMessageExtra(Message message, String body) {
         Message update = new Message();
         update.setId(message.getId());
-        messageExtra.setVideoMsgDTO(body);
-        update.setExtra(messageExtra);
+        update.setContent(body);
         messageDao.updateById(update);
     }
 
     @Override
     public String messageText(Message message) {
-        return "[视频]";
+        return message.getContent();
     }
 
     @Override
     public String replyMsgText(Message message) {
-        return "视频";
+        return message.getContent();
     }
 
     @Override
     public Object buildMessageBody(Message message) {
-        return message.getExtra().getVideoMsgDTO();
+        return message.getContent();
     }
 }

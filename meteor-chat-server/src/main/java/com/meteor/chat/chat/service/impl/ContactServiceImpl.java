@@ -1,5 +1,4 @@
 package com.meteor.chat.chat.service.impl;
-import java.util.Date;
 
 import cn.hutool.core.lang.Pair;
 import com.meteor.chat.chat.dao.ContactDao;
@@ -20,11 +19,10 @@ import com.meteor.chat.common.domain.vo.req.CursorPageBaseReq;
 import com.meteor.chat.common.domain.vo.req.IdBaseReq;
 import com.meteor.chat.common.exception.BusinessException;
 import com.meteor.chat.msg.dao.MessageDao;
-import com.meteor.chat.msg.service.handler.AbstractMsgHandler;
-import com.meteor.chat.msg.service.handler.MsgHandlerFactory;
+import com.meteor.chat.msg.service.handler.msg.AbstractMsgHandler;
+import com.meteor.chat.msg.service.handler.msg.MsgHandlerFactory;
 import com.meteor.chat.user.service.cache.UserCache;
 import org.apache.commons.collections.CollectionUtils;
-import org.springframework.data.redis.core.ZSetOperations;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;

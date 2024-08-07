@@ -1,6 +1,6 @@
-package com.meteor.chat.msg.service.handler;
+package com.meteor.chat.msg.service.handler.msg;
 
-import com.meteor.chat.common.domain.dto.msg.FileMsgDTO;
+import com.meteor.chat.common.domain.dto.msg.EmojisMsgDTO;
 import com.meteor.chat.common.domain.entity.Message;
 import com.meteor.chat.common.domain.entity.MessageExtra;
 import com.meteor.chat.common.domain.enums.MessageTypeEnum;
@@ -9,13 +9,22 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 import java.util.Optional;
-
 @Component
-public class FileMsgHandler extends AbstractMsgHandler<FileMsgDTO> {
+public class EmojiMsgHandler extends AbstractMsgHandler<EmojisMsgDTO>{
     @Resource
     private MessageDao messageDao;
 
-    private final MessageTypeEnum MESSAGE_TYPE = MessageTypeEnum.FILE;
+    private final MessageTypeEnum MESSAGE_TYPE = MessageTypeEnum.EMOJI;
+
+    @Override
+    void saveMessageExtra(Message message, EmojisMsgDTO body) {
+        MessageExtra messageExtra = Optional.ofNullable(message.getExtra()).orElse(new MessageExtra());
+        Message update = new Message();
+        update.setId(message.getId());
+        messageExtra.setEmojisMsgDTO(body);
+        update.setExtra(messageExtra);
+        messageDao.updateById(update);
+    }
 
     @Override
     MessageTypeEnum getMsgType() {
@@ -23,27 +32,17 @@ public class FileMsgHandler extends AbstractMsgHandler<FileMsgDTO> {
     }
 
     @Override
-    void saveMessageExtra(Message message, FileMsgDTO body) {
-        MessageExtra messageExtra = Optional.ofNullable(message.getExtra()).orElse(new MessageExtra());
-        Message update = new Message();
-        update.setId(message.getId());
-        messageExtra.setFileMsgDTO(body);
-        update.setExtra(messageExtra);
-        messageDao.updateById(update);
-    }
-
-    @Override
     public String messageText(Message message) {
-        return "[文件]" + message.getExtra().getFileMsgDTO().getFileName();
+        return "[表情包]";
     }
 
     @Override
     public String replyMsgText(Message message) {
-        return "文件：" + message.getExtra().getFileMsgDTO().getFileName();
+        return "表情";
     }
 
     @Override
     public Object buildMessageBody(Message message) {
-        return message.getExtra().getFileMsgDTO();
+        return message.getExtra().getEmojisMsgDTO();
     }
 }

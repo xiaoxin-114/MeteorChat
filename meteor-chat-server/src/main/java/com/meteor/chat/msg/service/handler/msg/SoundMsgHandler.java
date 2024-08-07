@@ -1,7 +1,6 @@
-package com.meteor.chat.msg.service.handler;
+package com.meteor.chat.msg.service.handler.msg;
 
 import com.meteor.chat.common.domain.dto.msg.SoundMsgDTO;
-import com.meteor.chat.common.domain.dto.msg.VideoMsgDTO;
 import com.meteor.chat.common.domain.entity.Message;
 import com.meteor.chat.common.domain.entity.MessageExtra;
 import com.meteor.chat.common.domain.enums.MessageTypeEnum;
