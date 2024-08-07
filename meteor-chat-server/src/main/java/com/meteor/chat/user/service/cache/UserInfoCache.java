@@ -32,6 +32,6 @@ public class UserInfoCache extends AbstractRedisStringCache<Long, User>  {
 
     @Override
     public Map<Long, User> load(List<Long> list) {
-        return Optional.ofNullable(userDao.listByIds(list).stream().collect(Collectors.toMap(User::getId, Function.identity()))).orElse(null);
+        return Optional.ofNullable(userDao.listByIds(list)).map(userList -> userList.stream().collect(Collectors.toMap(User::getId, Function.identity()))).orElse(null);
     }
 }

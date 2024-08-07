@@ -3,6 +3,7 @@ package com.meteor.chat.msg.service.handler.msgmark;
 import com.meteor.chat.common.domain.dto.MsgMarkDTO;
 import com.meteor.chat.common.domain.entity.Message;
 import com.meteor.chat.common.domain.entity.MessageMark;
+import com.meteor.chat.common.domain.enums.MessageMarkActTypeEnum;
 import com.meteor.chat.common.domain.enums.MessageTypeEnum;
 import com.meteor.chat.common.domain.enums.YesOrNoEnum;
 import com.meteor.chat.common.domain.vo.req.MsgMarkReq;
@@ -39,22 +40,37 @@ public abstract class AbstractMsgMarkHandler {
         // 如果是生效的请求
         if (YesOrNoEnum.YES.getCode() == req.getActType()) {
             // 判断并取消另外一种标记类型
-            cnacelAnother(req.getMsgId(), uid);
+            cancelAnother(req.getMsgId(), uid);
         } else {
             if (Objects.isNull(oldMark)) {
                 return;
             }
         }
         // 保存当前记录
-        saveMessageMark(req, uid, Optional.ofNullable(oldMark.getId()).orElse(null));
+        saveMessageMark(req, uid, Optional.ofNullable(oldMark).map(MessageMark::getId).orElse(null));
     }
 
     /**
-     * 取消另外一种类型的标记，由子类去实现
+     * 取消另外一种类型的标记
      * @param msgId 消息id
      * @param uid 用户id
      */
-    protected abstract void cnacelAnother(Long msgId, Long uid);
+    protected void cancelAnother(Long msgId, Long uid){
+        Integer type = getAnotherType();
+        MessageMark oldMark = messageMarkDao.getByTypeAndMsgIdAndUid(type, msgId, uid);
+        // 先查询数据库，如果不存在记录或者记录本身就是取消状态，无需处理
+        if (Objects.isNull(oldMark) || YesOrNoEnum.NO.getCode() == oldMark.getStatus()) {
+            return;
+        }
+        MessageMark messageMark = MessageMark.builder()
+                .id(oldMark.getId())
+                .status(YesOrNoEnum.NO.getCode())
+                .build();
+        boolean success = messageMarkDao.updateById(messageMark);
+        if (success) {
+            applicationEventPublisher.publishEvent(new MsgMarkEvent(this, new MsgMarkDTO(type, YesOrNoEnum.NO.getCode(), msgId, uid)));
+        }
+    }
 
     /**
      * 保存/修改标记数据
@@ -88,5 +104,10 @@ public abstract class AbstractMsgMarkHandler {
      * @return 1表示点赞，2表示踩
      */
     public abstract Integer getType();
+    /**
+     * 获取处理器类型的另一个，点赞/踩
+     * @return 1表示点赞，2表示踩
+     */
+    public abstract Integer getAnotherType();
 
 }

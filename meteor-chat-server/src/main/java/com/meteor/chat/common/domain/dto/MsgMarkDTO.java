@@ -1,11 +1,13 @@
 package com.meteor.chat.common.domain.dto;
 
 import com.meteor.chat.common.domain.vo.req.MsgMarkReq;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
+@AllArgsConstructor
 public class MsgMarkDTO {
 
     private Integer markType;

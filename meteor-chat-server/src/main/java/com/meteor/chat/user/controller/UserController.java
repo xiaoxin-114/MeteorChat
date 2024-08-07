@@ -39,7 +39,7 @@ public class UserController {
         if (!userService.isAdmin(uid)) {
             return ApiResult.fail(CommonErrorEnum.NOT_PERMITTED);
         }
-        userService.black(req.getBlackId());
+        userService.black(req.getUid());
         return ApiResult.success();
     }
 

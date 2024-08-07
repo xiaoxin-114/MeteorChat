@@ -10,6 +10,7 @@ import org.apache.commons.collections.CollectionUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -32,14 +33,14 @@ public class UserAdapter {
         if (CollectionUtils.isEmpty(badges)) {
             return new ArrayList<>();
         }
-        List<Long> haveBadgeIds = Optional.of(userDto.getItemIds()).orElse(new ArrayList<>());
+        List<Long> haveBadgeIds = Optional.of(userDto).map(SummaryInfoDTO::getItemIds).orElse(new ArrayList<>());
         return badges.stream().map(badge -> {
             BadgeResp resp = new BadgeResp();
             resp.setId(badge.getId());
             resp.setImg(badge.getImg());
             resp.setDescribe(badge.getDescribe());
             resp.setObtain(haveBadgeIds.contains(badge.getId()) ? 1 : 0);
-            resp.setWearing(userDto.getWearingItemId() == badge.getId() ? 1 : 0);
+            resp.setWearing(Objects.equals(badge.getId(), userDto.getWearingItemId()) ? 1 : 0);
             return resp;
         }).collect(Collectors.toList());
     }

@@ -145,10 +145,10 @@ public class ContactServiceImpl implements ContactService {
                         Collectors.mapping(Room::getId, Collectors.toList())));
         // 根据单聊房间号获取roomFriend信息
         Map<Long, RoomFriend> singleRoomMap = roomFriendCache.getBatch(
-                Optional.ofNullable(roomTypeMap.get(RoomTypeEnum.SINGLE.getCode())).orElse(null));
+                roomTypeMap.get(RoomTypeEnum.SINGLE.getCode()));
         // 根据群聊房间号获取roomGroup信息
         Map<Long, RoomGroup> groupRoomMap = roomGroupCache.getBatch(
-                Optional.ofNullable(roomTypeMap.get(RoomTypeEnum.GROUP.getCode())).orElse(null));
+                roomTypeMap.get(RoomTypeEnum.GROUP.getCode()));
         // 批量获取好友的信息，单聊聊天室需要用到
         List<Long> friendList = singleRoomMap.values().stream()
                 .map(roomFriend -> RoomAdapter.getFriendUid(roomFriend, uid))

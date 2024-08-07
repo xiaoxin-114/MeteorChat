@@ -45,7 +45,7 @@ public class GroupMemberCache {
         if (Objects.isNull(roomGroup)) {
             return new HashMap<>();
         }
-        List<GroupMember> groupMemberList = groupMemberDao.getMemberList(roomGroup.getRoomId());
+        List<GroupMember> groupMemberList = groupMemberDao.getMemberList(roomGroup.getId());
         return groupMemberList.stream().collect(Collectors.toMap(GroupMember::getUid, Function.identity()));
     }
 }

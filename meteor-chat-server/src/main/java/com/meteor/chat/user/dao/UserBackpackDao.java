@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.meteor.chat.common.constants.CommonConstants;
 import com.meteor.chat.common.domain.entity.UserBackpack;
+import com.meteor.chat.common.domain.enums.YesOrNoEnum;
 import com.meteor.chat.common.mapper.UserBackpackMapper;
 import org.springframework.stereotype.Repository;
 
@@ -26,6 +27,7 @@ public class UserBackpackDao extends ServiceImpl<UserBackpackMapper, UserBackpac
         return lambdaQuery()
                 .eq(UserBackpack::getUid, uid)
                 .eq(UserBackpack::getItemId, itemId)
+                .eq(UserBackpack::getStatus, YesOrNoEnum.NO.getCode())
                 .count();
     }
 

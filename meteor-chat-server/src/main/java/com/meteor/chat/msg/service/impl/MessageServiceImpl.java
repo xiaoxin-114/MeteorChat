@@ -199,7 +199,7 @@ public class MessageServiceImpl implements MessageService {
     }
 
     @Override
-    @RedissonLock(key = "#uid_#req.msgId")
+    @RedissonLock(key = "#uid + '_' + #req.msgId")
     public void markMsg(MsgMarkReq req, Long uid) {
         AbstractMsgMarkHandler handler = MsgMarkHandlerFacroty.getOrDefault(req.getMarkType());
         Assert.assertNotNull("标记类型异常", handler);

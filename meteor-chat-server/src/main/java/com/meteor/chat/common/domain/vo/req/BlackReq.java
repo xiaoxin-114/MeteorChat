@@ -12,6 +12,6 @@ import javax.validation.constraints.NotNull;
 @Data
 public class BlackReq {
     @ApiModelProperty("拉黑用户id")
-    @NotBlank(message = "拉黑用户id不能为空")
-    private Long blackId;
+    @NotNull(message = "拉黑用户id不能为空")
+    private Long uid;
 }
