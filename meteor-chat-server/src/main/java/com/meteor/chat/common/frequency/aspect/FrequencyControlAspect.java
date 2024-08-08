@@ -27,7 +27,7 @@ import org.springframework.stereotype.Component;
 public class FrequencyControlAspect {
     private static final String TOTAL_COUNT_WITH_FIX_TIME_STRATEGY_NAME = "TotalCountWithInFixTime";
 
-    @Pointcut(value = "@annotation(com.meteor.chat.common.frequency.annotation.FrequencyControl)")
+    @Pointcut(value = "@annotation(com.meteor.chat.common.frequency.annotation.FrequencyControl) || @annotation(com.meteor.chat.common.frequency.annotation.FrequencyControlContainer)")
     private void pointcut(){}
 
     @Around("pointcut()")

@@ -3,6 +3,7 @@ package com.meteor.chat.common.exception.handler;
 import com.meteor.chat.common.domain.result.ApiResult;
 import com.meteor.chat.common.exception.BusinessException;
 import com.meteor.chat.common.exception.CommonErrorEnum;
+import com.meteor.chat.common.frequency.exception.FrequencyException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -38,6 +39,13 @@ public class GlobalExceptionHandler {
     public ApiResult assertErrorHandler(AssertionError error) {
         log.error(error.getMessage(), error);
         return ApiResult.fail(CommonErrorEnum.PARAM_ERROR.getErrCode(), error.getMessage());
+    }
+
+    @ExceptionHandler(value = FrequencyException.class)
+    @ResponseStatus(code = HttpStatus.TOO_MANY_REQUESTS)
+    public ApiResult frequencyExceptionHandler(FrequencyException exception) {
+        log.error(exception.getMessage(), exception);
+        return ApiResult.fail(CommonErrorEnum.FREQUENCY_LIMIT.getErrCode(), exception.getMessage());
     }
 
 }

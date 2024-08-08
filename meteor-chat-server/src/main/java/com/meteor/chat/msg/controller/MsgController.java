@@ -44,10 +44,10 @@ public class MsgController {
         return success(result);
     }
 
-    @FrequencyControl(time = 5, count = 10, type = FrequencyControl.FrequencyTypeEnum.UID)
-    @FrequencyControl(time = 10, count = 15, type = FrequencyControl.FrequencyTypeEnum.UID)
     @PostMapping("/msg")
     @ApiOperation("发送消息")
+    @FrequencyControl(time = 5, count = 10, type = FrequencyControl.FrequencyTypeEnum.UID)
+    @FrequencyControl(time = 10, count = 15, type = FrequencyControl.FrequencyTypeEnum.UID)
     public ApiResult<ChatMessageResp> sendMsg(@Valid @RequestBody ChatMessageReq request) {
         Long uid = UserContext.getUid();
         Long msgId = messageService.sendMsg(request, uid);

@@ -5,6 +5,7 @@ import com.meteor.chat.chat.service.cache.RoomCache;
 import com.meteor.chat.common.domain.dto.MsgMarkDTO;
 import com.meteor.chat.common.domain.entity.Message;
 import com.meteor.chat.common.domain.entity.Room;
+import com.meteor.chat.common.domain.enums.MessageMarkActTypeEnum;
 import com.meteor.chat.common.domain.enums.MessageMarkTypeEnum;
 import com.meteor.chat.event.MsgMarkEvent;
 import com.meteor.chat.msg.dao.MessageDao;
@@ -19,6 +20,7 @@ import org.springframework.transaction.event.TransactionalEventListener;
 
 import javax.annotation.Resource;
 import java.util.List;
+import java.util.Objects;
 
 @Async
 @Component
@@ -64,6 +66,11 @@ public class MsgMarkEventListener {
      */
     @TransactionalEventListener(value = MsgMarkEvent.class, fallbackExecution = true)
     public void assignItem(MsgMarkEvent event) {
-
+        MsgMarkDTO msgMarkDTO = event.getMsgMarkDTO();
+        // 取消的话就不需要处理
+        if (Objects.equals(msgMarkDTO.getActType(), MessageMarkActTypeEnum.UN_MARK.getType())) {
+            return;
+        }
+        // todo
     }
 }
