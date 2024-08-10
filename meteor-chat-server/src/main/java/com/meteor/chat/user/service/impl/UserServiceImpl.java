@@ -14,6 +14,7 @@ import com.meteor.chat.common.domain.vo.CursorPageBaseResp;
 import com.meteor.chat.common.domain.vo.UserInfoVO;
 import com.meteor.chat.common.domain.vo.req.*;
 import com.meteor.chat.common.exception.BusinessException;
+import com.meteor.chat.common.sensitiveword.SensitiveWords;
 import com.meteor.chat.common.util.CommonUtils;
 import com.meteor.chat.event.BlackUserEvent;
 import com.meteor.chat.event.UserRegisterEvent;
@@ -60,6 +61,8 @@ public class UserServiceImpl implements UserService {
     private ItemCache itemCache;
     @Resource
     private UserSummaryCache userSummaryCache;
+    @Resource
+    private SensitiveWords sensitiveWords;
 
     @Override
     public void register(User user) {
@@ -114,7 +117,10 @@ public class UserServiceImpl implements UserService {
     @Transactional(rollbackFor = Exception.class)
     public void rename(Long uid, ModifyNameReq req) {
         String name = req.getName();
-        // todo 判断名称中是否包含敏感词
+        // 判断名称中是否包含敏感词
+        if (sensitiveWords.hasSensitiveWord(name)) {
+            throw new BusinessException("名称中包含敏感词，请选择其他昵称");
+        }
         // 判断名称是否重复，需要保证名称不重复
         List<User> userByName = userDao.getByName(name);
         Assert.assertTrue("该昵称已被占用，请选择其他昵称", CollectionUtils.isEmpty(userByName));

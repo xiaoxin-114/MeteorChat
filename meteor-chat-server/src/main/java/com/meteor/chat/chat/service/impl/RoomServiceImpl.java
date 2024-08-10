@@ -190,7 +190,7 @@ public class RoomServiceImpl implements RoomService {
         RoomGroup roomGroup = roomGroupCache.get(roomId);
         Assert.assertNotNull("聊天室id错误", roomGroup);
         GroupRoleAPPEnum groupRole = getGroupRole(uid, room, roomGroup);
-        Assert.assertEquals("当前用户不在群聊内", GroupRoleAPPEnum.REMOVE, groupRole);
+        Assert.assertNotEquals("当前用户不在群聊内", GroupRoleAPPEnum.REMOVE, groupRole);
         List<Long> memberUidList = groupMemberCache.getMemberUidList(roomId);
         if (GroupRoleAPPEnum.LEADER.equals(groupRole)) {
             // 如果是群主就直接解散群聊

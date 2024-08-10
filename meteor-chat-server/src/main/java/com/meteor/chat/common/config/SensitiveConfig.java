@@ -2,6 +2,7 @@ package com.meteor.chat.common.config;
 
 import com.meteor.chat.common.sensitiveword.MyWordFactory;
 import com.meteor.chat.common.sensitiveword.SensitiveWords;
+import com.meteor.chat.common.sensitiveword.algorithm.AC.ACTrieFilter;
 import com.meteor.chat.common.sensitiveword.algorithm.DFA.DFAFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -18,7 +19,7 @@ public class SensitiveConfig {
     public SensitiveWords sensitiveWords() {
         SensitiveWords instance = SensitiveWords.getInstance();
         instance.sensitiveWord(myWordFactory);
-        instance.filterStrategy(DFAFilter.getInstance());
+        instance.filterStrategy(ACTrieFilter.getInstance());
         instance.init();
         return instance;
     }

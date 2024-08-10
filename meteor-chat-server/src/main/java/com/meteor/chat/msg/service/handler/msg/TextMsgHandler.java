@@ -12,6 +12,7 @@ import com.meteor.chat.common.domain.entity.UrlInfo;
 import com.meteor.chat.common.domain.entity.User;
 import com.meteor.chat.common.domain.enums.MessageTypeEnum;
 import com.meteor.chat.common.domain.enums.YesOrNoEnum;
+import com.meteor.chat.common.sensitiveword.SensitiveWords;
 import com.meteor.chat.common.util.discover.PrioritizedUrlDiscover;
 import com.meteor.chat.msg.dao.MessageDao;
 import com.meteor.chat.user.service.cache.UserCache;
@@ -44,6 +45,9 @@ public class TextMsgHandler extends AbstractMsgHandler<TextMsgReq> {
 
     @Resource
     private RoomCache roomCache;
+
+    @Resource
+    private SensitiveWords sensitiveWords;
 
     @Override
     MessageTypeEnum getMsgType() {
@@ -95,6 +99,8 @@ public class TextMsgHandler extends AbstractMsgHandler<TextMsgReq> {
             Assert.assertNotNull("回复消息不存在", replyMsg);
             Assert.assertTrue("只能回复处于同一会话的消息", Objects.equals(replyMsg.getRoomId(), roomId));
         }
+        // 过滤消息中的敏感词
+        body.setContent(sensitiveWords.filter(body.getContent()));
     }
 
     @Override
