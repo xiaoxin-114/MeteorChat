@@ -22,6 +22,8 @@ import com.meteor.chat.chat.service.RoomService;
 import com.meteor.chat.chat.service.adapter.RoomAdapter;
 import com.meteor.chat.event.GroupMemberAddEvent;
 import com.meteor.chat.msg.dao.MessageDao;
+import com.meteor.chat.msg.service.MessageService;
+import com.meteor.chat.msg.service.adapter.MsgAdapter;
 import com.meteor.chat.route.service.PushService;
 import com.meteor.chat.user.dao.UserDao;
 import com.meteor.chat.user.dao.UserRoleDao;
@@ -95,6 +97,9 @@ public class RoomServiceImpl implements RoomService {
 
     @Resource
     private MessageDao messageDao;
+
+    @Resource
+    private MessageService messageService;
 
     @Override
     public GroupResp groupDetail(IdBaseReq req, Long uid) {
@@ -178,6 +183,8 @@ public class RoomServiceImpl implements RoomService {
         WSBaseResp<WSMemberChange> wsBaseResp = WSAdapter.buildGroupMemberRemove(roomId, req.getUid());
         pushService.pushMsg(wsBaseResp, uidList);
         groupMemberCache.evictMemberUidList(roomId);
+        User userInfo = userCache.getUserInfo(req.getUid());
+        messageService.sendMsg(MsgAdapter.buildMemberChange(roomId, userInfo.getName() + "被移出群聊"), CommonConstants.SYSTEM_UID);
     }
 
     @Override
@@ -192,8 +199,8 @@ public class RoomServiceImpl implements RoomService {
         GroupRoleAPPEnum groupRole = getGroupRole(uid, room, roomGroup);
         Assert.assertNotEquals("当前用户不在群聊内", GroupRoleAPPEnum.REMOVE, groupRole);
         List<Long> memberUidList = groupMemberCache.getMemberUidList(roomId);
-        if (GroupRoleAPPEnum.LEADER.equals(groupRole)) {
-            // 如果是群主就直接解散群聊
+        if (GroupRoleAPPEnum.LEADER.equals(groupRole) || memberUidList.size() - 1 < 2) {
+            // 如果是群主就直接解散群聊，或者离开后群聊只剩群主一人
             groupMemberDao.removeMember(roomGroup.getId(), null);
             contactDao.removeByRoomId(roomId);
             groupMemberCache.evictMemberUidList(roomId);
@@ -207,6 +214,8 @@ public class RoomServiceImpl implements RoomService {
             groupMemberDao.removeMember(roomGroup.getId(), uid);
             contactDao.removeContact(roomId, uid);
             groupMemberCache.evictMemberUidList(roomId);
+            User userInfo = userCache.getUserInfo(uid);
+            messageService.sendMsg(MsgAdapter.buildMemberChange(roomId, userInfo.getName() + "退出了群聊"), CommonConstants.SYSTEM_UID);
             // 向所有成员推送用户退出群聊的消息
             pushService.pushMsg(WSAdapter.buildGroupMemberRemove(roomId, uid), memberUidList);
         }

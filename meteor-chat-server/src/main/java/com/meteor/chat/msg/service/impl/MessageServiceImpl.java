@@ -29,6 +29,7 @@ import com.meteor.chat.msg.service.handler.msg.AbstractMsgHandler;
 import com.meteor.chat.msg.service.handler.msg.MsgHandlerFactory;
 import com.meteor.chat.msg.service.handler.msgmark.AbstractMsgMarkHandler;
 import com.meteor.chat.msg.service.handler.msgmark.MsgMarkHandlerFacroty;
+import com.meteor.chat.user.dao.UserRoleDao;
 import com.meteor.chat.user.service.cache.UserCache;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
@@ -69,10 +70,10 @@ public class MessageServiceImpl implements MessageService {
     private MessageMarkDao messageMarkDao;
 
     @Resource
-    private RoomService roomService;
+    private UserCache userCache;
 
     @Resource
-    private UserCache userCache;
+    private UserRoleDao userRoleDao;
 
     @Override
     public CursorPageBaseResp<ChatMessageReadResp> cursorPageMsgReader(MessageReadCursorPageReq req) {
@@ -160,7 +161,7 @@ public class MessageServiceImpl implements MessageService {
         Message message = messageDao.getById(req.getMsgId());
         // 如果不是消息发送者撤回消息，就必须得是管理员
         if (!Objects.equals(message.getFromUid(), uid)) {
-            boolean hasRoomPower = roomService.hasRoomPower(uid, req.getRoomId());
+            boolean hasRoomPower = this.hasRoomPower(uid, req.getRoomId());
             Assert.assertTrue("用户没有权限操作", hasRoomPower);
         }
         Assert.assertFalse("发出超出2分钟的消息无法撤回", message.getCreateTime().before(DateUtil.offsetMinute(new Date(), -2)));
@@ -247,5 +248,35 @@ public class MessageServiceImpl implements MessageService {
             return RoomFriendStatusEnum.NORAML.getCode().equals(roomFriend.getStatus()) || roomFriend.hasUser(uid);
         }
         throw new BusinessException("数据异常");
+    }
+
+    /**
+     * 判断用户在群聊中是否有管理权限
+     * @param uid 用户id
+     * @param roomId 群聊id
+     * @return
+     */
+    private boolean hasRoomPower(Long uid, Long roomId) {
+        Room room = roomCache.get(roomId);
+        Assert.assertNotNull("房间号有误", room);
+        UserRole userRole = userRoleDao.getUserRoleByUid(uid);
+        Assert.assertNotNull("用户数据异常", userRole);
+        boolean systemAdmin = userRole.getRoleId().equals(RoleEnum.SUPERADMIN.getId()) || userRole.getRoleId().equals(RoleEnum.CHAT_ADMIN.getId());
+        if (room.isHotRoom()) {
+            // 如果是热门群聊，取决于用户是否是系统管理员
+            return systemAdmin;
+        } else {
+            if (systemAdmin) {
+                // 系统管理员同样用于其他群聊的管理权限，但是没有群主权限
+                return true;
+            } else {
+                Map<Long, GroupMember> groupMemberMap = groupMemberCache.getMemberList(roomId);
+                Assert.assertTrue("群聊数据异常", groupMemberMap != null && groupMemberMap.size() > 0);
+                GroupMember groupMember = groupMemberMap.get(uid);
+                Assert.assertNotNull("用户不在群聊", groupMember);
+                Integer role = groupMember.getRole();
+                return GroupRoleAPPEnum.LEADER.getCode().equals(role) || GroupRoleAPPEnum.MANAGER.getCode().equals(role);
+            }
+        }
     }
 }

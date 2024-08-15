@@ -70,7 +70,7 @@ public class MsgAdapter {
     }
 
     /**
-     * 创建新增成员的系统信息
+     * 创建聊天室成员变动的系统信息，新增或移除
      * @param roomId 聊天室id
      * @param content 消息的内容
      * @return
