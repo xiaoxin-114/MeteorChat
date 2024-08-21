@@ -10,16 +10,19 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 
-@RocketMQMessageListener(consumerGroup = MQConstant.LOGIN_MSG_GROUP, topic = MQConstant.LOGIN_MSG_TOPIC, messageModel = MessageModel.BROADCASTING)
 @Component
-public class LoginSuccessConsumer implements RocketMQListener<LoginMessageDTO> {
+public class LoginSuccessConsumer extends AbstractConsumer<LoginMessageDTO> {
 
     @Resource
     private WebSocketService webSocketService;
 
+    @Override
+    public void consume(LoginMessageDTO loginMessageDTO) {
+        webSocketService.scanLoginSuccess(loginMessageDTO.getCode(), loginMessageDTO.getUid());
+    }
 
     @Override
-    public void onMessage(LoginMessageDTO loginMessageDTO) {
-        webSocketService.scanLoginSuccess(loginMessageDTO.getCode(), loginMessageDTO.getUid());
+    public String getKey() {
+        return MQConstant.LOGIN_MSG_TOPIC;
     }
 }

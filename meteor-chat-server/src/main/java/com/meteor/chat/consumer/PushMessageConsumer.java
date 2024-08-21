@@ -16,14 +16,14 @@ import java.util.stream.Collectors;
 
 
 @Component
-@RocketMQMessageListener(consumerGroup = MQConstant.PUSH_GROUP, topic = MQConstant.PUSH_TOPIC, messageModel = MessageModel.BROADCASTING)
-public class PushMessageConsumer implements RocketMQListener<PushMessageDTO> {
+public class PushMessageConsumer extends AbstractConsumer<PushMessageDTO> {
 
     @Resource
     private WebSocketService webSocketService;
 
+
     @Override
-    public void onMessage(PushMessageDTO pushMessageDTO) {
+    public void consume(PushMessageDTO pushMessageDTO) {
         if (PushMessageDTO.ALL.equals(pushMessageDTO.getType())) {
             webSocketService.sendToAllOnline(pushMessageDTO.getWsBaseResp());
         } else {
@@ -35,5 +35,10 @@ public class PushMessageConsumer implements RocketMQListener<PushMessageDTO> {
                 uidList.forEach(uid -> webSocketService.sendToUid(pushMessageDTO.getWsBaseResp(), uid));
             }
         }
+    }
+
+    @Override
+    public String getKey() {
+        return MQConstant.PUSH_TOPIC;
     }
 }

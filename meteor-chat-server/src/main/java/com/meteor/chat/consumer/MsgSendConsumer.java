@@ -29,9 +29,8 @@ import javax.websocket.OnMessage;
 import java.util.ArrayList;
 import java.util.List;
 
-@RocketMQMessageListener(consumerGroup = MQConstant.SEND_MSG_GROUP,topic = MQConstant.SEND_MSG_TOPIC, messageModel = MessageModel.BROADCASTING)
 @Component
-public class MsgSendConsumer implements RocketMQListener<MsgSendMessageDTO> {
+public class MsgSendConsumer extends AbstractConsumer<MsgSendMessageDTO> {
 
     @Resource
     private MessageDao messageDao;
@@ -63,9 +62,10 @@ public class MsgSendConsumer implements RocketMQListener<MsgSendMessageDTO> {
     @Resource
     private RoomFriendCache roomFriendCache;
 
-    @Override
+
     @Transactional(rollbackFor = Exception.class)
-    public void onMessage(MsgSendMessageDTO dto) {
+    @Override
+    public void consume(MsgSendMessageDTO dto) {
         Long msgId = dto.getMsgId();
         // 此时是推送新消息的，不会有人点赞和点踩，所有不用关心接收用户
         ChatMessageResp messageResp = messageService.getMessageResp(msgId, null);
@@ -94,5 +94,10 @@ public class MsgSendConsumer implements RocketMQListener<MsgSendMessageDTO> {
             // 推送消息
             pushService.pushMsg(WSAdapter.buildMsgSend(messageResp), uidList);
         }
+    }
+
+    @Override
+    public String getKey() {
+        return MQConstant.SEND_MSG_TOPIC;
     }
 }

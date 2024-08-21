@@ -2,7 +2,7 @@ package com.meteor.chat.transaction.configure;
 
 import com.meteor.chat.transaction.annotation.SecureInvokeConfigurer;
 import com.meteor.chat.transaction.dao.SecureInvokeDao;
-import com.meteor.chat.transaction.service.MQProducer;
+//import com.meteor.chat.transaction.service.MQProducer;
 import com.meteor.chat.transaction.service.SecureInvokeService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
@@ -49,8 +49,8 @@ public class TransactionAutoConfiguration {
         return new SecureInvokeService(executor, secureInvokeDao);
     }
 
-    @Bean
-    public MQProducer mqProducer() {
-        return new MQProducer();
-    }
+//    @Bean
+//    public MQProducer mqProducer() {
+//        return new MQProducer();
+//    }
 }

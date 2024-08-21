@@ -13,15 +13,18 @@ import javax.annotation.Resource;
 /**
  * 登入二维码扫码成功的消息消费者
  */
-@RocketMQMessageListener(topic = MQConstant.SCAN_MSG_TOPIC, consumerGroup = MQConstant.SCAN_MSG_GROUP, messageModel = MessageModel.BROADCASTING)
 @Component
-public class SacnSuccessMsgConsumer implements RocketMQListener<ScanSuccessMessageDTO> {
+public class SacnSuccessMsgConsumer extends AbstractConsumer<ScanSuccessMessageDTO> {
     @Resource
     private WebSocketService webSocketService;
 
+    @Override
+    public void consume(ScanSuccessMessageDTO scanSuccessMessageDTO) {
+        webSocketService.scanSuccess(scanSuccessMessageDTO.getCode());
+    }
 
     @Override
-    public void onMessage(ScanSuccessMessageDTO scanSuccessMessageDTO) {
-        webSocketService.scanSuccess(scanSuccessMessageDTO.getCode());
+    public String getKey() {
+        return MQConstant.SCAN_MSG_GROUP;
     }
 }
