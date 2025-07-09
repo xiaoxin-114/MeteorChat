@@ -8,10 +8,14 @@ mybatis-plus:
   configuration:
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
     map-underscore-to-camel-case: true
+# 便于测试，模拟用户行为
+mock:
+  enable: true
+  prefix: test
 spring:
   profiles:
     #运行的环境
-    active: pro
+    active: test
   application:
     name: meteorchat
   datasource:
@@ -85,5 +89,27 @@ rocketmq:
     listeners: # 配置某个消费分组，是否监听指定 Topic 。结构为 Map<消费者分组, <Topic, Boolean>> 。默认情况下，不配置表示监听。
       erbadagang-consumer-group:
         topic1: false # 关闭 test-consumer-group 对 topic1 的监听消费
+knife4j:
+  enable: true
+  openapi:
+    title: meteorChat官方文档
+    description: "`我是测试`,**你知道吗**
+    # aaa"
+    email: xiaoymin@foxmail.com
+    concat: 八一菜刀
+    url: https://docs.xiaominfo.com
+    version: v4.0
+    license: Apache 2.0
+    license-url: https://stackoverflow.com/
+    terms-of-service-url: https://stackoverflow.com/
+    group:
+      test1:
+        group-name: default
+        api-rule: package
+        api-rule-resources:
+          - com.meteor.chat
+management:
+  server:
+    port: 8070
 server:
   port: 8000

@@ -36,6 +36,7 @@ import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import java.time.Duration;
 import java.util.Date;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -135,10 +136,10 @@ public class WebSocketServiceImpl  implements WebSocketService {
     @Override
     public void authorize(Channel channel, WSAuthorize wsAuthorize) {
         String token = wsAuthorize.getToken();
-        if (!loginService.verify(token)) {
+        Long uid = loginService.getValidUid(token);
+        if (Objects.isNull(uid)) {
             sendMsg(channel, WSAdapter.buildTokenInvalidResp());
         } else {
-            Long uid = loginService.getValidUid(token);
             successLogin(channel, userDao.getById(uid), token);
         }
     }
@@ -237,7 +238,7 @@ public class WebSocketServiceImpl  implements WebSocketService {
      * @param user
      * @param token
      */
-    private void successLogin(Channel channel, User user, String token) {
+    public void successLogin(Channel channel, User user, String token) {
         //更新用户在线列表
         online(channel, user.getId());
         //告知前端用户登陆成功，需要告知前端用户的角色
