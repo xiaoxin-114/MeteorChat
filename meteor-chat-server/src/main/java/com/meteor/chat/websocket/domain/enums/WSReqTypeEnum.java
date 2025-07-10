@@ -12,7 +12,8 @@ import java.util.stream.Collectors;
 @Getter
 public enum WSReqTypeEnum {
     LOGIN(1, "请求登录二维码"),
-    HEARTBEAT(2, "心跳包");
+    HEARTBEAT(2, "心跳包"),
+    LOGIN_BY_PASSWORD(3, "账号密码登陆成功");
     private Integer type;
     private String desc;
 

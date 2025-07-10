@@ -1,14 +1,21 @@
 package com.meteor.chat.user.service.impl;
 
+import cn.hutool.core.util.StrUtil;
 import com.meteor.chat.common.constants.RedisKey;
+import com.meteor.chat.common.domain.entity.User;
+import com.meteor.chat.common.domain.enums.UserStatusEnum;
+import com.meteor.chat.common.exception.BusinessException;
+import com.meteor.chat.common.exception.CommonErrorEnum;
 import com.meteor.chat.common.util.JWTUtils;
+import com.meteor.chat.common.util.PBKDF2Util;
 import com.meteor.chat.common.util.RedisUtils;
+import com.meteor.chat.user.dao.UserDao;
 import com.meteor.chat.user.service.LoginService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-
+import org.junit.Assert;
 import javax.annotation.Resource;
 import java.util.Objects;
 
@@ -23,6 +30,8 @@ public class LoginServiceImpl implements LoginService {
     private String mockPrefix = "test";
     @Value("${mock.enable}")
     private Boolean mockEnable;
+    @Resource
+    private UserDao userDao;
 
     @Override
     public boolean verify(String token) {
@@ -61,6 +70,21 @@ public class LoginServiceImpl implements LoginService {
         return jwtUtils.getUid(token);
     }
 
+
+    @Override
+    public String loginByPassword(String username, String password) {
+        if (StrUtil.isBlank(username) || StrUtil.isBlank(password)) {
+            throw new BusinessException(CommonErrorEnum.USERNAME_OR_PASSWORD_EMPTY);
+        }
+        // 校验用户名
+        User user = userDao.getByUsername(username);
+        Assert.assertNotNull(CommonErrorEnum.USER_NOT_EXIST.getErrMsg(), user);
+        Assert.assertNotEquals(CommonErrorEnum.INNER_USER_LOGIN.getErrMsg(), user.getStatus(), UserStatusEnum.INNER.getId());
+        Assert.assertNotEquals(CommonErrorEnum.USER_IN_BLACK.getErrMsg(), user.getStatus(), UserStatusEnum.BLACK.getId());
+        // 密码校验
+        Assert.assertTrue(CommonErrorEnum.USERNAME_OR_PASSWORD_ERROR.getErrMsg(), PBKDF2Util.verifyPassword(password, user.getPassword(), user.getSalt()));
+        return login(user.getId());
+    }
 
     /**
      * 支持测试时模拟用户行为

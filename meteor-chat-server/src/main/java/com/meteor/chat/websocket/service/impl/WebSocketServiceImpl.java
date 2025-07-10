@@ -238,7 +238,7 @@ public class WebSocketServiceImpl  implements WebSocketService {
      * @param user
      * @param token
      */
-    public void successLogin(Channel channel, User user, String token) {
+    private void successLogin(Channel channel, User user, String token) {
         //更新用户在线列表
         online(channel, user.getId());
         //告知前端用户登陆成功，需要告知前端用户的角色

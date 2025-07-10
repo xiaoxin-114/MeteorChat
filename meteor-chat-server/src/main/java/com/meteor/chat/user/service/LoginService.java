@@ -1,5 +1,7 @@
 package com.meteor.chat.user.service;
 
+import javax.validation.constraints.NotNull;
+
 public interface LoginService {
 
 
@@ -34,4 +36,11 @@ public interface LoginService {
      */
     Long getValidUid(String token);
 
+    /**
+     * 账号密码登录
+     * @param username
+     * @param password
+     * @return token信息
+     */
+    String loginByPassword(@NotNull(message = "用户名不能为空") String username, @NotNull(message = "密码不能为空") String password);
 }

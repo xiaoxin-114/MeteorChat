@@ -26,6 +26,10 @@ public class UserDao extends ServiceImpl<UserMapper, User> {
         return lambdaQuery().eq(User::getName, name).list();
     }
 
+    public User getByUsername(String username) {
+        return lambdaQuery().eq(User::getUsername, username).one();
+    }
+
     public void rename(Long uid, String name) {
         lambdaUpdate().eq(User::getId, uid).set(User::getName, name).update();
     }

@@ -57,9 +57,13 @@ public class WebsocketHandler extends SimpleChannelInboundHandler<TextWebSocketF
         switch (typeEnum){
             case LOGIN:
                 webSocketService.handleLoginReq(channelHandlerContext.channel());
-                log.info("请求登录二维码" + textWebSocketFrame.text());
+                log.info("请求登录二维码{}", textWebSocketFrame.text());
                 break;
             case HEARTBEAT:
+                break;
+            case LOGIN_BY_PASSWORD:
+                // 处理账号密码登陆成功了
+                webSocketService.authorize(channelHandlerContext.channel(), new WSAuthorize(wsBaseReqVO.getData()));
                 break;
             default:
                 log.info("无法识别的websocket请求类型，该请求无效");
