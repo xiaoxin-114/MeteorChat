@@ -25,6 +25,6 @@ public class SacnSuccessMsgConsumer extends AbstractConsumer<ScanSuccessMessageD
 
     @Override
     public String getKey() {
-        return MQConstant.SCAN_MSG_GROUP;
+        return MQConstant.SCAN_MSG_TOPIC;
     }
 }

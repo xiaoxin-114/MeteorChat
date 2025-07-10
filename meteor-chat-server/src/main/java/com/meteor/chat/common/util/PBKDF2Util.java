@@ -17,6 +17,7 @@ public class PBKDF2Util {
     private static final int ITERATIONS = 10000; // 迭代次数
     private static final int KEY_LENGTH = 256;   // 密钥长度（位）
     private static final int SALT_LENGTH = 16;   // 盐值长度（字节）
+    private static final String DEFAULT_PASSWORD = "123456";
 
     /**
      * 生成随机盐值
@@ -62,6 +63,10 @@ public class PBKDF2Util {
         }
         String hashedInput = hashPassword(inputPass, salt);
         return hashedInput.equals(storedHash);
+    }
+
+    public static String getDefaultPassword(String salt) {
+        return hashPassword(DEFAULT_PASSWORD, salt);
     }
 }
 

@@ -1,2 +1,4 @@
 /meteor-chat-server/src/test/
 /.idea/
+*.iml
+**/target/

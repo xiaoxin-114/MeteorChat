@@ -6,6 +6,7 @@ import com.meteor.chat.common.domain.dto.LoginMessageDTO;
 import com.meteor.chat.common.domain.dto.ScanSuccessMessageDTO;
 import com.meteor.chat.common.domain.entity.User;
 import com.meteor.chat.common.domain.entity.UserRole;
+import com.meteor.chat.common.util.PBKDF2Util;
 import com.meteor.chat.common.util.RedisUtils;
 import com.meteor.chat.consumer.ConsumerExecutor;
 import com.meteor.chat.user.dao.UserDao;
@@ -82,11 +83,16 @@ public class WxMsgServiceImpl implements WxMsgService {
         user.setAvatar(userInfo.getHeadImgUrl());
         user.setName(userInfo.getNickname());
         user.setSex(userInfo.getSex());
+        user.setUsername(userInfo.getNickname());
+        String salt = PBKDF2Util.generateSalt();
+        user.setSalt(salt);
+        user.setPassword(PBKDF2Util.getDefaultPassword(salt));
         try {
             userDao.updateById(user);
         } catch (Exception e) {
             log.error(e.getMessage(), e);
             user.setName("名字重置" + user.getId());
+            user.setUsername("repeatName" + user.getId());
             userDao.updateById(user);
         }
         Integer code = RedisUtils.get(RedisKey.getKey(RedisKey.OPEN_ID_STRING, openid), Integer.class);
