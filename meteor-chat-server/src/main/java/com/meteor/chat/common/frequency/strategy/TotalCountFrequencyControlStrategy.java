@@ -21,7 +21,7 @@ public class TotalCountFrequencyControlStrategy extends AbstractFrequencyControl
             FrequencyControlBaseDTO dto = list.get(i);
             Integer count = countList.get(i);
             if (Objects.nonNull(count) && count >= dto.getCount()) {
-                log.warn("key为{}请求超出频控，要求{}{}下{}次，实际{}次，", dto.getKey(), dto.getTime(), dto.getUnit().toString(), count);
+                log.warn("key为{}请求超出频控，要求{}{}下{}次，实际{}次，", dto.getKey(), dto.getTime(), dto.getUnit().toString(), dto.getCount(), count);
                 return true;
             }
         }

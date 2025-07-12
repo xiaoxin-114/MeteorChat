@@ -1,7 +1,7 @@
 package com.meteor.chat.common.cache;
 
 import com.meteor.chat.common.util.RedisUtils;
-import org.apache.commons.collections.CollectionUtils;
+import org.springframework.util.CollectionUtils;
 
 import java.lang.reflect.ParameterizedType;
 import java.util.*;
@@ -40,7 +40,7 @@ public abstract class AbstractRedisStringCache<K, V> implements BatchCache<K, V>
         }
         Map<K, V> vs = new HashMap<>();
         // 过滤那些redis中不存在，还需要重新加载的数据
-        if (CollectionUtils.isNotEmpty(needLoadKeys)){
+        if (!CollectionUtils.isEmpty(needLoadKeys)){
             // 加载数据
             vs = load(needLoadKeys);
             // 转换并存回redis中

@@ -17,6 +17,7 @@
         <module>meteorchat-oss-starter</module>
         <module>meteorchat-redis</module>
         <module>meteorchat-transaction</module>
+        <module>meteorchat-mq-starter</module>
     </modules>
 
     <properties>

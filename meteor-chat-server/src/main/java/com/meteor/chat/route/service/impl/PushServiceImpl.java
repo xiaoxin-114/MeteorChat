@@ -1,8 +1,8 @@
 package com.meteor.chat.route.service.impl;
 
-import com.meteor.chat.common.constants.MQConstant;
 import com.meteor.chat.common.domain.dto.PushMessageDTO;
-import com.meteor.chat.consumer.ConsumerExecutor;
+import com.meteor.chat.rabbitmq.constants.MQConstant;
+import com.meteor.chat.rabbitmq.producer.MQProducer;
 import com.meteor.chat.route.service.PushService;
 import com.meteor.chat.websocket.domain.vo.WSBaseResp;
 import org.springframework.stereotype.Service;
@@ -14,20 +14,20 @@ import java.util.List;
 public class PushServiceImpl implements PushService {
 
     @Resource
-    private ConsumerExecutor consumerExecutor;
+    private MQProducer mqProducer;
 
     @Override
     public void pushMsg(WSBaseResp<?> msg, List<Long> uidList) {
-        consumerExecutor.execute(MQConstant.PUSH_TOPIC, new PushMessageDTO(msg, uidList, PushMessageDTO.NOT_ALL));
+        mqProducer.sendMsg(MQConstant.PUSH_EXCHANGE, MQConstant.PUSH_ROUTING_KEY, new PushMessageDTO(msg, uidList, PushMessageDTO.NOT_ALL));
     }
 
     @Override
     public void pushMsg(WSBaseResp<?> msg) {
-        consumerExecutor.execute(MQConstant.PUSH_TOPIC, new PushMessageDTO(msg));
+        mqProducer.sendMsg(MQConstant.PUSH_EXCHANGE, MQConstant.PUSH_ROUTING_KEY, new PushMessageDTO(msg));
     }
 
     @Override
     public void pushMsg(WSBaseResp<?> msg, Long uid) {
-        consumerExecutor.execute(MQConstant.PUSH_TOPIC, new PushMessageDTO(msg, uid));
+        mqProducer.sendMsg(MQConstant.PUSH_EXCHANGE, MQConstant.PUSH_ROUTING_KEY, new PushMessageDTO(msg, uid));
     }
 }

@@ -7,7 +7,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.meteor.chat.common.domain.vo.CursorPageBaseResp;
 import com.meteor.chat.common.domain.vo.req.CursorPageBaseReq;
-import org.apache.commons.collections.CollectionUtils;
+import org.springframework.util.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.redis.core.ZSetOperations;
 

@@ -30,6 +30,10 @@
             <artifactId>meteorchat-oss-starter</artifactId>
         </dependency>
         <dependency>
+            <groupId>com.meteor.chat</groupId>
+            <artifactId>meteorchat-mq-starter</artifactId>
+        </dependency>
+        <dependency>
             <groupId>com.knuddels</groupId>
             <artifactId>jtokkit</artifactId>
             <version>0.6.1</version>

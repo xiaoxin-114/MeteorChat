@@ -16,7 +16,7 @@ import com.meteor.chat.user.service.adapter.UserAdapter;
 import com.meteor.chat.user.service.cache.ItemCache;
 import com.meteor.chat.user.service.cache.UserSummaryCache;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections.CollectionUtils;
+import org.springframework.util.CollectionUtils;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 

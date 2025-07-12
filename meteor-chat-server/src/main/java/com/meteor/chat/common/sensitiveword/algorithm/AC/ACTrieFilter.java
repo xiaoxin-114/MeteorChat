@@ -1,7 +1,7 @@
 package com.meteor.chat.common.sensitiveword.algorithm.AC;
 
 import com.meteor.chat.common.sensitiveword.SensitiveWordFilter;
-import org.apache.commons.collections.CollectionUtils;
+import org.springframework.util.CollectionUtils;
 
 import java.util.List;
 import java.util.Objects;
@@ -21,7 +21,7 @@ public class ACTrieFilter implements SensitiveWordFilter {
 
     @Override
     public boolean hasSensitiveWord(String text) {
-        return CollectionUtils.isNotEmpty(acTrie.filter(text));
+        return !CollectionUtils.isEmpty(acTrie.filter(text));
     }
 
     @Override

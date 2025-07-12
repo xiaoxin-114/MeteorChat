@@ -6,7 +6,7 @@ import com.meteor.chat.common.domain.enums.MessageTypeEnum;
 import com.meteor.chat.common.domain.vo.req.ChatMessageReq;
 import com.meteor.chat.msg.dao.MessageDao;
 import com.meteor.chat.msg.service.adapter.MsgAdapter;
-import org.apache.commons.collections.CollectionUtils;
+import org.springframework.util.CollectionUtils;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;

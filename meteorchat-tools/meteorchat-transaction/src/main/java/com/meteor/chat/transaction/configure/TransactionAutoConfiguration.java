@@ -5,7 +5,6 @@ import com.meteor.chat.transaction.dao.SecureInvokeDao;
 //import com.meteor.chat.transaction.service.MQProducer;
 import com.meteor.chat.transaction.service.SecureInvokeService;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections.CollectionUtils;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +12,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.function.SingletonSupplier;
 
 import java.util.List;
@@ -49,8 +49,4 @@ public class TransactionAutoConfiguration {
         return new SecureInvokeService(executor, secureInvokeDao);
     }
 
-//    @Bean
-//    public MQProducer mqProducer() {
-//        return new MQProducer();
-//    }
 }

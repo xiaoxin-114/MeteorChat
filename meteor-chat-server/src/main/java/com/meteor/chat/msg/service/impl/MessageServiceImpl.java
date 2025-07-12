@@ -32,11 +32,11 @@ import com.meteor.chat.msg.service.handler.msgmark.MsgMarkHandlerFacroty;
 import com.meteor.chat.user.dao.UserRoleDao;
 import com.meteor.chat.user.service.cache.UserCache;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections.CollectionUtils;
 import org.junit.Assert;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
 import java.util.*;

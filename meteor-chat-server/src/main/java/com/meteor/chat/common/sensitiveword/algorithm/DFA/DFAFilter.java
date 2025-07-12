@@ -1,7 +1,7 @@
 package com.meteor.chat.common.sensitiveword.algorithm.DFA;
 
 import com.meteor.chat.common.sensitiveword.SensitiveWordFilter;
-import org.apache.commons.collections.CollectionUtils;
+import org.springframework.util.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.*;

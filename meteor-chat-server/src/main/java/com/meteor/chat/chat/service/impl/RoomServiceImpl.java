@@ -33,11 +33,11 @@ import com.meteor.chat.websocket.adapter.WSAdapter;
 import com.meteor.chat.websocket.domain.vo.WSBaseResp;
 import com.meteor.chat.websocket.domain.vo.WSMemberChange;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections.CollectionUtils;
 import org.junit.Assert;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
@@ -280,7 +280,7 @@ public class RoomServiceImpl implements RoomService {
                 .count();
         Assert.assertTrue("群聊管理员不能超过" + CommonConstants.MAX_ADMIN_NUM + "个",
                 uidList.size() + managerCount <= CommonConstants.MAX_ADMIN_NUM);
-        if (CollectionUtils.isNotEmpty(uidList)) {
+        if (!CollectionUtils.isEmpty(uidList)) {
             groupMemberDao.addAdmin(uidList, roomGroup.getId());
         }
     }

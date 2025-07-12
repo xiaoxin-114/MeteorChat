@@ -5,7 +5,6 @@ import com.meteor.chat.chat.dao.RoomDao;
 import com.meteor.chat.chat.dao.RoomFriendDao;
 import com.meteor.chat.chat.service.ContactService;
 import com.meteor.chat.chat.service.cache.*;
-import com.meteor.chat.common.constants.MQConstant;
 import com.meteor.chat.common.domain.dto.MsgSendMessageDTO;
 import com.meteor.chat.common.domain.entity.Message;
 import com.meteor.chat.common.domain.entity.Room;
@@ -18,19 +17,17 @@ import com.meteor.chat.msg.service.MessageService;
 import com.meteor.chat.msg.service.impl.MessageServiceImpl;
 import com.meteor.chat.route.service.PushService;
 import com.meteor.chat.websocket.adapter.WSAdapter;
-import org.apache.rocketmq.spring.annotation.MessageModel;
-import org.apache.rocketmq.spring.annotation.RocketMQMessageListener;
-import org.apache.rocketmq.spring.core.RocketMQListener;
+import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-
+import com.meteor.chat.rabbitmq.constants.MQConstant;
 import javax.annotation.Resource;
 import javax.websocket.OnMessage;
 import java.util.ArrayList;
 import java.util.List;
 
 @Component
-public class MsgSendConsumer extends AbstractConsumer<MsgSendMessageDTO> {
+public class MsgSendConsumer {
 
     @Resource
     private MessageDao messageDao;
@@ -63,8 +60,8 @@ public class MsgSendConsumer extends AbstractConsumer<MsgSendMessageDTO> {
     private RoomFriendCache roomFriendCache;
 
 
+    @RabbitListener(queues = MQConstant.SEND_MSG_QUEUE)
     @Transactional(rollbackFor = Exception.class)
-    @Override
     public void consume(MsgSendMessageDTO dto) {
         Long msgId = dto.getMsgId();
         // 此时是推送新消息的，不会有人点赞和点踩，所有不用关心接收用户
@@ -96,8 +93,4 @@ public class MsgSendConsumer extends AbstractConsumer<MsgSendMessageDTO> {
         }
     }
 
-    @Override
-    public String getKey() {
-        return MQConstant.SEND_MSG_TOPIC;
-    }
 }

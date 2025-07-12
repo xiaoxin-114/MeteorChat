@@ -8,7 +8,7 @@ import com.meteor.chat.common.domain.vo.req.IdBaseReq;
 import com.meteor.chat.common.domain.vo.req.UserEmojiAddReq;
 import com.meteor.chat.user.dao.UserEmojiDao;
 import com.meteor.chat.user.service.UserEmojiService;
-import org.apache.commons.collections.CollectionUtils;
+import org.springframework.util.CollectionUtils;
 import org.junit.Assert;
 import org.springframework.stereotype.Service;
 

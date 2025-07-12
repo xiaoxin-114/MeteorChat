@@ -8,7 +8,7 @@ import com.meteor.chat.user.dao.BlackDao;
 import com.meteor.chat.user.dao.UserDao;
 import com.meteor.chat.user.dao.UserRoleDao;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections.CollectionUtils;
+import org.springframework.util.CollectionUtils;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.Caching;
@@ -131,7 +131,7 @@ public class UserCache {
                 .collect(Collectors.toMap(User::getId, Function.identity()));
         // 过滤出那些需要查询，但是redis中没有的用户数据id
         List<Long> extraUid = idList.stream().filter(id -> !userMap.containsKey(id)).collect(Collectors.toList());
-        if (CollectionUtils.isNotEmpty(extraUid)) {
+        if (!CollectionUtils.isEmpty(extraUid)) {
             // 从数据库中查询，并且存储回redis中
             List<User> users = userDao.listByIds(extraUid);
             Map<String, User> extraMap = users.stream().collect(Collectors.toMap(user -> RedisKey.getKey(RedisKey.USER_INFO_STRING, user.getId()), Function.identity()));

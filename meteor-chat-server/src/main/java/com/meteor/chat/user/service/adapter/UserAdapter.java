@@ -6,7 +6,7 @@ import com.meteor.chat.common.domain.entity.ItemConfig;
 import com.meteor.chat.common.domain.entity.User;
 import com.meteor.chat.common.domain.vo.BadgeResp;
 import com.meteor.chat.common.domain.vo.UserInfoVO;
-import org.apache.commons.collections.CollectionUtils;
+import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
 import java.util.List;

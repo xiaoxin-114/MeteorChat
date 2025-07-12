@@ -22,7 +22,7 @@ import com.meteor.chat.msg.dao.MessageDao;
 import com.meteor.chat.msg.service.handler.msg.AbstractMsgHandler;
 import com.meteor.chat.msg.service.handler.msg.MsgHandlerFactory;
 import com.meteor.chat.user.service.cache.UserCache;
-import org.apache.commons.collections.CollectionUtils;
+import org.springframework.util.CollectionUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;

@@ -1,6 +1,5 @@
 package com.meteor.chat.user.service.impl;
 
-import com.meteor.chat.common.constants.MQConstant;
 import com.meteor.chat.common.constants.RedisKey;
 import com.meteor.chat.common.domain.dto.LoginMessageDTO;
 import com.meteor.chat.common.domain.dto.ScanSuccessMessageDTO;
@@ -8,7 +7,8 @@ import com.meteor.chat.common.domain.entity.User;
 import com.meteor.chat.common.domain.entity.UserRole;
 import com.meteor.chat.common.util.PBKDF2Util;
 import com.meteor.chat.common.util.RedisUtils;
-import com.meteor.chat.consumer.ConsumerExecutor;
+import com.meteor.chat.rabbitmq.constants.MQConstant;
+import com.meteor.chat.rabbitmq.producer.MQProducer;
 import com.meteor.chat.user.dao.UserDao;
 import com.meteor.chat.user.dao.UserRoleDao;
 import com.meteor.chat.user.service.UserService;
@@ -43,7 +43,7 @@ public class WxMsgServiceImpl implements WxMsgService {
     @Resource
     private UserService userService;
     @Resource
-    private ConsumerExecutor consumerExecutor;
+    private MQProducer mqProducer;
     @Resource
     private UserRoleDao userRoleDao;
 
@@ -56,7 +56,7 @@ public class WxMsgServiceImpl implements WxMsgService {
         int loginCode = Integer.parseInt(this.getEventKey(message));
         if (Objects.nonNull(user) && StringUtils.isNotEmpty(user.getAvatar())) {
             //mq发送消息，发送消息给前端登录成功
-            consumerExecutor.execute(MQConstant.LOGIN_MSG_TOPIC, new LoginMessageDTO(user.getId(), loginCode));
+            mqProducer.sendMsg(MQConstant.LOGIN_EXCHANGE, MQConstant.LOGIN_ROUTING_KEY, new LoginMessageDTO(user.getId(), loginCode));
             return null;
         }
         // 如果未注册进行注册
@@ -71,7 +71,7 @@ public class WxMsgServiceImpl implements WxMsgService {
         //将openId与code的映射关系缓存到redis中
         RedisUtils.set(RedisKey.getKey(RedisKey.OPEN_ID_STRING, openId), loginCode, 60, TimeUnit.MINUTES);
         //使用mq异步发送消息给前端，表示已经扫码成功，等待授权
-        consumerExecutor.execute(MQConstant.SCAN_MSG_TOPIC, new ScanSuccessMessageDTO(loginCode));
+        mqProducer.sendMsg(MQConstant.SCAN_EXCHANGE, MQConstant.SCAN_ROUTING_KEY, new ScanSuccessMessageDTO(loginCode));
         String url = String.format(AUTHORIZE_URL, service.getWxMpConfigStorage().getAppId(), URLEncoder.encode(callback + "/wx/portal/public/callBack"));
         return new TextBuilder().build("点击下方链接进行授权：<a href=\"" + url + "\">授权</a>", message, service);
     }
@@ -97,7 +97,7 @@ public class WxMsgServiceImpl implements WxMsgService {
         }
         Integer code = RedisUtils.get(RedisKey.getKey(RedisKey.OPEN_ID_STRING, openid), Integer.class);
         //mq发送用户成功登陆的事件
-        consumerExecutor.execute(MQConstant.LOGIN_MSG_TOPIC, new LoginMessageDTO(user.getId(), code));
+        mqProducer.sendMsg(MQConstant.LOGIN_EXCHANGE, MQConstant.LOGIN_ROUTING_KEY, new LoginMessageDTO(user.getId(), code));
     }
 
     private String getEventKey(WxMpXmlMessage wxMpXmlMessage) {

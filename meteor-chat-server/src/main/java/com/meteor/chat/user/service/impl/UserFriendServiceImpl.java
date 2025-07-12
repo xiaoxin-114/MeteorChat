@@ -21,7 +21,7 @@ import com.meteor.chat.user.service.UserFriendService;
 import com.meteor.chat.user.service.adapter.FriendAdapter;
 import com.meteor.chat.user.service.cache.UserCache;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections.CollectionUtils;
+import org.springframework.util.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Assert;
 import org.springframework.aop.framework.AopContext;

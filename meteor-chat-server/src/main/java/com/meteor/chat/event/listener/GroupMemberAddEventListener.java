@@ -15,7 +15,7 @@ import com.meteor.chat.user.service.cache.UserInfoCache;
 import com.meteor.chat.websocket.adapter.WSAdapter;
 import com.meteor.chat.websocket.domain.vo.WSBaseResp;
 import com.meteor.chat.websocket.domain.vo.WSMemberChange;
-import org.apache.commons.collections.CollectionUtils;
+import org.springframework.util.CollectionUtils;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 

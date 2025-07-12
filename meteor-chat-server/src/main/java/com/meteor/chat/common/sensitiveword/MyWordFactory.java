@@ -2,7 +2,7 @@ package com.meteor.chat.common.sensitiveword;
 
 import com.meteor.chat.common.domain.entity.SensitiveWord;
 import com.meteor.chat.common.sensitiveword.dao.SensitiveWordDao;
-import org.apache.commons.collections.CollectionUtils;
+import org.springframework.util.CollectionUtils;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;

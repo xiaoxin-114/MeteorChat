@@ -16,7 +16,7 @@ import com.meteor.chat.common.sensitiveword.SensitiveWords;
 import com.meteor.chat.common.util.discover.PrioritizedUrlDiscover;
 import com.meteor.chat.msg.dao.MessageDao;
 import com.meteor.chat.user.service.cache.UserCache;
-import org.apache.commons.collections.CollectionUtils;
+import org.springframework.util.CollectionUtils;
 import org.junit.Assert;
 import org.springframework.stereotype.Component;
 
@@ -66,7 +66,7 @@ public class TextMsgHandler extends AbstractMsgHandler<TextMsgReq> {
             update.setGapCount(messageDao.countMsgGap(message.getRoomId(), message.getId(), replyMsgId));
         }
         List<Long> atUidList = body.getAtUidList();
-        if (CollectionUtils.isNotEmpty(atUidList)) {
+        if (!CollectionUtils.isEmpty(atUidList)) {
             extra.setAtUidList(atUidList);
         }
         // 识别消息是否包含连接，插入连接相关消息
@@ -79,7 +79,7 @@ public class TextMsgHandler extends AbstractMsgHandler<TextMsgReq> {
     @Override
     protected void checkMsg(TextMsgReq body, Long roomId, Long uid) {
         // 校验@的列表
-        if (CollectionUtils.isNotEmpty(body.getAtUidList())) {
+        if (!CollectionUtils.isEmpty(body.getAtUidList())) {
             List<Long> atList = body.getAtUidList().stream().distinct().collect(Collectors.toList());
             if (atList.contains(0)) {
                 Assert.assertTrue("只有管理员才能@全员", roomService.hasRoomPower(uid, roomId));

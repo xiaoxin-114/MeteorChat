@@ -9,7 +9,7 @@ import com.meteor.chat.common.domain.enums.UserApplyStatusEnum;
 import com.meteor.chat.common.domain.enums.UserApplyTypeEnum;
 import com.meteor.chat.common.domain.vo.FriendApplyResp;
 import com.meteor.chat.common.domain.vo.FriendResp;
-import org.apache.commons.collections.CollectionUtils;
+import org.springframework.util.CollectionUtils;
 
 import java.util.*;
 import java.util.stream.Collectors;

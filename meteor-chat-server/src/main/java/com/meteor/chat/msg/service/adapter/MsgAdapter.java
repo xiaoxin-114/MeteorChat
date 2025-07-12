@@ -13,7 +13,7 @@ import com.meteor.chat.common.domain.vo.ChatMessageResp;
 import com.meteor.chat.common.domain.vo.req.ChatMessageReq;
 import com.meteor.chat.msg.service.handler.msg.AbstractMsgHandler;
 import com.meteor.chat.msg.service.handler.msg.MsgHandlerFactory;
-import org.apache.commons.collections.CollectionUtils;
+import org.springframework.util.CollectionUtils;
 
 import java.util.*;
 import java.util.stream.Collectors;

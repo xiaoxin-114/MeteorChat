@@ -28,7 +28,7 @@ import com.meteor.chat.user.service.adapter.UserAdapter;
 import com.meteor.chat.user.service.cache.ItemCache;
 import com.meteor.chat.user.service.cache.UserCache;
 import com.meteor.chat.user.service.cache.UserSummaryCache;
-import org.apache.commons.collections.CollectionUtils;
+import org.springframework.util.CollectionUtils;
 import org.junit.Assert;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
