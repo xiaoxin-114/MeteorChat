@@ -5,12 +5,13 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.io.Serializable;
 import java.util.Collections;
 import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class PushMessageDTO {
+public class PushMessageDTO implements Serializable {
     public static final Integer ALL = 2;
     public static final Integer NOT_ALL = 1;
 

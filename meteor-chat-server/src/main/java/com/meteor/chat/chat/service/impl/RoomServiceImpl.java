@@ -181,7 +181,7 @@ public class RoomServiceImpl implements RoomService {
         // 向所有用户端推送用户被移除的消息
         List<Long> uidList = groupMemberCache.getMemberUidList(roomId);
         WSBaseResp<WSMemberChange> wsBaseResp = WSAdapter.buildGroupMemberRemove(roomId, req.getUid());
-        pushService.pushMsg(wsBaseResp, uidList);
+        pushService.pushRoomMsg(wsBaseResp, uidList);
         groupMemberCache.evictMemberUidList(roomId);
         User userInfo = userCache.getUserInfo(req.getUid());
         messageService.sendMsg(MsgAdapter.buildMemberChange(roomId, userInfo.getName() + "被移出群聊"), CommonConstants.SYSTEM_UID);
@@ -217,7 +217,7 @@ public class RoomServiceImpl implements RoomService {
             User userInfo = userCache.getUserInfo(uid);
             messageService.sendMsg(MsgAdapter.buildMemberChange(roomId, userInfo.getName() + "退出了群聊"), CommonConstants.SYSTEM_UID);
             // 向所有成员推送用户退出群聊的消息
-            pushService.pushMsg(WSAdapter.buildGroupMemberRemove(roomId, uid), memberUidList);
+            pushService.pushRoomMsg(WSAdapter.buildGroupMemberRemove(roomId, uid), memberUidList);
         }
     }
 

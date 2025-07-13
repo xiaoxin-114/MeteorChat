@@ -6,13 +6,14 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.io.Serializable;
 import java.util.Date;
 
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class GroupMemberResp {
+public class GroupMemberResp implements Serializable {
     @ApiModelProperty("uid")
     private Long uid;
     /**

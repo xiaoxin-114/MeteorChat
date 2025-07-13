@@ -74,7 +74,7 @@ public class MsgSendConsumer {
         roomCache.delete(roomId);
         if (room.isHotRoom()) {
             hotRoomCache.refreshActiveTime(roomId, message.getCreateTime());
-            pushService.pushMsg(WSAdapter.buildMsgSend(messageResp));
+            pushService.pushRoomMsg(WSAdapter.buildMsgSend(messageResp));
         } else {
             // 根据房间获取需要转发的群聊内的所有用户id
             List<Long> uidList = new ArrayList<>();
@@ -89,7 +89,7 @@ public class MsgSendConsumer {
             // 更新用户contact表格的最新活跃时间与最新消息id
             contactDao.refreshActiveTime(roomId, uidList, message.getCreateTime(), message.getId());
             // 推送消息
-            pushService.pushMsg(WSAdapter.buildMsgSend(messageResp), uidList);
+            pushService.pushRoomMsg(WSAdapter.buildMsgSend(messageResp), uidList);
         }
     }
 

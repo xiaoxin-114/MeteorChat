@@ -1,16 +1,36 @@
 package com.meteor.chat.rabbitmq.producer;
 
+import cn.hutool.core.util.StrUtil;
+import com.meteor.chat.rabbitmq.constants.MQConstant;
 import com.meteor.chat.transaction.annotation.SecureInvoke;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
-@AllArgsConstructor
+import org.springframework.beans.factory.annotation.Value;
+
+import javax.annotation.PostConstruct;
+
+@RequiredArgsConstructor
 public class MQProducer {
 
-    private RabbitTemplate rocketMQTemplate;
+    private final RabbitTemplate mqTemplate;
+    @Value("${push.instanceId}")
+    private String instanceId;
+
+    public String singleQueueName;
+
+    public String roomQueueName;
+
+    @PostConstruct
+    public void init() {
+        singleQueueName = MQConstant.SINGLE_PUSH_QUEUE.replace("${instanceId}", instanceId);
+        roomQueueName = MQConstant.ROOM_PUSH_QUEUE.replace("${instanceId}", instanceId);
+    }
 
     public void sendMsg(String exchange, String routingKey, Object body) {
-
-        rocketMQTemplate.convertAndSend(exchange, routingKey,  body);
+        if (StrUtil.isNotBlank(routingKey)) {
+            routingKey = routingKey.contains("${instanceId") ? routingKey.replace("${instanceId}", instanceId) : routingKey;
+        }
+        mqTemplate.convertAndSend(exchange, routingKey,  body);
     }
 
     /**
@@ -20,7 +40,18 @@ public class MQProducer {
      */
     @SecureInvoke
     public void sendSecureMsg(String exchange, String routingKey, Object body) {
-        rocketMQTemplate.convertAndSend(exchange, routingKey, body);
+        if (StrUtil.isNotBlank(routingKey)) {
+            routingKey = routingKey.contains("${instanceId") ? routingKey.replace("${instanceId}", instanceId) : routingKey;
+        }
+        mqTemplate.convertAndSend(exchange, routingKey, body);
+    }
+
+    public String getSingleQueueName() {
+        return singleQueueName;
+    }
+
+    public String getRoomQueueName() {
+        return roomQueueName;
     }
 }
 

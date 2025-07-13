@@ -78,7 +78,7 @@ public class GroupMemberAddEventListener {
         Map<Long, User> userMap = userInfoCache.getBatch(uidList);
         userMap.values().forEach(user -> {
             WSBaseResp<WSMemberChange> memberAddWsResp = WSAdapter.buildGroupMemberAdd(roomGroup.getRoomId(), user);
-            pushService.pushMsg(memberAddWsResp, memberUidList);
+            pushService.pushRoomMsg(memberAddWsResp, memberUidList);
         });
         // 清除缓存
         groupMemberCache.evictMemberUidList(roomGroup.getRoomId());

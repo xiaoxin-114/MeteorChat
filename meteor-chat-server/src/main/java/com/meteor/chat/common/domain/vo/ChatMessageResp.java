@@ -6,13 +6,14 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.io.Serializable;
 import java.util.Date;
 
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class ChatMessageResp {
+public class ChatMessageResp implements Serializable {
 
     @ApiModelProperty("发送者信息")
     private UserInfo fromUser;
@@ -20,7 +21,7 @@ public class ChatMessageResp {
     private Message message;
 
     @Data
-    public static class UserInfo {
+    public static class UserInfo implements Serializable {
         @ApiModelProperty("用户id")
         private Long uid;
     }

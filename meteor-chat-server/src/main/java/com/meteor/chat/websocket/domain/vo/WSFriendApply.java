@@ -6,11 +6,13 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.io.Serializable;
+
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class WSFriendApply {
+public class WSFriendApply implements Serializable {
 
     @ApiModelProperty("申请人")
     private Long uid;

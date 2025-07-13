@@ -3,15 +3,18 @@ logging:
     org.springframework.web: INFO
     com.github.binarywang.demo.wx.mp: DEBUG
     me.chanjar.weixin: DEBUG
+    com.meteor.chat.common.mapper: WARN
 mybatis-plus:
   mapper-locations: classpath:mapper/**/*.xml
   configuration:
-    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+#    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
     map-underscore-to-camel-case: true
 # 便于测试，模拟用户行为
 mock:
   enable: true
   prefix: test
+push:
+  instanceId: 01
 spring:
   profiles:
     #运行的环境

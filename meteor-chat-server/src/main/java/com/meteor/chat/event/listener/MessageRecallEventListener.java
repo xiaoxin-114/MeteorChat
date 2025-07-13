@@ -31,10 +31,10 @@ public class MessageRecallEventListener{
         Room room = roomCache.get(dto.getRoomId());
         // 全员群
         if (room.isHotRoom()) {
-            pushService.pushMsg(WSAdapter.buildMsgRecall(dto));
+            pushService.pushRoomMsg(WSAdapter.buildMsgRecall(dto));
         } else {
             List<Long> memberUidList = groupMemberCache.getMemberUidList(dto.getRoomId());
-            pushService.pushMsg(WSAdapter.buildMsgRecall(dto), memberUidList);
+            pushService.pushRoomMsg(WSAdapter.buildMsgRecall(dto), memberUidList);
         }
     }
 }

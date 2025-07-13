@@ -53,10 +53,10 @@ public class MsgMarkEventListener {
         Integer markCount = messageMarkDao.countMsgType(msgMarkDTO.getMsgId(), msgMarkDTO.getMarkType());
         WSBaseResp<WSMsgMark> wsBaseResp = WSAdapter.buildMsgMarkResp(msgMarkDTO, markCount);
         if (room.isHotRoom()) {
-            pushService.pushMsg(wsBaseResp);
+            pushService.pushRoomMsg(wsBaseResp);
         }else {
             List<Long> uidList = groupMemberCache.getMemberUidList(message.getRoomId());
-            pushService.pushMsg(wsBaseResp, uidList);
+            pushService.pushRoomMsg(wsBaseResp, uidList);
         }
     }
 

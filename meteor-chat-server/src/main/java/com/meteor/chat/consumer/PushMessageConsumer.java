@@ -1,7 +1,7 @@
 package com.meteor.chat.consumer;
 
-import com.meteor.chat.rabbitmq.constants.MQConstant;
 import com.meteor.chat.common.domain.dto.PushMessageDTO;
+import com.meteor.chat.rabbitmq.constants.MQConstant;
 import com.meteor.chat.websocket.service.WebSocketService;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.util.CollectionUtils;
@@ -19,8 +19,7 @@ public class PushMessageConsumer {
     @Resource
     private WebSocketService webSocketService;
 
-
-    @RabbitListener(queues = MQConstant.PUSH_QUEUE)
+    @RabbitListener(queues = {"#{@mqProducer.getSingleQueueName()}", "#{@mqProducer.getRoomQueueName()}"})
     public void consume(PushMessageDTO pushMessageDTO) {
         if (PushMessageDTO.ALL.equals(pushMessageDTO.getType())) {
             webSocketService.sendToAllOnline(pushMessageDTO.getWsBaseResp());

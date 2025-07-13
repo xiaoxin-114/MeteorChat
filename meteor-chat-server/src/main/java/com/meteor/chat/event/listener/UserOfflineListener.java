@@ -33,7 +33,7 @@ public class UserOfflineListener {
         userCache.offline(user.getId(), user.getLastOptTime());
         Long onlineNum = userCache.getOnlineNum();
         // 向所有在线用户推送，该用户断开连接的消息
-        pushService.pushMsg(WSAdapter.buildUserOfflineResp(user, onlineNum));
+        pushService.pushRoomMsg(WSAdapter.buildUserOfflineResp(user, onlineNum));
     }
 
     @EventListener(classes = UserOfflineEvent.class)

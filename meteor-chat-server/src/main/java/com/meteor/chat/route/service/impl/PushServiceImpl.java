@@ -17,17 +17,23 @@ public class PushServiceImpl implements PushService {
     private MQProducer mqProducer;
 
     @Override
-    public void pushMsg(WSBaseResp<?> msg, List<Long> uidList) {
-        mqProducer.sendMsg(MQConstant.PUSH_EXCHANGE, MQConstant.PUSH_ROUTING_KEY, new PushMessageDTO(msg, uidList, PushMessageDTO.NOT_ALL));
+    public void pushRoomMsg(WSBaseResp<?> msg, List<Long> uidList) {
+        if (uidList.size() == 1) {
+            pushSingleMsg(msg, uidList.get(0));
+        } else {
+            mqProducer.sendMsg(MQConstant.ROOM_PUSH_EXCHANGE, null, new PushMessageDTO(msg, uidList, PushMessageDTO.NOT_ALL));
+        }
     }
 
     @Override
-    public void pushMsg(WSBaseResp<?> msg) {
-        mqProducer.sendMsg(MQConstant.PUSH_EXCHANGE, MQConstant.PUSH_ROUTING_KEY, new PushMessageDTO(msg));
+    public void pushRoomMsg(WSBaseResp<?> msg) {
+        mqProducer.sendMsg(MQConstant.ROOM_PUSH_EXCHANGE, null, new PushMessageDTO(msg));
     }
 
     @Override
-    public void pushMsg(WSBaseResp<?> msg, Long uid) {
-        mqProducer.sendMsg(MQConstant.PUSH_EXCHANGE, MQConstant.PUSH_ROUTING_KEY, new PushMessageDTO(msg, uid));
+    public void pushSingleMsg(WSBaseResp<?> msg, Long uid) {
+        // todo 后续优化，同步websocket模块一起，websocket建立连接时，就要根据uid分配给不同的用户
+        // 但是前端建立websocket连接时，还没有用户信息，这个无法确定
+        mqProducer.sendMsg(MQConstant.SINGLE_PUSH_EXCHANGE, MQConstant.SINGLE_PUSH_ROUTING_KEY, new PushMessageDTO(msg, uid));
     }
 }

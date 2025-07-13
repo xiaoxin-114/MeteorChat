@@ -18,6 +18,6 @@ public class MessageSendEventListener {
     @EventListener(value = MessageSendEvent.class)
     public void pushMsg(MessageSendEvent event) {
         Long msgId = event.getMsgId();
-        mqProducer.sendMsg(MQConstant.SEND_MSG_EXCHANGE, MQConstant.SEND_MSG_QUEUE, new MsgSendMessageDTO(msgId));
+        mqProducer.sendMsg(MQConstant.SEND_MSG_EXCHANGE, MQConstant.SEND_MSG_ROUTING_KEY, new MsgSendMessageDTO(msgId));
     }
 }

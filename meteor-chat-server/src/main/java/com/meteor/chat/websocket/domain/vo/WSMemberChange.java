@@ -2,10 +2,11 @@ package com.meteor.chat.websocket.domain.vo;
 
 import lombok.Data;
 
+import java.io.Serializable;
 import java.util.Date;
 
 @Data
-public class WSMemberChange {
+public class WSMemberChange implements Serializable {
     public static final Integer CHANGE_TYPE_ADD = 1;
     public static final Integer CHANGE_TYPE_REMOVE = 2;
 

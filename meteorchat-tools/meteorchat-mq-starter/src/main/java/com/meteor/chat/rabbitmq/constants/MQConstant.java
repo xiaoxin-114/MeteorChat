@@ -8,29 +8,31 @@ public interface MQConstant {
     /**
      * 群聊消息发送mq
      */
-    String SEND_MSG_EXCHANGE = "chat_send_msg_exchange";
-    String SEND_MSG_ROUTING_KEY = "chat_send_msg_routing_key";
-    String SEND_MSG_QUEUE = "chat_send_msg_queue";
+    String SEND_MSG_EXCHANGE = "chat.send.msg.exchange";
+    String SEND_MSG_ROUTING_KEY = "chat.send.msg.routing.key";
+    String SEND_MSG_QUEUE = "chat.send.msg.queue";
 
     /**
      * 消息推送
      */
     // todo 后续扩展，如果采用分布式，需要考虑群聊和私聊消息进入不同的队列，并且每个实例单独监听一个队列
-    String PUSH_QUEUE = "websocket_push_queue";
-    String PUSH_ROUTING_KEY = "websocket_push_routing_key";
-    String PUSH_EXCHANGE = "websocket_push_exchange";
+    String SINGLE_PUSH_QUEUE = "websocket.single.push.queue.${instanceId}";
+    String SINGLE_PUSH_ROUTING_KEY = "websocket.single.push.routing.key.${instanceId}";
+    String SINGLE_PUSH_EXCHANGE = "websocket.single.push.exchange";
 
+    String ROOM_PUSH_QUEUE = "websocket.room.push.queue.${instanceId}";
+    String ROOM_PUSH_EXCHANGE = "websocket.room.push.exchange";
     /**
      * (授权完成后)登录信息mq
      */
-    String LOGIN_QUEUE = "user_login_send_msg_queue";
-    String LOGIN_ROUTING_KEY = "user_login_send_msg_routing_key";
-    String LOGIN_EXCHANGE = "user_login_send_msg_exchange";
+    String LOGIN_QUEUE = "user.login.send.msg.queue";
+    String LOGIN_ROUTING_KEY = "user.login.send.msg.routing.key";
+    String LOGIN_EXCHANGE = "user.login.send.msg.exchange";
 
     /**
      * 扫码成功 信息发送mq
      */
-    String SCAN_QUEUE = "user_scan_send_msg_queue";
-    String SCAN_ROUTING_KEY = "user_scan_send_msg_routing_key";
-    String SCAN_EXCHANGE = "user_scan_send_msg_exchange";
+    String SCAN_QUEUE = "user.scan.send.msg.queue";
+    String SCAN_ROUTING_KEY = "user.scan.send.msg.routing.key";
+    String SCAN_EXCHANGE = "user.scan.send.msg.exchange";
 }

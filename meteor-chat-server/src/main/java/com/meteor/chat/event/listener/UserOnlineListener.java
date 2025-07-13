@@ -41,7 +41,7 @@ public class UserOnlineListener {
         User user = event.getUser();
         userCache.online(user.getId(), user.getLastOptTime());
         // 向所有在线用户推送，该用户登入成功的消息
-        pushService.pushMsg(WSAdapter.buildUserOfflineResp(user, userCache.getOnlineNum()));
+        pushService.pushRoomMsg(WSAdapter.buildUserOfflineResp(user, userCache.getOnlineNum()));
     }
 
     @Async

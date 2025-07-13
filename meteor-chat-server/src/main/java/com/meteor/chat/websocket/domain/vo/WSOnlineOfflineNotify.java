@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,7 +19,7 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class WSOnlineOfflineNotify {
+public class WSOnlineOfflineNotify implements Serializable {
     //新的上下线用户
     private List<GroupMemberResp> changeList = new ArrayList<>();
     //在线人数
