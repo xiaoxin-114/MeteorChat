@@ -27,21 +27,22 @@ public class HotRoomCache {
     private RoomDao roomDao;
 
     public void refreshActiveTime(Long roomId, Date activeTime) {
-        RedisUtils.zAdd(RedisKey.HOT_ROOM_ZET, roomId, (double) activeTime.getTime());
+        RedisUtils.zAdd(RedisKey.getKey(RedisKey.HOT_ROOM_ZET), roomId, (double) activeTime.getTime());
     }
 
     public CursorPageBaseResp<Pair<Long, Double>> cursorPage(CursorPageBaseReq req) {
-        CursorPageBaseResp<Pair<Long, Double>> resp = CursorUtils.cursorRedisPage(req, RedisKey.HOT_ROOM_ZET, Long::parseLong);
+        CursorPageBaseResp<Pair<Long, Double>> resp = CursorUtils.cursorRedisPage(req, RedisKey.getKey(RedisKey.HOT_ROOM_ZET), Long::parseLong);
         return resp;
     }
 
     public Set<ZSetOperations.TypedTuple<String>> rangeByScore(Double min, Double max) {
-        return RedisUtils.zRangeByScoreWithScores(RedisKey.HOT_ROOM_ZET, min, max);
+        return RedisUtils.zRangeByScoreWithScores(RedisKey.getKey(RedisKey.HOT_ROOM_ZET), min, max);
     }
 
     @PostConstruct
     private void loadData() {
-        if (!RedisUtils.hasKey(RedisKey.HOT_ROOM_ZET)) {
+        String key = RedisKey.getKey(RedisKey.HOT_ROOM_ZET);
+        if (!RedisUtils.hasKey(key)) {
             // 初始化热门房间
             List<Room> hotRoom = roomDao.getHotRoom();
             Set<ZSetOperations.TypedTuple<String>> tupleSet = hotRoom.stream()
@@ -50,7 +51,7 @@ public class HotRoomCache {
                         DefaultTypedTuple<String> tuple = new DefaultTypedTuple<String >(room.getId().toString(), Double.parseDouble(room.getActiveTime().getTime() + ""));
                         return tuple;
                     }).collect(Collectors.toSet());
-            RedisUtils.zAdd(RedisKey.HOT_ROOM_ZET, tupleSet);
+            RedisUtils.zAdd(key, tupleSet);
         }
     }
 

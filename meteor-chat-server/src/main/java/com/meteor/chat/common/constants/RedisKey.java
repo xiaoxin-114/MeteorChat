@@ -4,7 +4,7 @@ package com.meteor.chat.common.constants;
  * redis存储信息所对应的key常量
  */
 public class RedisKey {
-    private static final String BASE_KEY = "mallchat:";
+    public static final String BASE_KEY = "mallchat:";
 
     /**
      * 在线用户列表

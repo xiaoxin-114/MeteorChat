@@ -45,6 +45,11 @@ spring:
     timeout: 1800000
     # 设置密码
     password: ${mallchat.redis.password}
+  cache:
+    type: redis
+    redis:
+      cache-null-values: true
+      time-to-live: 18000
   jackson:
     serialization:
       write-dates-as-timestamps: true
