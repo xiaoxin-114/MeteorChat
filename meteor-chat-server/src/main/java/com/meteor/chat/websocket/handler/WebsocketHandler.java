@@ -69,7 +69,6 @@ public class WebsocketHandler extends SimpleChannelInboundHandler<TextWebSocketF
                 log.info("请求登录二维码{}", textWebSocketFrame.text());
                 break;
             case HEARTBEAT:
-                log.info("收到心跳包");
                 break;
             case LOGIN_BY_PASSWORD:
                 // 处理账号密码登陆成功了
