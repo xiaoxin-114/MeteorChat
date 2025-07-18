@@ -8,6 +8,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.meteor.chat.common.constants.CommonConstants;
 import com.meteor.chat.common.domain.dto.IpResultDTO;
 import com.meteor.chat.common.domain.entity.IpDetail;
+import com.meteor.chat.util.JsonUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.stereotype.Component;
@@ -24,7 +25,7 @@ public class IPUtils implements DisposableBean {
         Future<IpDetail> future = executor.submit(() -> {
             for (int i = 0; i < CommonConstants.GET_IPINFO_RETRY; i++) {
                 String result = HttpUtil.get(url);
-                IpResultDTO<IpDetail> resultDTO = new ObjectMapper().readValue(result, new TypeReference<IpResultDTO<IpDetail>>(){});
+                IpResultDTO<IpDetail> resultDTO = JsonUtils.toObj(result, new TypeReference<IpResultDTO<IpDetail>>() {});
                 if (resultDTO.isSuccess()) {
                     return resultDTO.getData();
                 }

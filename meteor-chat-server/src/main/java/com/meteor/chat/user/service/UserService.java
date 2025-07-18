@@ -12,6 +12,7 @@ import com.meteor.chat.common.domain.vo.req.MemberCursorReq;
 import com.meteor.chat.common.domain.vo.req.ModifyNameReq;
 import com.meteor.chat.common.domain.vo.req.SummaryInfoReq;
 
+import javax.validation.constraints.NotBlank;
 import java.util.List;
 
 public interface UserService {
@@ -52,4 +53,11 @@ public interface UserService {
      * @return
      */
     CursorPageBaseResp<User> cursorPageUser(MemberCursorReq req, List<Long> uidList);
+
+    /**
+     * 前端使用账号密码注册用户
+     * @param username
+     * @param password
+     */
+    void doRegister(@NotBlank(message = "用户名不能为空") String username, @NotBlank(message = "密码不能为空") String password);
 }

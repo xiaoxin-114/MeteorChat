@@ -2,6 +2,7 @@ package com.meteor.chat.websocket.handler;
 
 import cn.hutool.extra.spring.SpringUtil;
 import cn.hutool.json.JSONUtil;
+import com.meteor.chat.common.constants.MDCKey;
 import com.meteor.chat.websocket.domain.enums.WSReqTypeEnum;
 import com.meteor.chat.websocket.domain.vo.WSAuthorize;
 import com.meteor.chat.websocket.domain.vo.WSBaseReq;
@@ -17,6 +18,9 @@ import io.netty.handler.timeout.IdleState;
 import io.netty.handler.timeout.IdleStateEvent;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.MDC;
+
+import java.util.Objects;
 
 @Slf4j
 @Sharable
@@ -52,6 +56,11 @@ public class WebsocketHandler extends SimpleChannelInboundHandler<TextWebSocketF
      */
     @Override
     protected void channelRead0(ChannelHandlerContext channelHandlerContext, TextWebSocketFrame textWebSocketFrame) throws Exception {
+        // 如果用户已经登陆的话，在mdc中添加uid，保证日志输出
+        Long uid = NettyUtils.getAttr(channelHandlerContext.channel(), NettyUtils.UID_KEY);
+        if (Objects.nonNull(uid)) {
+            MDC.put(MDCKey.UID, String.valueOf(uid));
+        }
         WSBaseReq wsBaseReqVO = JSONUtil.toBean(textWebSocketFrame.text(), WSBaseReq.class);
         WSReqTypeEnum typeEnum = WSReqTypeEnum.of(wsBaseReqVO.getType());
         switch (typeEnum){
@@ -60,6 +69,7 @@ public class WebsocketHandler extends SimpleChannelInboundHandler<TextWebSocketF
                 log.info("请求登录二维码{}", textWebSocketFrame.text());
                 break;
             case HEARTBEAT:
+                log.info("收到心跳包");
                 break;
             case LOGIN_BY_PASSWORD:
                 // 处理账号密码登陆成功了

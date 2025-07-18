@@ -63,10 +63,6 @@ public class WxMsgServiceImpl implements WxMsgService {
         if (Objects.isNull(user)){
             user = User.builder().openId(openId).build();
             userService.register(user);
-            UserRole userRole = new UserRole();
-            userRole.setUid(userDao.getByOpenId(openId).getId());
-            userRole.setRoleId(0L);
-            userRoleDao.save(userRole);
         }
         //将openId与code的映射关系缓存到redis中
         RedisUtils.set(RedisKey.getKey(RedisKey.OPEN_ID_STRING, openId), loginCode, 60, TimeUnit.MINUTES);

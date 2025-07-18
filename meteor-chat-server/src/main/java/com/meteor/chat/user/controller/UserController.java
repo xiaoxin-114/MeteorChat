@@ -44,6 +44,12 @@ public class UserController {
         return ApiResult.success(loginService.loginByPassword(req.getUsername(), req.getPassword()));
     }
 
+    @PostMapping("/public/register")
+    public ApiResult<Void> register(@RequestBody @Valid UserRegisterReq req) {
+        userService.doRegister(req.getUsername(), req.getPassword());
+        return ApiResult.success();
+    }
+
     @PutMapping("/black")
     public ApiResult<Void> black(@RequestBody @Valid BlackReq req) {
         Long uid = UserContext.get().getUid();

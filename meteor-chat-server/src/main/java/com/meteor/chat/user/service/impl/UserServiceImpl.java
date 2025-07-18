@@ -1,12 +1,10 @@
 package com.meteor.chat.user.service.impl;
 
 import cn.hutool.core.lang.Pair;
+import com.meteor.chat.common.constants.UserConstants;
 import com.meteor.chat.common.domain.dto.ItemInfoDTO;
 import com.meteor.chat.common.domain.dto.SummaryInfoDTO;
-import com.meteor.chat.common.domain.entity.IpInfo;
-import com.meteor.chat.common.domain.entity.ItemConfig;
-import com.meteor.chat.common.domain.entity.User;
-import com.meteor.chat.common.domain.entity.UserBackpack;
+import com.meteor.chat.common.domain.entity.*;
 import com.meteor.chat.common.domain.enums.ChatActiveStatusEnum;
 import com.meteor.chat.common.domain.enums.ItemConfigTypeEnum;
 import com.meteor.chat.common.domain.enums.RoleEnum;
@@ -16,6 +14,7 @@ import com.meteor.chat.common.domain.vo.req.*;
 import com.meteor.chat.common.exception.BusinessException;
 import com.meteor.chat.common.sensitiveword.SensitiveWords;
 import com.meteor.chat.common.util.CommonUtils;
+import com.meteor.chat.common.util.PBKDF2Util;
 import com.meteor.chat.event.BlackUserEvent;
 import com.meteor.chat.event.UserRegisterEvent;
 import com.meteor.chat.user.dao.BlackDao;
@@ -64,9 +63,28 @@ public class UserServiceImpl implements UserService {
     @Resource
     private SensitiveWords sensitiveWords;
 
+
+    @Override
+    public void doRegister(String username, String password) {
+        User user = userDao.getByUsername(username);
+        Assert.assertNull("用户名重复，请重新输入", user);
+        String salt = PBKDF2Util.generateSalt();
+        User newUser = User.builder().username(username)
+                .salt(salt)
+                .password(PBKDF2Util.hashPassword(password, salt))
+                .name(username)
+                .avatar(UserConstants.DEFAULT_AVATAR_URL)
+                .build();
+        this.register(newUser);
+    }
+
     @Override
     public void register(User user) {
         userDao.save(user);
+        UserRole userRole = new UserRole();
+        userRole.setUid(user.getId());
+        userRole.setRoleId(0L);
+        userRoleDao.save(userRole);
         //用户注册事件推送
         applicationEventPublisher.publishEvent(new UserRegisterEvent(this, user));
     }

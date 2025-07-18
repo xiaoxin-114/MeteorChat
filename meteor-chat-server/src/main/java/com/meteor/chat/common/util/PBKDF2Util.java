@@ -1,6 +1,7 @@
 package com.meteor.chat.common.util;
 
 import cn.hutool.core.util.StrUtil;
+import com.meteor.chat.common.constants.UserConstants;
 import com.meteor.chat.common.exception.BusinessException;
 
 import javax.crypto.SecretKey;
@@ -17,7 +18,6 @@ public class PBKDF2Util {
     private static final int ITERATIONS = 10000; // 迭代次数
     private static final int KEY_LENGTH = 256;   // 密钥长度（位）
     private static final int SALT_LENGTH = 16;   // 盐值长度（字节）
-    private static final String DEFAULT_PASSWORD = "123456";
 
     /**
      * 生成随机盐值
@@ -66,7 +66,7 @@ public class PBKDF2Util {
     }
 
     public static String getDefaultPassword(String salt) {
-        return hashPassword(DEFAULT_PASSWORD, salt);
+        return hashPassword(UserConstants.DEFAULT_PASSWORD, salt);
     }
 }
 
