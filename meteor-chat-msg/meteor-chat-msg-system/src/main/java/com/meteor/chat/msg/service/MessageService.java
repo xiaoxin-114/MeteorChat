@@ -7,7 +7,7 @@ import com.meteor.chat.api.msg.dto.RoomMsgDTO;
 import com.meteor.chat.api.msg.dto.RoomMsgReqDTO;
 import com.meteor.chat.msg.domain.dto.MsgReadInfoDTO;
 import com.meteor.chat.msg.domain.vo.*;
-import com.meteor.chat.common.domain.CursorPageBaseResp;
+import com.meteor.chat.mybatis.domain.CursorPageBaseResp;
 
 import java.util.List;
 

@@ -1,6 +1,6 @@
 package com.meteor.chat.room.controller;
 
-import com.meteor.chat.common.domain.CursorPageBaseResp;
+import com.meteor.chat.mybatis.domain.CursorPageBaseResp;
 import com.meteor.chat.room.domain.vo.*;
 import com.meteor.chat.room.service.RoomService;
 import com.meteor.chat.web.core.context.UserContext;

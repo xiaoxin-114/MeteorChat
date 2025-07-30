@@ -22,6 +22,10 @@
             <groupId>com.meteor.chat</groupId>
             <artifactId>meteor-chat-common-starter</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.meteor.chat</groupId>
+            <artifactId>meteor-chat-mybatis-starter</artifactId>
+        </dependency>
     </dependencies>
 
 </project>

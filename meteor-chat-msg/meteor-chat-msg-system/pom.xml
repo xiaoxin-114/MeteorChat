@@ -59,6 +59,11 @@
             <groupId>com.meteor.chat</groupId>
             <artifactId>meteor-chat-sensitiveword</artifactId>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/org.jsoup/jsoup -->
+        <dependency>
+            <groupId>org.jsoup</groupId>
+            <artifactId>jsoup</artifactId>
+        </dependency>
         <!-- 负载均衡 -->
         <dependency>
             <groupId>org.springframework.cloud</groupId>

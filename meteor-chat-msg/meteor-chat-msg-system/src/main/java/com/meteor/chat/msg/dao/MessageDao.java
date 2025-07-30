@@ -5,7 +5,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.meteor.chat.msg.domain.entity.Message;
 import com.meteor.chat.msg.domain.vo.MessageCursorReq;
 import com.meteor.chat.msg.mapper.MessageMapper;
-import com.meteor.chat.common.domain.CursorPageBaseResp;
+import com.meteor.chat.mybatis.domain.CursorPageBaseResp;
 import com.meteor.chat.redis.core.util.CursorUtils;
 import org.springframework.stereotype.Repository;
 

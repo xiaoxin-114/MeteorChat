@@ -1,7 +1,7 @@
 package com.meteor.chat.sensitiveword.core.algorithm.DFA;
 
 import com.meteor.chat.sensitiveword.core.SensitiveWordFilter;
-import org.apache.commons.lang3.StringUtils;
+import cn.hutool.core.util.StrUtil;
 import org.springframework.util.CollectionUtils;
 
 import java.util.*;
@@ -43,7 +43,7 @@ public class DFAFilter implements SensitiveWordFilter {
     }
 
     private void loadWord(String str) {
-        if (StringUtils.isEmpty(str)) {
+        if (StrUtil.isEmpty(str)) {
             return;
         }
         char[] chars = str.toLowerCase(Locale.ROOT).toCharArray();
@@ -71,7 +71,7 @@ public class DFAFilter implements SensitiveWordFilter {
 
     @Override
     public String filter(String content) {
-        if (StringUtils.isEmpty(content)) {
+        if (StrUtil.isEmpty(content)) {
             return content;
         }
         StringBuilder stringBuilder = new StringBuilder(content);

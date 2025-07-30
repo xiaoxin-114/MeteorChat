@@ -1,4 +1,4 @@
-package com.meteor.chat.common.domain;
+package com.meteor.chat.mybatis.domain;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;

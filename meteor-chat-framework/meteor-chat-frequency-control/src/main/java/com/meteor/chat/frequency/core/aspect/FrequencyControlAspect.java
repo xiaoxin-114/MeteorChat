@@ -1,5 +1,6 @@
 package com.meteor.chat.frequency.core.aspect;
 
+import cn.hutool.core.util.StrUtil;
 import com.meteor.chat.common.utils.CommonUtils;
 import com.meteor.chat.common.utils.SpElUtils;
 import com.meteor.chat.frequency.core.annotation.FrequencyControl;
@@ -7,7 +8,6 @@ import com.meteor.chat.frequency.core.dto.FrequencyControlBaseDTO;
 import com.meteor.chat.frequency.core.utils.FrequencyControlUtils;
 import com.meteor.chat.web.core.context.UserContext;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.Signature;
 import org.aspectj.lang.annotation.Around;
@@ -41,7 +41,7 @@ public class FrequencyControlAspect {
                 FrequencyControl frequency = frequencyControlArray[i];
                 FrequencyControl.FrequencyTypeEnum type = frequency.type();
                 String prefixKey = frequency.prefixKey();
-                if (StringUtils.isEmpty(prefixKey)) {
+                if (StrUtil.isEmpty(prefixKey)) {
                     prefixKey = CommonUtils.getDefaultPrefix(method);
                 }
                 prefixKey = prefixKey + ":index:" + i;

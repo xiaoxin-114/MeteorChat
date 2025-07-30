@@ -5,7 +5,7 @@ import com.meteor.chat.frequency.core.annotation.FrequencyControl;
 import com.meteor.chat.msg.domain.dto.MsgReadInfoDTO;
 import com.meteor.chat.msg.domain.vo.*;
 import com.meteor.chat.msg.service.MessageService;
-import com.meteor.chat.common.domain.CursorPageBaseResp;
+import com.meteor.chat.mybatis.domain.CursorPageBaseResp;
 import com.meteor.chat.web.core.context.UserContext;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiOperation;

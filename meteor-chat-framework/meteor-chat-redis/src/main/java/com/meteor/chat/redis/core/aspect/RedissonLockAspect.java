@@ -1,11 +1,11 @@
 package com.meteor.chat.redis.core.aspect;
 
+import cn.hutool.core.util.StrUtil;
 import com.meteor.chat.common.utils.CommonUtils;
 import com.meteor.chat.common.utils.SpElUtils;
 import com.meteor.chat.redis.core.annotation.RedissonLock;
 import com.meteor.chat.redis.core.util.LockUtil;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.Signature;
 import org.aspectj.lang.annotation.Around;
@@ -56,7 +56,7 @@ public class RedissonLockAspect {
             String key = annotation.key();
             Object[] args = joinPoint.getArgs();
             String prefixKey = annotation.prefixKey();
-            if (StringUtils.isEmpty(prefixKey)) {
+            if (StrUtil.isEmpty(prefixKey)) {
                 prefixKey = CommonUtils.getDefaultPrefix(method);
             }
             key = SpElUtils.parseSpEl(method, key, args);

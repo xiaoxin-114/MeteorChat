@@ -2,8 +2,8 @@ package com.meteor.chat.room.service.cache;
 
 import cn.hutool.core.lang.Pair;
 import com.meteor.chat.redis.core.constants.RedisKey;
-import com.meteor.chat.common.domain.CursorPageBaseReq;
-import com.meteor.chat.common.domain.CursorPageBaseResp;
+import com.meteor.chat.mybatis.domain.CursorPageBaseReq;
+import com.meteor.chat.mybatis.domain.CursorPageBaseResp;
 import com.meteor.chat.redis.core.util.CursorUtils;
 import com.meteor.chat.redis.core.util.RedisUtils;
 import com.meteor.chat.room.dao.RoomDao;

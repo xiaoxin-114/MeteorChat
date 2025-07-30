@@ -3,7 +3,6 @@ package com.meteor.chat.push.core.service;
 import com.meteor.chat.push.common.domain.vo.WSAuthorize;
 import com.meteor.chat.push.common.domain.vo.WSBaseResp;
 import io.netty.channel.Channel;
-import me.chanjar.weixin.common.error.WxErrorException;
 
 public interface WebSocketService {
     /**
@@ -11,7 +10,7 @@ public interface WebSocketService {
      *
      * @param channel
      */
-    void handleLoginReq(Channel channel) throws WxErrorException;
+    void handleLoginReq(Channel channel);
 
     /**
      * 处理所有ws连接的事件

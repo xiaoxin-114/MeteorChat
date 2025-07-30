@@ -13,7 +13,7 @@ import com.meteor.chat.common.exception.BusinessException;
 import com.meteor.chat.push.common.core.push.PushService;
 import com.meteor.chat.push.common.domain.vo.WSBaseResp;
 import com.meteor.chat.redis.core.annotation.RedissonLock;
-import com.meteor.chat.common.domain.CursorPageBaseResp;
+import com.meteor.chat.mybatis.domain.CursorPageBaseResp;
 import com.meteor.chat.room.adapter.WSAdapter;
 import com.meteor.chat.room.dao.*;
 import com.meteor.chat.room.domain.entity.GroupMember;

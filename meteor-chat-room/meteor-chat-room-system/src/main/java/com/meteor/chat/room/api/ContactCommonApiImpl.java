@@ -4,7 +4,7 @@ import com.meteor.chat.api.room.ContactCommonApi;
 import com.meteor.chat.api.room.dto.ContactInfoDTO;
 import com.meteor.chat.api.room.dto.MessageReadCursorPageDTO;
 import com.meteor.chat.api.room.dto.ReadMessageDTO;
-import com.meteor.chat.common.domain.CursorPageBaseResp;
+import com.meteor.chat.mybatis.domain.CursorPageBaseResp;
 import com.meteor.chat.room.service.ContactService;
 import org.springframework.web.bind.annotation.RestController;
 

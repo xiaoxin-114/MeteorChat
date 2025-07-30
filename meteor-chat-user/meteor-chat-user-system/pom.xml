@@ -86,6 +86,17 @@
             <groupId>com.meteor.chat</groupId>
             <artifactId>meteor-chat-rpc</artifactId>
         </dependency>
+
+        <!-- 微信公众号工具包 -->
+        <dependency>
+            <groupId>com.github.binarywang</groupId>
+            <artifactId>weixin-java-mp</artifactId>
+        </dependency>
+        <!-- jwt工具包 -->
+        <dependency>
+            <groupId>com.auth0</groupId>
+            <artifactId>java-jwt</artifactId>
+        </dependency>
     </dependencies>
 
 </project>

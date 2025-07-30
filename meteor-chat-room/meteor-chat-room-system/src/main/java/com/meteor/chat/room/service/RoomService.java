@@ -1,7 +1,7 @@
 package com.meteor.chat.room.service;
 
 import com.meteor.chat.api.room.dto.RoomFriendDTO;
-import com.meteor.chat.common.domain.CursorPageBaseResp;
+import com.meteor.chat.mybatis.domain.CursorPageBaseResp;
 import com.meteor.chat.room.domain.vo.*;
 
 import java.util.List;

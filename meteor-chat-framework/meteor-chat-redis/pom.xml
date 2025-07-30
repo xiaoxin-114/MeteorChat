@@ -26,6 +26,11 @@
             <groupId>org.redisson</groupId>
             <artifactId>redisson-spring-boot-starter</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.meteor.chat</groupId>
+            <artifactId>meteor-chat-mybatis-starter</artifactId>
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
 
 </project>

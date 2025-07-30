@@ -1,6 +1,5 @@
 package com.meteor.chat.user.domain.entity;
 
-import com.meteor.chat.user.domain.entity.IpDetail;
 import lombok.Data;
 import org.apache.commons.lang3.StringUtils;
 

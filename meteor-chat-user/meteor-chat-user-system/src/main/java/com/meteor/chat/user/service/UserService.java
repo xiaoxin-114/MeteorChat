@@ -1,6 +1,6 @@
 package com.meteor.chat.user.service;
 
-import com.meteor.chat.common.domain.CursorPageBaseResp;
+import com.meteor.chat.mybatis.domain.CursorPageBaseResp;
 import com.meteor.chat.user.domain.dto.ItemInfoDTO;
 import com.meteor.chat.user.domain.dto.SummaryInfoDTO;
 import com.meteor.chat.user.domain.entity.User;

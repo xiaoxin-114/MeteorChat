@@ -1,6 +1,6 @@
 package com.meteor.chat.api.user.dto;
 
-import com.meteor.chat.common.domain.CursorPageBaseReq;
+import com.meteor.chat.mybatis.domain.CursorPageBaseReq;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

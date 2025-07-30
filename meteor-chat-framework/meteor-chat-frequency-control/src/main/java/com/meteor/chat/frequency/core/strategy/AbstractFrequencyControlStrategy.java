@@ -6,7 +6,7 @@ import com.meteor.chat.common.exception.FrequencyException;
 import com.meteor.chat.frequency.core.dto.FrequencyControlBaseDTO;
 import com.meteor.chat.frequency.core.factory.FrequencyControlStrategyFactory;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
+import cn.hutool.core.util.StrUtil;
 import org.junit.Assert;
 
 import javax.annotation.PostConstruct;
@@ -20,7 +20,7 @@ public abstract class AbstractFrequencyControlStrategy<T extends FrequencyContro
     }
 
     public Object processWithFrequencyControl(List<T> frequencyDTOList, SupplierThrow supplier) throws Throwable {
-        boolean anyMatch = frequencyDTOList.stream().anyMatch(dto -> StringUtils.isEmpty(dto.getKey()));
+        boolean anyMatch = frequencyDTOList.stream().anyMatch(dto -> StrUtil.isEmpty(dto.getKey()));
         Assert.assertFalse("频控注解的key不能为空", anyMatch);
         if (exceedControlCount(frequencyDTOList)) {
             throw new FrequencyException(CommonErrorEnum.FREQUENCY_LIMIT);

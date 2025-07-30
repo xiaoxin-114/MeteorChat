@@ -4,7 +4,7 @@ import com.meteor.chat.api.user.constants.ApiConstants;
 import com.meteor.chat.api.user.dto.UserCursorPageDTO;
 import com.meteor.chat.api.user.dto.UserInfoDTO;
 import com.meteor.chat.common.constants.RpcConstants;
-import com.meteor.chat.common.domain.CursorPageBaseResp;
+import com.meteor.chat.mybatis.domain.CursorPageBaseResp;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;

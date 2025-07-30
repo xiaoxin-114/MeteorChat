@@ -1,4 +1,4 @@
-package com.meteor.chat.common.utils;
+package com.meteor.chat.redis.core.util;
 
 
 import cn.hutool.core.map.WeakConcurrentMap;

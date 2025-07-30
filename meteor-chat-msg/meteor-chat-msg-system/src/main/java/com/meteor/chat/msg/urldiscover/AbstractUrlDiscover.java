@@ -6,7 +6,6 @@ import com.meteor.chat.common.utils.FutureUtils;
 import com.meteor.chat.msg.config.MsgConfiguration;
 import com.meteor.chat.msg.domain.entity.UrlInfo;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -35,7 +34,7 @@ public abstract class AbstractUrlDiscover implements UrlDiscover {
 
     @Override
     public Map<String, UrlInfo> getUrlContentMap(String content) {
-        if (StringUtils.isEmpty(content)) {
+        if (StrUtil.isEmpty(content)) {
             return new HashMap<>();
         }
         Matcher matcher = URL_PATTERN.matcher(content);

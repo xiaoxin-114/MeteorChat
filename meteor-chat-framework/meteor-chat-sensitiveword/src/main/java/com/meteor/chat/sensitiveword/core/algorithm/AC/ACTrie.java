@@ -1,6 +1,6 @@
 package com.meteor.chat.sensitiveword.core.algorithm.AC;
 
-import org.apache.commons.lang3.StringUtils;
+import cn.hutool.core.util.StrUtil;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -73,7 +73,7 @@ public class ACTrie {
     public List<MatchResult> filter(String content) {
         content = content.toLowerCase(Locale.ROOT);
         ArrayList<MatchResult> result = new ArrayList<>();
-        if (StringUtils.isEmpty(content)) {
+        if (StrUtil.isEmpty(content)) {
             return result;
         }
         ACTrieNode head = root;

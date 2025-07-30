@@ -1,7 +1,7 @@
 package com.meteor.chat.user.service;
 
-import com.meteor.chat.common.domain.CursorPageBaseReq;
-import com.meteor.chat.common.domain.CursorPageBaseResp;
+import com.meteor.chat.mybatis.domain.CursorPageBaseReq;
+import com.meteor.chat.mybatis.domain.CursorPageBaseResp;
 import com.meteor.chat.user.domain.vo.*;
 import com.meteor.chat.user.domain.vo.req.FriendApproveReq;
 import com.meteor.chat.user.domain.vo.req.FriendCheckReq;

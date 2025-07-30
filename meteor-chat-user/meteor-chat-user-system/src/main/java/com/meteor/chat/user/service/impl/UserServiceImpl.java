@@ -2,8 +2,8 @@ package com.meteor.chat.user.service.impl;
 
 import cn.hutool.core.lang.Pair;
 import com.meteor.chat.common.exception.BusinessException;
-import com.meteor.chat.common.domain.CursorPageBaseReq;
-import com.meteor.chat.common.domain.CursorPageBaseResp;
+import com.meteor.chat.mybatis.domain.CursorPageBaseReq;
+import com.meteor.chat.mybatis.domain.CursorPageBaseResp;
 import com.meteor.chat.sensitiveword.core.SensitiveWords;
 import com.meteor.chat.user.constants.UserConstants;
 import com.meteor.chat.user.dao.BlackDao;

@@ -1,8 +1,8 @@
 package com.meteor.chat.msg.urldiscover;
 
+import cn.hutool.core.util.StrUtil;
 import com.meteor.chat.msg.domain.entity.UrlInfo;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.jsoup.nodes.Document;
 import org.springframework.stereotype.Component;
 
@@ -28,7 +28,7 @@ public class PrioritizedUrlDiscover extends AbstractUrlDiscover {
         for (UrlDiscover urlDiscover:
              urlDiscoverList) {
             String image = urlDiscover.getImage(url, document);
-            if (StringUtils.isNotEmpty(image)) {
+            if (StrUtil.isNotEmpty(image)) {
                 return image;
             }
         }
@@ -40,7 +40,7 @@ public class PrioritizedUrlDiscover extends AbstractUrlDiscover {
         for (UrlDiscover urlDiscover:
                 urlDiscoverList) {
             String image = urlDiscover.getTitle(document);
-            if (StringUtils.isNotEmpty(image)) {
+            if (StrUtil.isNotEmpty(image)) {
                 return image;
             }
         }
@@ -52,7 +52,7 @@ public class PrioritizedUrlDiscover extends AbstractUrlDiscover {
         for (UrlDiscover urlDiscover:
                 urlDiscoverList) {
             String image = urlDiscover.getDescription(document);
-            if (StringUtils.isNotEmpty(image)) {
+            if (StrUtil.isNotEmpty(image)) {
                 return image;
             }
         }

@@ -28,7 +28,7 @@ import com.meteor.chat.rabbitmq.core.producer.MQProducer;
 import com.meteor.chat.redis.core.annotation.RedissonLock;
 import com.meteor.chat.msg.domain.dto.MessageRecallDTO;
 import com.meteor.chat.msg.domain.dto.MsgReadInfoDTO;
-import com.meteor.chat.common.domain.CursorPageBaseResp;
+import com.meteor.chat.mybatis.domain.CursorPageBaseResp;
 import com.meteor.chat.msg.event.MessageRecallEvent;
 import com.meteor.chat.msg.dao.MessageDao;
 import com.meteor.chat.msg.dao.MessageMarkDao;

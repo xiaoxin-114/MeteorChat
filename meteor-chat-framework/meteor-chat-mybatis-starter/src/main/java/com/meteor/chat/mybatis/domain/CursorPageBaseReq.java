@@ -1,4 +1,4 @@
-package com.meteor.chat.common.domain;
+package com.meteor.chat.mybatis.domain;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import io.swagger.annotations.ApiModel;

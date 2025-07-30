@@ -2,8 +2,8 @@ package com.meteor.chat.room.dao;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.meteor.chat.common.domain.CursorPageBaseReq;
-import com.meteor.chat.common.domain.CursorPageBaseResp;
+import com.meteor.chat.mybatis.domain.CursorPageBaseReq;
+import com.meteor.chat.mybatis.domain.CursorPageBaseResp;
 import com.meteor.chat.redis.core.util.CursorUtils;
 import com.meteor.chat.room.domain.entity.Contact;
 import com.meteor.chat.room.mapper.ContactMapper;

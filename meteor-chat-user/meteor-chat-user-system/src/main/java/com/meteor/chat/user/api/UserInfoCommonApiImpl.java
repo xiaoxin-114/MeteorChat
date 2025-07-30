@@ -3,7 +3,7 @@ package com.meteor.chat.user.api;
 import com.meteor.chat.api.user.UserInfoCommonApi;
 import com.meteor.chat.api.user.dto.UserCursorPageDTO;
 import com.meteor.chat.api.user.dto.UserInfoDTO;
-import com.meteor.chat.common.domain.CursorPageBaseResp;
+import com.meteor.chat.mybatis.domain.CursorPageBaseResp;
 import com.meteor.chat.user.dao.UserDao;
 import com.meteor.chat.user.domain.entity.User;
 import com.meteor.chat.user.domain.vo.req.MemberCursorReq;

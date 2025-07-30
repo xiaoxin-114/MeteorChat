@@ -1,6 +1,6 @@
 package com.meteor.chat.msg.domain.vo;
 
-import com.meteor.chat.common.domain.CursorPageBaseReq;
+import com.meteor.chat.mybatis.domain.CursorPageBaseReq;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

@@ -1,5 +1,6 @@
 package com.meteor.chat.push.core.handler;
 
+import cn.hutool.core.util.StrUtil;
 import cn.hutool.extra.spring.SpringUtil;
 import cn.hutool.json.JSONUtil;
 import com.meteor.chat.common.constants.MDCKey;
@@ -17,7 +18,6 @@ import io.netty.handler.codec.http.websocketx.WebSocketServerProtocolHandler;
 import io.netty.handler.timeout.IdleState;
 import io.netty.handler.timeout.IdleStateEvent;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.MDC;
 
 import java.util.Objects;
@@ -121,7 +121,7 @@ public class WebsocketHandler extends SimpleChannelInboundHandler<TextWebSocketF
             Channel channel = ctx.channel();
             webSocketService.connect(channel);
             String token = NettyUtils.getAttr(channel, NettyUtils.TOKEN_KEY);
-            if (StringUtils.isNotEmpty(token)) {
+            if (StrUtil.isNotEmpty(token)) {
                 webSocketService.authorize(channel, new WSAuthorize(token));
             }
         }

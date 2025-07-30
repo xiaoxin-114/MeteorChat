@@ -25,6 +25,10 @@
         </dependency>
 
         <dependency>
+            <groupId>com.meteor.chat</groupId>
+            <artifactId>meteor-chat-cache-starter</artifactId>
+        </dependency>
+        <dependency>
             <groupId>io.netty</groupId>
             <artifactId>netty-all</artifactId>
         </dependency>

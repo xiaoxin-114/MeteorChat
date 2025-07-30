@@ -21,7 +21,6 @@ import com.meteor.chat.api.UserLoginApi;
 import io.netty.channel.Channel;
 import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
 import lombok.extern.slf4j.Slf4j;
-import me.chanjar.weixin.common.error.WxErrorException;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -78,7 +77,7 @@ public class WebSocketServiceImpl  implements WebSocketService {
 
 
     @Override
-    public void handleLoginReq(Channel channel) throws WxErrorException {
+    public void handleLoginReq(Channel channel) {
         //生成一个不重复的随机数
         Integer code = generateLoginCode(channel);
         //根据随机数向微信申请一个带有参数的临时二维码

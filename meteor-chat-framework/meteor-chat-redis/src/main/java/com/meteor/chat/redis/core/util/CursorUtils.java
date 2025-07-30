@@ -1,14 +1,13 @@
 package com.meteor.chat.redis.core.util;
 
 import cn.hutool.core.lang.Pair;
+import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.meteor.chat.common.utils.LambdaUtils;
-import com.meteor.chat.common.domain.CursorPageBaseReq;
-import com.meteor.chat.common.domain.CursorPageBaseResp;
-import org.apache.commons.lang3.StringUtils;
+import com.meteor.chat.mybatis.domain.CursorPageBaseReq;
+import com.meteor.chat.mybatis.domain.CursorPageBaseResp;
 import org.springframework.data.redis.core.ZSetOperations;
 import org.springframework.util.CollectionUtils;
 
@@ -35,7 +34,7 @@ public class CursorUtils {
      */
     public static <T> CursorPageBaseResp<Pair<T, Double>> cursorRedisPage(CursorPageBaseReq request, String redisKey, Function<String, T> function) {
         Set<ZSetOperations.TypedTuple<String>> typedTuples;
-        if (StringUtils.isEmpty(request.getCursor())) {
+        if (StrUtil.isEmpty(request.getCursor())) {
             typedTuples = RedisUtils.zReverseRangeWithScores(redisKey, request.getPageSize() + 1);
         }else {
             typedTuples = RedisUtils.zReverseRangeByScoreWithScores(redisKey, Double.parseDouble(request.getCursor()), request.getPageSize());
@@ -59,7 +58,7 @@ public class CursorUtils {
         // 根据cursorColumn获取游标类型
         Class cursorClass = LambdaUtils.getReturnType(cursorCollum);
         LambdaQueryWrapper<T> queryWrapper = new LambdaQueryWrapper<>();
-        if (StringUtils.isNotEmpty(cursor)) {
+        if (StrUtil.isNotEmpty(cursor)) {
             // 根据游标，定位条件
             queryWrapper.lt(cursorCollum, parseCursor(cursor, cursorClass));
         }
