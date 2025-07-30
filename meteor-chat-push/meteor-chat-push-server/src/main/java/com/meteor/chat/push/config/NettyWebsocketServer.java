@@ -19,6 +19,7 @@ import io.netty.handler.stream.ChunkedWriteHandler;
 import io.netty.handler.timeout.IdleStateHandler;
 import io.netty.util.NettyRuntime;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 
 import javax.annotation.PostConstruct;
@@ -30,7 +31,8 @@ import javax.annotation.PreDestroy;
 @Configuration
 @Slf4j
 public class NettyWebsocketServer {
-    private final int SERVER_PORT = 8090;
+    @Value("${server.port:8080}")
+    private int serverPort;
     private final WebsocketHandler NETTY_WEB_SOCKET_SERVER_HANDLER = new WebsocketHandler();
     private final EventLoopGroup bossGroup = new NioEventLoopGroup(1);
     private final EventLoopGroup workerGroup = new NioEventLoopGroup(NettyRuntime.availableProcessors());
@@ -38,6 +40,8 @@ public class NettyWebsocketServer {
     @PostConstruct
     public void start(){
         try {
+            // 默认websocket监听的端口为服务端口+1000
+            serverPort = serverPort + 1000;
             run();
         } catch (InterruptedException e) {
             log.error("websocket server start filed", e);
@@ -90,6 +94,6 @@ public class NettyWebsocketServer {
                         pipeline.addLast(NETTY_WEB_SOCKET_SERVER_HANDLER);
                     }
                 });
-        bootstrap.bind(SERVER_PORT).sync();
+        bootstrap.bind(serverPort).sync();
     }
 }
