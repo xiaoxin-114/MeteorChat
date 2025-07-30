@@ -1,0 +1,40 @@
+package com.meteor.chat.msg.event.listener;
+
+import com.meteor.chat.api.room.RoomCommonApi;
+import com.meteor.chat.api.room.RoomMemberCommonApi;
+import com.meteor.chat.api.room.dto.RoomInfoDTO;
+import com.meteor.chat.msg.adapter.WSAdapter;
+import com.meteor.chat.msg.domain.dto.MessageRecallDTO;
+import com.meteor.chat.msg.event.MessageRecallEvent;
+import com.meteor.chat.push.common.core.push.PushService;
+import org.springframework.context.event.EventListener;
+import org.springframework.stereotype.Component;
+
+import javax.annotation.Resource;
+import java.util.List;
+
+@Component
+public class MessageRecallEventListener{
+
+    @Resource
+    private PushService pushService;
+
+    @Resource
+    private RoomCommonApi roomCommonApi;
+
+    @Resource
+    private RoomMemberCommonApi roomMemberCommonApi;
+    // 推送撤回消息给群聊的所有成员
+    @EventListener(value = MessageRecallEvent.class)
+    public void sendMsgToAll(MessageRecallEvent event) {
+        MessageRecallDTO dto = event.getMessageRecallDTO();
+        RoomInfoDTO room = roomCommonApi.getRoomInfo(dto.getRoomId());
+        // 全员群
+        if (room.isHotRoom()) {
+            pushService.pushRoomMsg(WSAdapter.buildMsgRecall(dto));
+        } else {
+            List<Long> memberUidList = roomMemberCommonApi.getMemberList(dto.getRoomId());
+            pushService.pushRoomMsg(WSAdapter.buildMsgRecall(dto), memberUidList);
+        }
+    }
+}

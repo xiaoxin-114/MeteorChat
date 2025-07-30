@@ -1,0 +1,37 @@
+spring:
+  application:
+    name: meteor-chat-gateway-server
+  profiles:
+    active: dev
+  main:
+    #    allow-circular-references: true # 允许循环依赖，因为项目是三层架构，无法避免这个情况。
+    allow-bean-definition-overriding: true # 允许 Bean 覆盖，例如说 Feign 等会存在重复定义的服务
+  codec:
+    max-in-memory-size: 10MB
+
+  config:
+    import:
+      - optional:classpath:application-${spring.profiles.active}.yaml # 加载【本地】配置
+      - optional:nacos:${spring.application.name}-${spring.profiles.active}.yaml # 加载【Nacos】的配置
+  cloud:
+    gateway:
+      routes:
+        - id: meteor-chat-user-server
+          uri: lb://meteor-chat-user-server
+          predicates:
+            - Path=/capi/user/**,/capi/oss/**,/capi/user/emoji/**,/capi/user/friend/**,/wx/portal/public/**
+        - id: meteor-chat-msg-server
+          uri: lb://meteor-chat-msg-server
+          predicates:
+            - Path=/capi/chat/msg/**,/capi/chat/public/msg/**
+        - id: meteor-chat-room-server
+          uri: lb://meteor-chat-room-server
+          predicates:
+            - Path=/capi/room/**,/capi/chat/public/contact/**
+server:
+  port: 8000
+logging:
+  level:
+    org.springframework.cloud.gateway: DEBUG
+    org.springframework.web.reactive: DEBUG
+    feign: DEBUG

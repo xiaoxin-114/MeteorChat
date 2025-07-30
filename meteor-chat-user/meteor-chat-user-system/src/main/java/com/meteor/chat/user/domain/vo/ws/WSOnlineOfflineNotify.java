@@ -1,0 +1,27 @@
+package com.meteor.chat.user.domain.vo.ws;
+
+import com.meteor.chat.user.domain.vo.GroupMemberResp;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * Description:用户上下线变动的推送类
+ * Author: <a href="https://github.com/zongzibinbin">abin</a>
+ * Date: 2023-03-19
+ */
+@Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
+public class WSOnlineOfflineNotify implements Serializable {
+    //新的上下线用户
+    private List<GroupMemberResp> changeList = new ArrayList<>();
+    //在线人数
+    private Long onlineNum;
+}

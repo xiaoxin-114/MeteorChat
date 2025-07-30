@@ -1,0 +1,166 @@
+logging:
+  level:
+    org.springframework.web: INFO
+    com.github.binarywang.demo.wx.mp: DEBUG
+    me.chanjar.weixin: DEBUG
+    com.meteor.chat.common.mapper: WARN
+    org.springframework.cloud.gateway: DEBUG
+    org.springframework.web.reactive: DEBUG
+    feign: DEBUG
+mybatis-plus:
+  mapper-locations: classpath:com.meteor.chat.room.mapper/**/*.xml
+  configuration:
+#    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+    map-underscore-to-camel-case: true
+# 便于测试，模拟用户行为
+mock:
+  enable: true
+  prefix: test
+push:
+  instanceId: 01
+spring:
+  profiles:
+    #运行的环境
+    active: test
+  application:
+    name: meteor-chat-room-server
+  main:
+#    allow-circular-references: true # 允许循环依赖，因为项目是三层架构，无法避免这个情况。
+    allow-bean-definition-overriding: true # 允许 Bean 覆盖，例如说 Feign 等会存在重复定义的服务
+  config:
+    import:
+      - optional:nacos:${spring.application.name}-${spring.profiles.active}.yaml # 加载【Nacos】的配置
+  cloud:
+    nacos:
+      server-addr: 192.168.191.131:8848 # Nacos 服务器地址
+      username: nacos # Nacos 账号
+      password: nacos # Nacos 密码
+      discovery: # 【配置中心】配置项
+        namespace: dev # 命名空间。这里使用 dev 开发环境
+        group: DEFAULT_GROUP # 使用的 Nacos 配置分组，默认为 DEFAULT_GROUP
+        metadata:
+          version: 1.0.0 # 服务实例的版本号，可用于灰度发布
+      config: # 【注册中心】配置项
+        namespace: dev # 命名空间。这里使用 dev 开发环境
+        group: DEFAULT_GROUP # 使用的 Nacos 配置分组，默认为 DEFAULT_GROUP
+  datasource:
+    url: jdbc:mysql://${mallchat.mysql.ip}:${mallchat.mysql.port}/${mallchat.mysql.db}?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai
+    username: ${mallchat.mysql.username}
+    password: ${mallchat.mysql.password}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    hikari:
+      minimum-idle: 3
+      maximum-pool-size: 10
+      max-lifetime: 30000   #不能小于30秒，否则默认回到1800秒
+      connection-test-query: SELECT 1
+  mvc:
+    pathmatch:
+      matching-strategy: ANT_PATH_MATCHER
+  redis:
+    # Redis服务器地址
+    host: ${mallchat.redis.host}
+    # Redis服务器端口号
+    port: ${mallchat.redis.port}
+    # 使用的数据库索引，默认是0
+    database: 0
+    # 连接超时时间
+    timeout: 1800000
+    # 设置密码
+    password: ${mallchat.redis.password}
+  cache:
+    type: redis
+    redis:
+      cache-null-values: true
+      time-to-live: 18000
+  jackson:
+    serialization:
+      write-dates-as-timestamps: true
+  rabbitmq:
+    host: ${rabbitmq.host}
+    port: ${rabbitmq.port}
+    username: ${rabbitmq.username}
+    password: ${rabbitmq.password}
+    virtual-host: /
+#    listener: # 消息消费者配置
+#      simple:
+#        acknowledge-mode: manual # 手动确认模式（默认 auto）
+#        prefetch: 1              # 每次预取的消息数量
+#        retry:
+#          enabled: true          # 是否启用重试
+#          max-attempts: 3        # 最大重试次数
+#          initial-interval: 2000 # 初始重试间隔（毫秒）
+#      template: # 消息生产者配置
+#        retry:
+#          enabled: true            # 发送消息失败是否重试
+#          max-attempts: 3
+#          initial-interval: 2000
+#      publisher-confirm-type: correlated  # 开启发布确认（Confirm）
+#      publisher-return: true       # 开启消息返回机制（Return Listener）
+jwt:
+  secret: ${mallchat.jwt.secret}
+wx:
+  mp:
+    #    callback: http://f4cd-113-92-129-127.ngrok.io
+    callback: ${mallchat.wx.callback}
+    configs:
+      - appId: ${mallchat.wx.appId} # 第一个公众号的appid
+        secret: ${mallchat.wx.secret} # 公众号的appsecret
+        token: ${mallchat.wx.token} # 接口配置里的Token值
+        aesKey: ${mallchat.wx.aesKey} # 接口配置里的EncodingAESKey值
+chatai:
+  chatgpt:
+    use: ${mallchat.chatgpt.use}
+    AIUserId: ${mallchat.chatgpt.uid}
+    key: ${mallchat.chatgpt.key}
+    proxyUrl: ${mallchat.chatgpt.proxyUrl}
+  chatglm2:
+    use: ${mallchat.chatglm2.use}
+    url: ${mallchat.chatglm2.url}
+    minute: 3 # 每个用户每3分钟可以请求一次
+    AIUserId: ${mallchat.chatglm2.uid}
+#rocketmq:
+#  name-server: ${rocketmq.name-server}
+#  # 默认的消息组
+#  producer:
+#    group: chatGroup
+#    send-message-timeout: 3000 # 发送消息超时时间，单位：毫秒。默认为 3000 。
+#    compress-message-body-threshold: 4096 # 消息压缩阀值，当消息体的大小超过该阀值后，进行消息压缩。默认为 4 * 1024B
+#    max-message-size: 4194304 # 消息体的最大允许大小。。默认为 4 * 1024 * 1024B
+#    retry-times-when-send-failed: 2 # 同步发送消息时，失败重试次数。默认为 2 次。
+#    retry-times-when-send-async-failed: 2 # 异步发送消息时，失败重试次数。默认为 2 次。
+#    retry-next-server: false # 发送消息给 Broker 时，如果发送失败，是否重试另外一台 Broker 。默认为 false
+#    access-key: ${rocketmq.access-key} # Access Key ，可阅读 https://github.com/apache/rocketmq/blob/master/docs/cn/acl/user_guide.md 文档
+#    secret-key: ${rocketmq.secret-key} # Secret Key
+#    enable-msg-trace: true # 是否开启消息轨迹功能。默认为 true 开启。可阅读 https://github.com/apache/rocketmq/blob/master/docs/cn/msg_trace/user_guide.md 文档
+#    customized-trace-topic: RMQ_SYS_TRACE_TOPIC # 自定义消息轨迹的 Topic 。默认为 RMQ_SYS_TRACE_TOPIC 。
+#  # Consumer 配置项
+#  consumer:
+#    access-key: ${rocketmq.access-key} # Access Key ，可阅读 https://github.com/apache/rocketmq/blob/master/docs/cn/acl/user_guide.md 文档
+#    secret-key: ${rocketmq.secret-key} # Secret Key
+#    listeners: # 配置某个消费分组，是否监听指定 Topic 。结构为 Map<消费者分组, <Topic, Boolean>> 。默认情况下，不配置表示监听。
+#      erbadagang-consumer-group:
+#        topic1: false # 关闭 test-consumer-group 对 topic1 的监听消费
+knife4j:
+  enable: true
+  openapi:
+    title: meteorChat官方文档
+    description: "`我是测试`,**你知道吗**
+    # aaa"
+    email: xiaoymin@foxmail.com
+    concat: 八一菜刀
+    url: https://docs.xiaominfo.com
+    version: v4.0
+    license: Apache 2.0
+    license-url: https://stackoverflow.com/
+    terms-of-service-url: https://stackoverflow.com/
+    group:
+      test1:
+        group-name: default
+        api-rule: package
+        api-rule-resources:
+          - com.meteor.chat
+management:
+  server:
+    port: 18002
+server:
+  port: 8002
