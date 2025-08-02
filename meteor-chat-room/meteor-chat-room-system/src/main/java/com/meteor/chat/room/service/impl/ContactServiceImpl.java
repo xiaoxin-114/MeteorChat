@@ -109,7 +109,7 @@ public class ContactServiceImpl implements ContactService {
                     .build();
         }).collect(Collectors.toList());
         // 获取最后一条消息，并且转换成对应的显示格式
-        List<RoomMsgDTO> roomMsgList = messageCommonApi.getRoomMsgList(roomMsgReqDTOList);
+        List<RoomMsgDTO> roomMsgList = messageCommonApi.getRoomMsgList(roomMsgReqDTOList).getCheckData();
         if (Objects.isNull(roomMsgList)) {
             roomMsgList = new ArrayList<>();
         }
@@ -220,7 +220,7 @@ public class ContactServiceImpl implements ContactService {
         List<Long> friendList = singleRoomMap.values().stream()
                 .map(roomFriend -> RoomAdapter.getFriendUid(roomFriend, uid))
                 .collect(Collectors.toList());
-        Map<Long, UserInfoDTO> friendMap = userInfoCommonApi.getUserInfoMap(friendList);
+        Map<Long, UserInfoDTO> friendMap = userInfoCommonApi.getUserInfoMap(friendList).getCheckData();
         return roomIds.stream().map(id -> {
             Room room = roomMap.get(id);
             ChatRoomDTO chatRoomDTO = RoomAdapter.buildDTO(room);

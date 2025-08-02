@@ -1,6 +1,7 @@
 package com.meteor.chat.user.api;
 
 import com.meteor.chat.api.user.UserRoleCommonApi;
+import com.meteor.chat.common.result.ApiResult;
 import com.meteor.chat.user.dao.UserRoleDao;
 import com.meteor.chat.user.domain.entity.UserRole;
 import com.meteor.chat.user.enums.RoleEnum;
@@ -15,10 +16,10 @@ public class UserRoleCommonApiImpl implements UserRoleCommonApi {
     private UserRoleDao userRoleDao;
 
     @Override
-    public boolean isSuperAdmin(Long uid) {
+    public ApiResult<Boolean> isSuperAdmin(Long uid) {
         UserRole role = userRoleDao.getUserRoleByUid(uid);
-        return Objects.nonNull(role) &&
+        return ApiResult.success(Objects.nonNull(role) &&
                 (RoleEnum.SUPERADMIN.getId().equals(role.getRoleId())
-                        || RoleEnum.CHAT_ADMIN.getId().equals(role.getRoleId()));
+                        || RoleEnum.CHAT_ADMIN.getId().equals(role.getRoleId())));
     }
 }

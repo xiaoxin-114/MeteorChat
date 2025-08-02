@@ -77,14 +77,14 @@ public class TextMsgHandler extends AbstractMsgHandler<TextMsgReq> {
         // 校验@的列表
         if (!CollectionUtils.isEmpty(body.getAtUidList())) {
             List<Long> atList = body.getAtUidList().stream().distinct().collect(Collectors.toList());
-            if (atList.contains(0)) {
-                Assert.assertTrue("只有管理员才能@全员", roomcommonApi.hasRoomPower(uid, roomId));
+            if (atList.contains(0L)) {
+                Assert.assertTrue("只有管理员才能@全员", roomcommonApi.hasRoomPower(uid, roomId).getCheckData());
                 atList = Collections.singletonList(0L);
             } else {
-                if (!roomcommonApi.getRoomInfo(roomId).isHotRoom()) {
+                if (!roomcommonApi.getRoomInfo(roomId).getCheckData().isHotRoom()) {
                     // 确保at的成员都在群聊中
-                    List<Long> memberUidList = roomMemberCommonApi.getMemberList(roomId);
-                    Assert.assertTrue("@的用户已不在群聊", atList.stream().allMatch(memberUidList::contains));
+                    List<Long> memberUidList = roomMemberCommonApi.getMemberList(roomId).getCheckData();
+                    Assert.assertTrue("@的用户已不在群聊", new HashSet<>(memberUidList).containsAll(atList));
                 }
             }
             body.setAtUidList(atList);
@@ -93,7 +93,7 @@ public class TextMsgHandler extends AbstractMsgHandler<TextMsgReq> {
         if (body.getReplyMsgId() != null) {
             Message replyMsg = messageDao.getById(body.getReplyMsgId());
             Assert.assertNotNull("回复消息不存在", replyMsg);
-            Assert.assertTrue("只能回复处于同一会话的消息", Objects.equals(replyMsg.getRoomId(), roomId));
+            Assert.assertEquals("只能回复处于同一会话的消息", replyMsg.getRoomId(), roomId);
         }
         // 过滤消息中的敏感词
         body.setContent(sensitiveWords.filter(body.getContent()));
@@ -120,7 +120,7 @@ public class TextMsgHandler extends AbstractMsgHandler<TextMsgReq> {
             TextMsgResp.ReplyMsg replyMsg = new TextMsgResp.ReplyMsg();
             replyMsg.setId(message.getReplyMsgId());
             replyMsg.setUid(reply.getFromUid());
-            UserInfoDTO userInfo = userInfoCommonApi.getUserInfo(reply.getFromUid());
+            UserInfoDTO userInfo = userInfoCommonApi.getUserInfo(reply.getFromUid()).getCheckData();
             replyMsg.setUsername(Optional.ofNullable(userInfo).map(UserInfoDTO::getName).orElse(null));
             replyMsg.setType(reply.getType());
             replyMsg.setBody(MsgHandlerFactory.getStrategyNotNull(reply.getType()).replyMsgText(reply));

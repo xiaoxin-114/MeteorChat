@@ -81,7 +81,7 @@ public class WebSocketServiceImpl  implements WebSocketService {
         //生成一个不重复的随机数
         Integer code = generateLoginCode(channel);
         //根据随机数向微信申请一个带有参数的临时二维码
-        WxQrCodeDTO wxQrCode = wxMsgCommonApi.getWxQrCode(code, (int) EXPIRE_TIME.getSeconds());
+        WxQrCodeDTO wxQrCode = wxMsgCommonApi.getWxQrCode(code, (int) EXPIRE_TIME.getSeconds()).getCheckData();
         //将二维码返回给前端
         sendMsg(channel, WSAdapter.buildLoginResp(wxQrCode));
     }
@@ -117,7 +117,7 @@ public class WebSocketServiceImpl  implements WebSocketService {
     @Override
     public void authorize(Channel channel, WSAuthorize wsAuthorize) {
         String token = wsAuthorize.getToken();
-        Long uid = userLoginApi.validToken(token);
+        Long uid = userLoginApi.validToken(token).getCheckData();
         if (Objects.isNull(uid)) {
             sendMsg(channel, WSAdapter.buildTokenInvalidResp());
         } else {
@@ -133,7 +133,7 @@ public class WebSocketServiceImpl  implements WebSocketService {
         }
         // 登入成功后，清除code和channel的映射关系
         WAIT_LOGIN_MAP.invalidate(loginCode);
-        String token = loginCommonApi.login(uid);
+        String token = loginCommonApi.login(uid).getCheckData();
         successLogin(channel, uid, token);
         return true;
     }
@@ -222,17 +222,9 @@ public class WebSocketServiceImpl  implements WebSocketService {
         //更新用户在线列表
         online(channel, uid);
         UserInfoDTO userInfoDTO = loginCommonApi.loginSuccess(LoginSuccessDTO.builder()
-                .uid(uid).IP(NettyUtils.getAttr(channel, NettyUtils.IP_KEY)).build());
+                .uid(uid).IP(NettyUtils.getAttr(channel, NettyUtils.IP_KEY)).build()).getCheckData();
         //告知前端用户登陆成功，需要告知前端用户的角色
         sendMsg(channel, WSAdapter.buildLoginSuccessResp(userInfoDTO, token));
-//        if (!userCache.isOnline(user.getId())){
-//            //如果用户之前是离线状态，那么就更新用户的状态信息
-//            user.setLastOptTime(new Date());
-//            // 更新用户的ip信息
-//            user.refreshIp(NettyUtils.getAttr(channel, NettyUtils.IP_KEY));
-//            //发送用户登陆的事件
-//            applicationEventPublisher.publishEvent(new UserOnlineEvent(this, user));
-//        }
     }
 
     /**

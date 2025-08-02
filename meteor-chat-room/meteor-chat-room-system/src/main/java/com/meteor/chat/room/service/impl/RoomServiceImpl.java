@@ -87,7 +87,7 @@ public class RoomServiceImpl implements RoomService {
     public GroupResp groupDetail(IdBaseReq req, Long uid) {
         Room room = roomCache.get(req.getId());
         RoomGroup roomGroup = roomGroupCache.get(req.getId());
-        Set<Long> onlineUidSet = userInfoCommonApi.getOnlineUidSet();
+        Set<Long> onlineUidSet = userInfoCommonApi.getOnlineUidSet().getCheckData();
         long onlineCount;
         // 计算群聊在线人数
         if (room.isHotRoom()) {
@@ -121,7 +121,7 @@ public class RoomServiceImpl implements RoomService {
                 .build();
         cursorPageDTO.setPageSize(req.getPageSize());
         cursorPageDTO.setCursor(req.getCursor());
-        CursorPageBaseResp<UserInfoDTO> userPage = userInfoCommonApi.cursorPageUser(cursorPageDTO);
+        CursorPageBaseResp<UserInfoDTO> userPage = userInfoCommonApi.cursorPageUser(cursorPageDTO).getCheckData();
         if (CollectionUtils.isEmpty(userPage.getList())) {
             return CursorPageBaseResp.empty();
         }
@@ -137,12 +137,12 @@ public class RoomServiceImpl implements RoomService {
         Room room = roomCache.get(roomId);
         Assert.assertNotNull("聊天室不存在", room);
         if (room.isHotRoom()) {
-             List<UserInfoDTO> userList = userInfoCommonApi.getAllUser();
+             List<UserInfoDTO> userList = userInfoCommonApi.getAllUser().getCheckData();
              return RoomAdapter.buildMemberListResp(userList);
         } else {
             // 同样需要根据情况处理，可能实际数据过大，或者和微信一样，限制群聊用户上限
             List<Long> uidList = groupMemberCache.getMemberUidList(roomId);
-            List<UserInfoDTO> userList = userInfoCommonApi.getUserInfoList(uidList);
+            List<UserInfoDTO> userList = userInfoCommonApi.getUserInfoList(uidList).getCheckData();
             return RoomAdapter.buildMemberListResp(userList);
         }
     }
@@ -345,7 +345,7 @@ public class RoomServiceImpl implements RoomService {
      * 是系统管理员或者群聊管理员
      */
     private boolean hasPower(GroupRoleAPPEnum groupRole, Long uid) {
-        boolean power = userRoleCommonApi.isSuperAdmin(uid);
+        boolean power = userRoleCommonApi.isSuperAdmin(uid).getCheckData();
         return power || GroupRoleAPPEnum.LEADER.equals(groupRole) || GroupRoleAPPEnum.MANAGER.equals(groupRole);
     }
 
@@ -358,7 +358,7 @@ public class RoomServiceImpl implements RoomService {
     public boolean hasRoomPower(Long uid, Long roomId) {
         Room room = roomCache.get(roomId);
         Assert.assertNotNull("房间号有误", room);
-        boolean systemAdmin = userRoleCommonApi.isSuperAdmin(uid);
+        boolean systemAdmin = userRoleCommonApi.isSuperAdmin(uid).getCheckData();
         if (room.isHotRoom()) {
             // 如果是热门群聊，取决于用户是否是系统管理员
             return systemAdmin;
@@ -401,7 +401,7 @@ public class RoomServiceImpl implements RoomService {
     private RoomGroup buildGroupRoom(Long uid) {
         Room room = RoomAdapter.buildRoom(RoomTypeEnum.GROUP);
         roomDao.save(room);
-        UserInfoDTO user = userInfoCommonApi.getUserInfo(uid);
+        UserInfoDTO user = userInfoCommonApi.getUserInfo(uid).getCheckData();
         RoomGroup roomGroup = RoomAdapter.buildRoomGroup(user, room);
         roomGroupDao.save(roomGroup);
         return roomGroup;

@@ -3,6 +3,7 @@ package com.meteor.chat.msg.api;
 import com.meteor.chat.api.msg.MessageCommonApi;
 import com.meteor.chat.api.msg.dto.*;
 import com.meteor.chat.common.constants.CommonConstants;
+import com.meteor.chat.common.result.ApiResult;
 import com.meteor.chat.msg.adapter.MsgAdapter;
 import com.meteor.chat.msg.service.MessageService;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -37,8 +38,8 @@ public class MessageCommonApiImpl implements MessageCommonApi {
     }
 
     @Override
-    public List<RoomMsgDTO> getRoomMsgList(List<RoomMsgReqDTO> reqList) {
-        return messageService.getRoomMsgList(reqList);
+    public ApiResult<List<RoomMsgDTO>> getRoomMsgList(List<RoomMsgReqDTO> reqList) {
+        return ApiResult.success(messageService.getRoomMsgList(reqList));
     }
 
     @Override
@@ -47,7 +48,7 @@ public class MessageCommonApiImpl implements MessageCommonApi {
     }
 
     @Override
-    public ChatMessageResp getMessageResp(Long msgId) {
-        return messageService.getMessageResp(msgId, null);
+    public ApiResult<ChatMessageResp> getMessageResp(Long msgId) {
+        return ApiResult.success(messageService.getMessageResp(msgId, null));
     }
 }

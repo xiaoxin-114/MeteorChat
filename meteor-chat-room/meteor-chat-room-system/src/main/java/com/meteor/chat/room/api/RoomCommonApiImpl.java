@@ -4,6 +4,7 @@ import com.meteor.chat.api.room.RoomCommonApi;
 import com.meteor.chat.api.room.dto.RoomFriendDTO;
 import com.meteor.chat.api.room.dto.RoomInfoDTO;
 import com.meteor.chat.api.room.dto.SingleRoomDTO;
+import com.meteor.chat.common.result.ApiResult;
 import com.meteor.chat.room.domain.entity.Room;
 import com.meteor.chat.room.service.RoomService;
 import com.meteor.chat.room.service.cache.RoomCache;
@@ -20,8 +21,8 @@ public class RoomCommonApiImpl implements RoomCommonApi {
     private RoomCache roomCache;
 
     @Override
-    public Long buildSingleRoom(SingleRoomDTO req) {
-        return roomService.buildSingleRoom(req.getUid1(), req.getUid2());
+    public ApiResult<Long> buildSingleRoom(SingleRoomDTO req) {
+        return ApiResult.success(roomService.buildSingleRoom(req.getUid1(), req.getUid2()));
     }
 
     @Override
@@ -30,25 +31,25 @@ public class RoomCommonApiImpl implements RoomCommonApi {
     }
 
     @Override
-    public RoomInfoDTO getRoomInfo(Long roomId) {
+    public ApiResult<RoomInfoDTO> getRoomInfo(Long roomId) {
         Room room = roomCache.get(roomId);
         if (Objects.isNull(room)) {
             return null;
         }
-        return RoomInfoDTO.builder()
+        return ApiResult.success(RoomInfoDTO.builder()
                 .roomId(room.getId())
                 .type(room.getType())
                 .hotFlag(room.getHotFlag())
-                .build();
+                .build());
     }
 
     @Override
-    public Boolean hasRoomPower(Long roomId, Long uid) {
-        return roomService.hasRoomPower(roomId, uid);
+    public ApiResult<Boolean> hasRoomPower(Long roomId, Long uid) {
+        return ApiResult.success(roomService.hasRoomPower(roomId, uid));
     }
 
     @Override
-    public RoomFriendDTO getRoomFriend(Long roomId) {
-        return roomService.getRoomFriendInfo(roomId);
+    public ApiResult<RoomFriendDTO> getRoomFriend(Long roomId) {
+        return ApiResult.success(roomService.getRoomFriendInfo(roomId));
     }
 }

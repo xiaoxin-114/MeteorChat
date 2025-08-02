@@ -49,13 +49,13 @@ public class MsgMarkEventListener {
     public void sendMark(MsgMarkEvent event) {
         MsgMarkDTO msgMarkDTO = event.getMsgMarkDTO();
         Message message = messageDao.getById(msgMarkDTO.getMsgId());
-        RoomInfoDTO room = roomCommonApi.getRoomInfo(message.getRoomId());
+        RoomInfoDTO room = roomCommonApi.getRoomInfo(message.getRoomId()).getCheckData();
         Integer markCount = messageMarkDao.countMsgType(msgMarkDTO.getMsgId(), msgMarkDTO.getMarkType());
         WSBaseResp<WSMsgMark> wsBaseResp = WSAdapter.buildMsgMarkResp(msgMarkDTO, markCount);
         if (room.isHotRoom()) {
             pushService.pushRoomMsg(wsBaseResp);
         }else {
-            List<Long> uidList = roomMemberCommonApi.getMemberList(message.getRoomId());
+            List<Long> uidList = roomMemberCommonApi.getMemberList(message.getRoomId()).getCheckData();
             pushService.pushRoomMsg(wsBaseResp, uidList);
         }
     }

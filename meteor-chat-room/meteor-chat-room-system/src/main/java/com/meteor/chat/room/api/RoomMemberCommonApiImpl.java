@@ -1,6 +1,7 @@
 package com.meteor.chat.room.api;
 
 import com.meteor.chat.api.room.RoomMemberCommonApi;
+import com.meteor.chat.common.result.ApiResult;
 import com.meteor.chat.room.domain.entity.RoomGroup;
 import com.meteor.chat.room.service.cache.GroupMemberCache;
 import com.meteor.chat.room.service.cache.RoomGroupCache;
@@ -17,11 +18,11 @@ public class RoomMemberCommonApiImpl implements RoomMemberCommonApi {
     @Resource
     private GroupMemberCache groupMemberCache;
     @Override
-    public List<Long> getMemberList(Long roomId) {
+    public ApiResult<List<Long>> getMemberList(Long roomId) {
         RoomGroup roomGroup = roomGroupCache.get(roomId);
         if (Objects.isNull(roomGroup)) {
-            return Collections.emptyList();
+            return ApiResult.success(Collections.emptyList());
         }
-        return groupMemberCache.getMemberUidList(roomGroup.getId());
+        return ApiResult.success(groupMemberCache.getMemberUidList(roomGroup.getId()));
     }
 }

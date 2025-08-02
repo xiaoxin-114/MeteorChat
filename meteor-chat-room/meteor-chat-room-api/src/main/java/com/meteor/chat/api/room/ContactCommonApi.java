@@ -4,6 +4,7 @@ import com.meteor.chat.api.room.constants.ApiConstants;
 import com.meteor.chat.api.room.dto.ContactInfoDTO;
 import com.meteor.chat.api.room.dto.MessageReadCursorPageDTO;
 import com.meteor.chat.api.room.dto.ReadMessageDTO;
+import com.meteor.chat.common.result.ApiResult;
 import com.meteor.chat.mybatis.domain.CursorPageBaseResp;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,12 +24,12 @@ public interface ContactCommonApi {
      * 获取消息已读的会话游标分页
      */
     @PostMapping(ApiConstants.CONTACT_PREFIX + "/read/page")
-    CursorPageBaseResp<ContactInfoDTO> cursorReadPage(@RequestBody MessageReadCursorPageDTO  req);
+    ApiResult<CursorPageBaseResp<ContactInfoDTO>> cursorReadPage(@RequestBody MessageReadCursorPageDTO  req);
     /**
      * 获取消息未读的会话游标分页
      */
     @PostMapping(ApiConstants.CONTACT_PREFIX + "/unread/page")
-    CursorPageBaseResp<ContactInfoDTO> cursorUnReadPage(@RequestBody MessageReadCursorPageDTO  req);
+    ApiResult<CursorPageBaseResp<ContactInfoDTO>> cursorUnReadPage(@RequestBody MessageReadCursorPageDTO  req);
 
     /**
      * 获取房间内的所有会话
@@ -37,7 +38,7 @@ public interface ContactCommonApi {
      * @return 获取的会话应该排除登陆用户
      */
     @GetMapping(ApiConstants.CONTACT_PREFIX + "/list")
-    List<ContactInfoDTO> listByRoomId(@RequestParam("roomId") Long roomId, @RequestParam("uid") Long uid);
+    ApiResult<List<ContactInfoDTO>> listByRoomId(@RequestParam("roomId") Long roomId, @RequestParam("uid") Long uid);
 
     /**
      * 根据用户和房间号获取会话信息
@@ -45,7 +46,7 @@ public interface ContactCommonApi {
      * @param uid  用户id
      */
     @GetMapping(ApiConstants.CONTACT_PREFIX)
-    ContactInfoDTO getByRoomIdUid(@RequestParam("roomId") Long roomId, @RequestParam("uid") Long uid);
+    ApiResult<ContactInfoDTO> getByRoomIdUid(@RequestParam("roomId") Long roomId, @RequestParam("uid") Long uid);
 
     /**
      * 用户读取消息

@@ -3,6 +3,7 @@ package com.meteor.chat.user.api;
 import com.meteor.chat.api.user.LoginCommonApi;
 import com.meteor.chat.api.user.dto.LoginSuccessDTO;
 import com.meteor.chat.api.user.dto.UserInfoDTO;
+import com.meteor.chat.common.result.ApiResult;
 import com.meteor.chat.user.service.LoginService;
 import com.meteor.chat.api.UserLoginApi;
 import org.springframework.web.bind.annotation.RestController;
@@ -15,19 +16,19 @@ public class LoginCommonApiImpl implements LoginCommonApi, UserLoginApi {
     private LoginService loginService;
 
     @Override
-    public Long validToken(String token) {
-        return loginService.getValidUid(token);
+    public ApiResult<Long> validToken(String token) {
+        return ApiResult.success(loginService.getValidUid(token));
     }
 
     @Override
-    public String login(Long uid) {
-        return loginService.login(uid);
+    public ApiResult<String> login(Long uid) {
+        return ApiResult.success(loginService.login(uid));
     }
 
     @Override
-    public UserInfoDTO loginSuccess(LoginSuccessDTO loginSuccessDTO) {
+    public ApiResult<UserInfoDTO> loginSuccess(LoginSuccessDTO loginSuccessDTO) {
         // 可能需要更新用户信息，在线人数，并且返回用户的基本信息
-        return loginService.successLogin(loginSuccessDTO);
+        return ApiResult.success(loginService.successLogin(loginSuccessDTO));
     }
 
     @Override

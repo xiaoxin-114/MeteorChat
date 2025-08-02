@@ -28,12 +28,12 @@ public class MessageRecallEventListener{
     @EventListener(value = MessageRecallEvent.class)
     public void sendMsgToAll(MessageRecallEvent event) {
         MessageRecallDTO dto = event.getMessageRecallDTO();
-        RoomInfoDTO room = roomCommonApi.getRoomInfo(dto.getRoomId());
+        RoomInfoDTO room = roomCommonApi.getRoomInfo(dto.getRoomId()).getCheckData();
         // 全员群
         if (room.isHotRoom()) {
             pushService.pushRoomMsg(WSAdapter.buildMsgRecall(dto));
         } else {
-            List<Long> memberUidList = roomMemberCommonApi.getMemberList(dto.getRoomId());
+            List<Long> memberUidList = roomMemberCommonApi.getMemberList(dto.getRoomId()).getCheckData();
             pushService.pushRoomMsg(WSAdapter.buildMsgRecall(dto), memberUidList);
         }
     }

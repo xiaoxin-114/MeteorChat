@@ -39,7 +39,7 @@ public class RecallMsgHandler extends AbstractMsgHandler<String>{
             throw new RuntimeException("撤回消息数据异常，缺失撤回信息");
         }
         Long uid = recall.getRecallUid();
-        UserInfoDTO userInfo = userInfoCommonApi.getUserInfo(uid);
+        UserInfoDTO userInfo = userInfoCommonApi.getUserInfo(uid).getCheckData();
         if (Objects.equals(userInfo.getUid(), message.getFromUid())) {
             return userInfo.getName() + "撤回了一条消息";
         }

@@ -39,7 +39,7 @@ public class UserTokenFilter extends OncePerRequestFilter {
         String token = getToken(request);
         Long uid = null;
         if (StrUtil.isNotBlank(token)) {
-            uid = userLoginApi.validToken(token);
+            uid = userLoginApi.validToken(token).getCheckData();
             //如果token没过期，用户已经登入，把uid存入request中
             if (uid != null) {
                 request.setAttribute(ATTRIBUTE_UID, uid);

@@ -1,6 +1,7 @@
 package com.meteor.chat.api.room;
 
 import com.meteor.chat.api.room.constants.ApiConstants;
+import com.meteor.chat.common.result.ApiResult;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -17,5 +18,5 @@ public interface RoomMemberCommonApi {
      * @param roomId 聊天室id
      */
     @GetMapping(ApiConstants.ROOM_MEMBER_PREFIX)
-    List<Long> getMemberList(@RequestParam("roomId") Long roomId);
+    ApiResult<List<Long>> getMemberList(@RequestParam("roomId") Long roomId);
 }

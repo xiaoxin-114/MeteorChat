@@ -2,6 +2,7 @@ package com.meteor.chat.api.msg;
 
 import com.meteor.chat.api.msg.constants.ApiConstants;
 import com.meteor.chat.api.msg.dto.*;
+import com.meteor.chat.common.result.ApiResult;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.*;
 
@@ -39,7 +40,7 @@ public interface MessageCommonApi {
      * @return 最新消息缩略信息，未读消息数
      */
     @PostMapping(ApiConstants.MSG_PREFIX + "/room/list")
-    List<RoomMsgDTO> getRoomMsgList(@RequestBody List<RoomMsgReqDTO> reqList);
+    ApiResult<List<RoomMsgDTO>> getRoomMsgList(@RequestBody List<RoomMsgReqDTO> reqList);
 
     /**
      * 删除群聊信息
@@ -52,5 +53,5 @@ public interface MessageCommonApi {
      * @param msgId 消息id
      */
     @GetMapping(ApiConstants.MSG_PREFIX + "/detail")
-    ChatMessageResp getMessageResp(@RequestParam("msgId") Long msgId);
+    ApiResult<ChatMessageResp> getMessageResp(@RequestParam("msgId") Long msgId);
 }

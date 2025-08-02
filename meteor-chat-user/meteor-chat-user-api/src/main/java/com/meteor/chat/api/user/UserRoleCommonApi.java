@@ -2,6 +2,7 @@ package com.meteor.chat.api.user;
 
 import com.meteor.chat.api.user.constants.ApiConstants;
 import com.meteor.chat.common.constants.RpcConstants;
+import com.meteor.chat.common.result.ApiResult;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -13,5 +14,5 @@ import org.springframework.web.bind.annotation.RequestParam;
 public interface UserRoleCommonApi {
 
     @GetMapping(ApiConstants.ROLE_PREFIX + "/super")
-    boolean isSuperAdmin(@RequestParam("uid") Long uid);
+    ApiResult<Boolean> isSuperAdmin(@RequestParam("uid") Long uid);
 }

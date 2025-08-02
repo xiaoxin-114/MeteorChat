@@ -2,6 +2,8 @@ package com.meteor.chat.user.api;
 
 import com.meteor.chat.api.user.WxMsgCommonApi;
 import com.meteor.chat.api.user.dto.WxQrCodeDTO;
+import com.meteor.chat.common.exception.BusinessException;
+import com.meteor.chat.common.result.ApiResult;
 import lombok.extern.slf4j.Slf4j;
 import me.chanjar.weixin.common.error.WxErrorException;
 import me.chanjar.weixin.mp.api.WxMpService;
@@ -17,13 +19,13 @@ public class WxMsgCommonApiImpl implements WxMsgCommonApi {
     @Resource
     private WxMpService wxMpService;
     @Override
-    public WxQrCodeDTO getWxQrCode(Integer code, int expireTime) {
+    public ApiResult<WxQrCodeDTO> getWxQrCode(Integer code, int expireTime) {
         try {
             WxMpQrCodeTicket wxMpQrCodeTicket = wxMpService.getQrcodeService().qrCodeCreateTmpTicket(code, expireTime);
-            return new WxQrCodeDTO(wxMpQrCodeTicket.getUrl());
+            return ApiResult.success(new WxQrCodeDTO(wxMpQrCodeTicket.getUrl()));
         } catch (WxErrorException e) {
             log.error(e.getMessage(), e);
+            throw new BusinessException(e.getMessage());
         }
-        return null;
     }
 }

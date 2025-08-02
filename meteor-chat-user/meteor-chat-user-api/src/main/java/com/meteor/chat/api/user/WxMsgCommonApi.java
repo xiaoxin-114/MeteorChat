@@ -3,6 +3,7 @@ package com.meteor.chat.api.user;
 import com.meteor.chat.api.user.constants.ApiConstants;
 import com.meteor.chat.api.user.dto.WxQrCodeDTO;
 import com.meteor.chat.common.constants.RpcConstants;
+import com.meteor.chat.common.result.ApiResult;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -16,5 +17,5 @@ public interface WxMsgCommonApi {
      * @param expireTime 秒数，过期时间
      */
     @GetMapping(ApiConstants.WX_PREFIX + "/qrcode")
-    WxQrCodeDTO getWxQrCode(@RequestParam("code") Integer code, @RequestParam("expireTime") int expireTime);
+    ApiResult<WxQrCodeDTO> getWxQrCode(@RequestParam("code") Integer code, @RequestParam("expireTime") int expireTime);
 }

@@ -4,6 +4,7 @@ import com.meteor.chat.api.user.constants.ApiConstants;
 import com.meteor.chat.api.user.dto.UserCursorPageDTO;
 import com.meteor.chat.api.user.dto.UserInfoDTO;
 import com.meteor.chat.common.constants.RpcConstants;
+import com.meteor.chat.common.result.ApiResult;
 import com.meteor.chat.mybatis.domain.CursorPageBaseResp;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,41 +22,41 @@ public interface UserInfoCommonApi {
      * @param uid 用户id
      */
     @GetMapping(ApiConstants.USER_PREFIX + "/info")
-    UserInfoDTO getUserInfo(@RequestParam("uid") Long uid);
+    ApiResult<UserInfoDTO> getUserInfo(@RequestParam("uid") Long uid);
 
     /**
      * 获取黑名单列表
      */
     @GetMapping(ApiConstants.USER_PREFIX + "/blacklist")
-    Set<String> getBlackList();
+    ApiResult<Set<String>> getBlackList();
 
     /**
      * 批量获取用户信息
      * @param uidList 用户id列表
      */
     @PostMapping(ApiConstants.USER_PREFIX + "/info/list")
-    List<UserInfoDTO> getUserInfoList(@RequestBody List<Long> uidList);
+    ApiResult<List<UserInfoDTO>> getUserInfoList(@RequestBody List<Long> uidList);
 
     /**
      * 批量获取用户信息
      * @param uidList 用户id列表
      */
     @PostMapping(ApiConstants.USER_PREFIX + "/info/map")
-    Map<Long, UserInfoDTO> getUserInfoMap(@RequestBody List<Long> uidList);
+    ApiResult<Map<Long, UserInfoDTO>> getUserInfoMap(@RequestBody List<Long> uidList);
 
 
     /**
      * 游标分页查询用户列表
      */
     @PostMapping(ApiConstants.USER_PREFIX + "/info/page")
-    CursorPageBaseResp<UserInfoDTO> cursorPageUser(@RequestBody UserCursorPageDTO req);
+    ApiResult<CursorPageBaseResp<UserInfoDTO>> cursorPageUser(@RequestBody UserCursorPageDTO req);
 
     @GetMapping(ApiConstants.USER_PREFIX + "/info/all")
-    List<UserInfoDTO> getAllUser();
+    ApiResult<List<UserInfoDTO>> getAllUser();
 
     /**
      * 获取在线用户id列表
      */
     @GetMapping(ApiConstants.USER_PREFIX + "/online")
-    Set<Long> getOnlineUidSet();
+    ApiResult<Set<Long>> getOnlineUidSet();
 }

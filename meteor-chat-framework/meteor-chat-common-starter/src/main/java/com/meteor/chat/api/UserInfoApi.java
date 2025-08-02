@@ -1,6 +1,7 @@
 package com.meteor.chat.api;
 
 import com.meteor.chat.common.constants.RpcConstants;
+import com.meteor.chat.common.result.ApiResult;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 
@@ -13,5 +14,5 @@ public interface UserInfoApi {
      * @return key为拉黑类型，分为ip和uid，value为拉黑列表
      */
     @GetMapping("/api/user/blackMap")
-    Map<Integer, Set<String>> getBlackMap();
+    ApiResult<Map<Integer, Set<String>>> getBlackMap();
 }

@@ -63,7 +63,7 @@ public class GroupMemberAddEventListener {
         }
         List<Long> memberUidList = groupMemberCache.getMemberUidList(roomGroup.getRoomId());
         List<Long> uidList = memberList.stream().map(GroupMember::getUid).collect(Collectors.toList());
-        List<UserInfoDTO> userList = userInfoCommonApi.getUserInfoList(uidList);
+        List<UserInfoDTO> userList = userInfoCommonApi.getUserInfoList(uidList).getCheckData();
         if (CollectionUtils.isEmpty(userList)) {
             return;
         }

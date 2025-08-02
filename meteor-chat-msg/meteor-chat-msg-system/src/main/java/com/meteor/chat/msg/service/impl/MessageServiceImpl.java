@@ -89,9 +89,9 @@ public class MessageServiceImpl implements MessageService {
                 .msgCreateTime(message.getCreateTime()).build();
         // 获取未读的contact列表
         if (ReadEnum.UNREAD.getCode().equals(req.getSearchType())) {
-            contactPage  = contactCommonApi.cursorUnReadPage(cursorPageDTO);
+            contactPage  = contactCommonApi.cursorUnReadPage(cursorPageDTO).getCheckData();
         }else {
-            contactPage = contactCommonApi.cursorReadPage(cursorPageDTO);
+            contactPage = contactCommonApi.cursorReadPage(cursorPageDTO).getCheckData();
         }
         List<ChatMessageReadResp> uidList = contactPage.getList().stream()
                 // 过滤掉发送消息的用户
@@ -108,7 +108,7 @@ public class MessageServiceImpl implements MessageService {
         Assert.assertTrue("只能查询自己发送的消息阅读数", msgList.stream().allMatch(msg -> uid.equals(msg.getFromUid())));
         List<Long> roomIds = msgList.stream().map(Message::getRoomId).distinct().collect(Collectors.toList());
         Assert.assertTrue("只能查询同一会话下的消息", roomIds.size() == 1);
-        List<ContactInfoDTO> contactList = contactCommonApi.listByRoomId(roomIds.get(0), uid);
+        List<ContactInfoDTO> contactList = contactCommonApi.listByRoomId(roomIds.get(0), uid).getCheckData();
         if (CollectionUtils.isEmpty(contactList)) {
             throw new BusinessException("会话信息缺失，计算失败");
         }
@@ -142,7 +142,7 @@ public class MessageServiceImpl implements MessageService {
         Long lastMsgId = null;
         if (!inRoom) {
             // 如果用户不在群聊，则只会显示历史信息，不会显示最新消息
-            ContactInfoDTO contact = contactCommonApi.getByRoomIdUid(roomId, uid);
+            ContactInfoDTO contact = contactCommonApi.getByRoomIdUid(roomId, uid).getCheckData();
             Assert.assertNotNull("数据异常", contact);
             lastMsgId = contact.getLastMsgId();
         }
@@ -150,7 +150,7 @@ public class MessageServiceImpl implements MessageService {
         if (messageCursorPage.isEmpty()) {
             return CursorPageBaseResp.empty();
         }
-        Set<String> blackList = userInfoCommonApi.getBlackList();
+        Set<String> blackList = userInfoCommonApi.getBlackList().getCheckData();
         if (blackList == null) {
             blackList = new HashSet<>();
         }
@@ -182,7 +182,7 @@ public class MessageServiceImpl implements MessageService {
         Message message = messageDao.getById(req.getMsgId());
         // 如果不是消息发送者撤回消息，就必须得是管理员
         if (!Objects.equals(message.getFromUid(), uid)) {
-            boolean hasRoomPower = roomCommonApi.hasRoomPower(uid, req.getRoomId());
+            boolean hasRoomPower = roomCommonApi.hasRoomPower(uid, req.getRoomId()).getCheckData();
             Assert.assertTrue("用户没有权限操作", hasRoomPower);
         }
         Assert.assertFalse("发出超出2分钟的消息无法撤回", message.getCreateTime().before(DateUtil.offsetMinute(new Date(), -2)));
@@ -248,7 +248,7 @@ public class MessageServiceImpl implements MessageService {
     @Override
     public void sendMemberAddMsg(MemberAddMsgDTO memberAddMsgDTO) {
         memberAddMsgDTO.getMemberUidList().add(memberAddMsgDTO.getInviter());
-        List<UserInfoDTO> userInfoList = userInfoCommonApi.getUserInfoList(memberAddMsgDTO.getMemberUidList());
+        List<UserInfoDTO> userInfoList = userInfoCommonApi.getUserInfoList(memberAddMsgDTO.getMemberUidList()).getCheckData();
         if (CollectionUtils.isEmpty(userInfoList)) {
             return;
         }
@@ -266,7 +266,7 @@ public class MessageServiceImpl implements MessageService {
 
     @Override
     public void sendMemberSubMsg(Long roomId, Long uid, String content) {
-        UserInfoDTO userInfo = userInfoCommonApi.getUserInfo(uid);
+        UserInfoDTO userInfo = userInfoCommonApi.getUserInfo(uid).getCheckData();
         if (Objects.nonNull(userInfo) && Objects.equals(userInfo.getUid(), uid)) {
             sendMsg(MsgAdapter.buildMemberChange(roomId, userInfo.getName() + content), CommonConstants.SYSTEM_UID);
         }
@@ -274,7 +274,7 @@ public class MessageServiceImpl implements MessageService {
 
     private void checkSendMsg(ChatMessageReq request, Long uid) {
         Long roomId = request.getRoomId();
-        RoomInfoDTO room = roomCommonApi.getRoomInfo(roomId);
+        RoomInfoDTO room = roomCommonApi.getRoomInfo(roomId).getCheckData();
         Assert.assertNotNull("房间号有误", room);
         if (room.isHotRoom()) {
             // 全员群所有用户都在
@@ -282,10 +282,10 @@ public class MessageServiceImpl implements MessageService {
         }
         if (RoomTypeEnum.GROUP.getCode().equals(room.getType())) {
             // 群聊需要校验用户是否在群里
-            List<Long> memberUidList = roomMemberCommonApi.getMemberList(roomId);
+            List<Long> memberUidList = roomMemberCommonApi.getMemberList(roomId).getCheckData();
             Assert.assertTrue("您已被移出群聊", memberUidList.contains(uid));
         }else if (RoomTypeEnum.SINGLE.getCode().equals(room.getType())) {
-            RoomFriendDTO roomFriend = roomCommonApi.getRoomFriend(roomId);
+            RoomFriendDTO roomFriend = roomCommonApi.getRoomFriend(roomId).getCheckData();
             Assert.assertNotNull("您已被对方拉黑", roomFriend);
             Assert.assertTrue("您已被对方拉黑", roomFriend.hasUid(uid));
         }
@@ -293,7 +293,7 @@ public class MessageServiceImpl implements MessageService {
     }
 
     private boolean inRoom(Long roomId, Long uid) {
-        RoomInfoDTO room = roomCommonApi.getRoomInfo(roomId);
+        RoomInfoDTO room = roomCommonApi.getRoomInfo(roomId).getCheckData();
         Assert.assertNotNull("房间号有误", room);
         if (room.isHotRoom()) {
             // 全员群所有用户都在
@@ -301,11 +301,11 @@ public class MessageServiceImpl implements MessageService {
         }
         if (RoomTypeEnum.GROUP.getCode().equals(room.getType())) {
             // 群聊需要校验用户是否在群里
-            List<Long> memberUidList = roomMemberCommonApi.getMemberList(roomId);
+            List<Long> memberUidList = roomMemberCommonApi.getMemberList(roomId).getCheckData();
             Assert.assertNotNull("数据异常", memberUidList);
             return memberUidList.contains(uid);
         }else if (RoomTypeEnum.SINGLE.getCode().equals(room.getType())) {
-            RoomFriendDTO roomFriend = roomCommonApi.getRoomFriend(roomId);
+            RoomFriendDTO roomFriend = roomCommonApi.getRoomFriend(roomId).getCheckData();
             return Objects.nonNull(roomFriend) && roomFriend.hasUid(uid);
         }
         throw new BusinessException("数据异常");

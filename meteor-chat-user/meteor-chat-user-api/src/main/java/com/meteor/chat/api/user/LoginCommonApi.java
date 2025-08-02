@@ -4,6 +4,7 @@ import com.meteor.chat.api.user.constants.ApiConstants;
 import com.meteor.chat.api.user.dto.LoginSuccessDTO;
 import com.meteor.chat.api.user.dto.UserInfoDTO;
 import com.meteor.chat.common.constants.RpcConstants;
+import com.meteor.chat.common.result.ApiResult;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -21,7 +22,7 @@ public interface LoginCommonApi {
      * @return
      */
     @GetMapping(ApiConstants.LOGIN_PREFIX + "/token")
-    String login(@RequestParam("uid") Long uid);
+    ApiResult<String> login(@RequestParam("uid") Long uid);
 
     /**
      * 用户登陆成功后，根据用户id和ip信息来更新用户状态、在线人数和用户信息
@@ -29,7 +30,7 @@ public interface LoginCommonApi {
      * @return
      */
     @PostMapping(ApiConstants.LOGIN_PREFIX)
-    UserInfoDTO loginSuccess(@RequestBody LoginSuccessDTO loginSuccessDTO);
+    ApiResult<UserInfoDTO> loginSuccess(@RequestBody LoginSuccessDTO loginSuccessDTO);
 
     /**
      * 用户下线，处理用户状态和信息，更新在线列表并发送下线消息

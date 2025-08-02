@@ -52,7 +52,7 @@ public class MsgSendConsumer {
     public void consume(MsgSendMessageDTO dto) {
         Long msgId = dto.getMsgId();
         // 此时是推送新消息的，不会有人点赞和点踩，所有不用关心接收用户
-        ChatMessageResp messageResp = messageCommonApi.getMessageResp(msgId);
+        ChatMessageResp messageResp = messageCommonApi.getMessageResp(msgId).getCheckData();
         ChatMessageResp.Message message = messageResp.getMessage();
         Long roomId = message.getRoomId();
         Room room = roomCache.get(roomId);

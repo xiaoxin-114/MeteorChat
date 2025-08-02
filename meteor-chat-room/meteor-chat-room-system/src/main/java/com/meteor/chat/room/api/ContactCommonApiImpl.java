@@ -4,6 +4,7 @@ import com.meteor.chat.api.room.ContactCommonApi;
 import com.meteor.chat.api.room.dto.ContactInfoDTO;
 import com.meteor.chat.api.room.dto.MessageReadCursorPageDTO;
 import com.meteor.chat.api.room.dto.ReadMessageDTO;
+import com.meteor.chat.common.result.ApiResult;
 import com.meteor.chat.mybatis.domain.CursorPageBaseResp;
 import com.meteor.chat.room.service.ContactService;
 import org.springframework.web.bind.annotation.RestController;
@@ -17,23 +18,23 @@ public class ContactCommonApiImpl implements ContactCommonApi {
     private ContactService contactService;
 
     @Override
-    public CursorPageBaseResp<ContactInfoDTO> cursorReadPage(MessageReadCursorPageDTO req) {
-        return contactService.cursorMsgReadOrUnReadPage(req, true);
+    public ApiResult<CursorPageBaseResp<ContactInfoDTO>> cursorReadPage(MessageReadCursorPageDTO req) {
+        return ApiResult.success(contactService.cursorMsgReadOrUnReadPage(req, true));
     }
 
     @Override
-    public CursorPageBaseResp<ContactInfoDTO> cursorUnReadPage(MessageReadCursorPageDTO req) {
-        return contactService.cursorMsgReadOrUnReadPage(req, false);
+    public ApiResult<CursorPageBaseResp<ContactInfoDTO>> cursorUnReadPage(MessageReadCursorPageDTO req) {
+        return ApiResult.success(contactService.cursorMsgReadOrUnReadPage(req, false));
     }
 
     @Override
-    public List<ContactInfoDTO> listByRoomId(Long roomId, Long uid) {
-        return contactService.listContactInfoByRoomId(roomId, uid);
+    public ApiResult<List<ContactInfoDTO>> listByRoomId(Long roomId, Long uid) {
+        return ApiResult.success(contactService.listContactInfoByRoomId(roomId, uid));
     }
 
     @Override
-    public ContactInfoDTO getByRoomIdUid(Long roomId, Long uid) {
-        return contactService.getContactInfoByRoomIdUid(roomId, uid);
+    public ApiResult<ContactInfoDTO> getByRoomIdUid(Long roomId, Long uid) {
+        return ApiResult.success(contactService.getContactInfoByRoomIdUid(roomId, uid));
     }
 
     @Override

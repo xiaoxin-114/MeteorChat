@@ -133,7 +133,7 @@ public class UserFriendServiceImpl implements UserFriendService {
         // 添加两者的好友关系
         addFriend(userApply.getUid(), userApply.getTargetId());
         // 创建单聊会话，这里添加好友和创建单聊会话不能通过时间监听机制，因为要保证事务统一性
-        Long roomId = roomCommonApi.buildSingleRoom(SingleRoomDTO.builder().uid1(userApply.getUid()).uid2(userApply.getTargetId()).build());
+        Long roomId = roomCommonApi.buildSingleRoom(SingleRoomDTO.builder().uid1(userApply.getUid()).uid2(userApply.getTargetId()).build()).getCheckData();
         // 自动发送消息
         messageCommonApi.sendUserApplyMsg(UserApplyMsgDTO.builder()
                 .roomId(roomId).uid(userApply.getUid())
