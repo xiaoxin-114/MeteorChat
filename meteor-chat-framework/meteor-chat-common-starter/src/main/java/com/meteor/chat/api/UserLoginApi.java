@@ -2,11 +2,15 @@ package com.meteor.chat.api;
 
 import com.meteor.chat.common.constants.RpcConstants;
 import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @FeignClient(name = RpcConstants.USER_SERVER_NAME)
 public interface UserLoginApi {
-    @PostMapping("/api/user/login/token")
-    Long validToken(@RequestBody String token);
+
+    String VALID_TOKEN_URL = "/api/user/login/token";
+    String VALID_TOKEN_URI = "http://" + RpcConstants.USER_SERVER_NAME + VALID_TOKEN_URL;
+
+    @GetMapping(VALID_TOKEN_URL)
+    Long validToken(@RequestParam("token") String token);
 }

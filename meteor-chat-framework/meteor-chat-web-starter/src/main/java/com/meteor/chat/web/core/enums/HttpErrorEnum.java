@@ -3,6 +3,7 @@ package com.meteor.chat.web.core.enums;
 import cn.hutool.http.ContentType;
 import com.meteor.chat.common.exception.ErrorEnum;
 import com.meteor.chat.common.result.ApiResult;
+import com.meteor.chat.web.core.utils.WebFrameworkUtils;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -20,9 +21,7 @@ public enum HttpErrorEnum implements ErrorEnum {
     }
 
     public void sendErrorResponse(HttpServletResponse response) throws IOException {
-        response.setStatus(this.errorCode);
-        response.setContentType(ContentType.JSON.toString(StandardCharsets.UTF_8));
-        response.getWriter().write(ApiResult.fail(this).toString());
+        WebFrameworkUtils.sendErrorMsg(response, ApiResult.fail(this));
     }
 
     @Override

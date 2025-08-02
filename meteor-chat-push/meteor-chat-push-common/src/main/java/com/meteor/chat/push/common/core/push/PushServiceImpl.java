@@ -31,7 +31,7 @@ public class PushServiceImpl implements PushService {
 
     @Override
     public void pushSingleMsg(WSBaseResp<?> msg, Long uid) {
-        // todo 后续优化，同步websocket模块一起，websocket建立连接时，就要根据uid分配给不同的用户
+        // todo 后续优化，同步websocket模块一起，websocket建立连接时，就要根据uid分配给不同的用户，目前无法推送单聊消息
         // 但是前端建立websocket连接时，还没有用户信息，这个无法确定
         mqProducer.sendMsg(MQConstant.SINGLE_PUSH_EXCHANGE, MQConstant.SINGLE_PUSH_ROUTING_KEY, new PushMessageDTO(msg, uid));
     }

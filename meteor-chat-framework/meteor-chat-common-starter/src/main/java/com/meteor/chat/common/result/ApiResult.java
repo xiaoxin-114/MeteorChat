@@ -1,5 +1,7 @@
 package com.meteor.chat.common.result;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.meteor.chat.common.exception.BusinessException;
 import com.meteor.chat.common.exception.ErrorEnum;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -48,5 +50,17 @@ public class ApiResult<T>{
 
     public boolean isSuccess(){
         return success;
+    }
+
+    @JsonIgnore
+    public T getCheckData() {
+        checkError();
+        return data;
+    }
+
+    private void checkError() {
+        if (!success) {
+            throw new BusinessException(errCode, errMsg);
+        }
     }
 }

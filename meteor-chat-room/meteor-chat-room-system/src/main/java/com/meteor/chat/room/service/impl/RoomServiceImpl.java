@@ -119,6 +119,8 @@ public class RoomServiceImpl implements RoomService {
                 .roomId(req.getRoomId())
                 .uidList(uidList)
                 .build();
+        cursorPageDTO.setPageSize(req.getPageSize());
+        cursorPageDTO.setCursor(req.getCursor());
         CursorPageBaseResp<UserInfoDTO> userPage = userInfoCommonApi.cursorPageUser(cursorPageDTO);
         if (CollectionUtils.isEmpty(userPage.getList())) {
             return CursorPageBaseResp.empty();
@@ -382,7 +384,7 @@ public class RoomServiceImpl implements RoomService {
 
     @Override
     public RoomFriendDTO getRoomFriendInfo(Long roomId) {
-        RoomFriend roomFriend = roomFriendDao.getById(roomId);
+        RoomFriend roomFriend = roomFriendDao.getByRoomId(roomId);
         if (roomFriend == null) {
             return null;
         }

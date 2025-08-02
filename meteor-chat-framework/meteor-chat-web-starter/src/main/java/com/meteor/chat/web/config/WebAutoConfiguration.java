@@ -3,10 +3,7 @@ package com.meteor.chat.web.config;
 import com.meteor.chat.api.UserInfoApi;
 import com.meteor.chat.api.UserLoginApi;
 import com.meteor.chat.web.core.exception.GlobalExceptionHandler;
-import com.meteor.chat.web.core.filters.BlackFilter;
-import com.meteor.chat.web.core.filters.CorsFilter;
-import com.meteor.chat.web.core.filters.TraceIdFilter;
-import com.meteor.chat.web.core.filters.UserTokenFilter;
+import com.meteor.chat.web.core.filters.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
@@ -62,5 +59,14 @@ public class WebAutoConfiguration {
     @Bean
     public GlobalExceptionHandler globalExceptionHandler() {
         return new GlobalExceptionHandler();
+    }
+
+    @Bean
+    public FilterRegistrationBean<ExceptionFilter> exceptionFilter(GlobalExceptionHandler globalExceptionHandler) {
+        FilterRegistrationBean<ExceptionFilter> registrationBean = new FilterRegistrationBean<>();
+        registrationBean.setFilter(new ExceptionFilter(globalExceptionHandler));
+        registrationBean.addUrlPatterns("/*");
+        registrationBean.setOrder(Integer.MIN_VALUE);
+        return registrationBean;
     }
 }

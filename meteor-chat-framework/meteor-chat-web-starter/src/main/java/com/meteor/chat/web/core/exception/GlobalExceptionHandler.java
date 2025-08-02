@@ -17,6 +17,20 @@ public class GlobalExceptionHandler {
 
     private static final Logger log = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
+    public ApiResult<Void> globalExceptionHandler(Throwable e) {
+        if (e instanceof BusinessException) {
+            return businessExceptionHandler((BusinessException) e);
+        } else if (e instanceof AssertionError) {
+            return assertErrorHandler((AssertionError) e);
+        } else if (e instanceof FrequencyException) {
+            return frequencyExceptionHandler((FrequencyException) e);
+        } else if (e instanceof BindException) {
+            return argsNotValidExceptionHandler((BindException) e);
+        } else {
+            return exceptionHandler(e);
+        }
+    }
+
     @ExceptionHandler(value = BindException.class)
     @ResponseStatus(code = HttpStatus.BAD_REQUEST)
     public ApiResult<Void> argsNotValidExceptionHandler(BindException e){

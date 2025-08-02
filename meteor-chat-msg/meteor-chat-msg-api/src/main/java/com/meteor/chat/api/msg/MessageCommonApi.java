@@ -45,12 +45,12 @@ public interface MessageCommonApi {
      * 删除群聊信息
      */
     @DeleteMapping(ApiConstants.MSG_PREFIX)
-    void removeRoomMsg(Long roomId);
+    void removeRoomMsg(@RequestParam("roomId") Long roomId);
 
     /**
      * 获取消息的详情，用于推送给用户
      * @param msgId 消息id
      */
     @GetMapping(ApiConstants.MSG_PREFIX + "/detail")
-    ChatMessageResp getMessageResp(Long msgId);
+    ChatMessageResp getMessageResp(@RequestParam("msgId") Long msgId);
 }

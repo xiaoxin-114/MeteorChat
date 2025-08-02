@@ -34,7 +34,7 @@ public interface RoomCommonApi {
      * @param roomId 房间id
      */
     @GetMapping(ApiConstants.ROOM_PREFIX)
-    RoomInfoDTO getRoomInfo(Long roomId);
+    RoomInfoDTO getRoomInfo(@RequestParam("roomId") Long roomId);
 
     /**
      * 判断用户是否有为聊天群管理员
@@ -50,5 +50,5 @@ public interface RoomCommonApi {
      * @param roomId 房间id
      */
     @GetMapping(ApiConstants.ROOM_PREFIX + "/friend")
-    RoomFriendDTO getRoomFriend(Long roomId);
+    RoomFriendDTO getRoomFriend(@RequestParam("roomId") Long roomId);
 }

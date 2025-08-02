@@ -17,6 +17,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -36,8 +37,9 @@ public class UserTokenFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String token = getToken(request);
+        Long uid = null;
         if (StrUtil.isNotBlank(token)) {
-            Long uid = userLoginApi.validToken(token);
+            uid = userLoginApi.validToken(token);
             //如果token没过期，用户已经登入，把uid存入request中
             if (uid != null) {
                 request.setAttribute(ATTRIBUTE_UID, uid);
@@ -50,7 +52,7 @@ public class UserTokenFilter extends OncePerRequestFilter {
             }
         }
         //如果没有登入，且访问的地址非公共域，那么直接返回401，并拦截该请求
-        if (!isPublic(request)){
+        if (Objects.isNull(uid) && !isPublic(request)){
             HttpErrorEnum.ACCESS_DENIED.sendErrorResponse(response);
             return;
         }

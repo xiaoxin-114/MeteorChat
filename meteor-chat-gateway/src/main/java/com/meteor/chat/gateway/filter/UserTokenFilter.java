@@ -7,11 +7,13 @@ import com.meteor.chat.common.result.ApiResult;
 import com.meteor.chat.gateway.util.WebFrameworkUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.MDC;
+import org.springframework.cloud.client.loadbalancer.reactive.ReactorLoadBalancerExchangeFilterFunction;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.core.Ordered;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.stereotype.Component;
+import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
@@ -27,34 +29,62 @@ public class UserTokenFilter implements GlobalFilter, Ordered {
     // 看清楚，空格必须加上，否则token解析错误
     public static final String AUTHORIZATION_SCHEMA = "Bearer ";
 
-    // 注意：UserLoginApi是一个RPC接口，在网关服务中需要通过RPC调用用户服务的实现
-    @Resource
-    private UserLoginApi userLoginApi;
+    private final WebClient webClient;
+
+    public UserTokenFilter(ReactorLoadBalancerExchangeFilterFunction lbFunction) {
+        // Q：为什么不使用 OAuth2TokenApi 进行调用？
+        // A1：Spring Cloud OpenFeign 官方未内置 Reactive 的支持 https://docs.spring.io/spring-cloud-openfeign/docs/current/reference/html/#reactive-support
+        // A2：校验 Token 的 API 需要使用到 header[tenant-id] 传递租户编号，暂时不想编写 RequestInterceptor 实现
+        // 因此，这里采用 WebClient，通过 lbFunction 实现负载均衡
+        this.webClient = WebClient.builder().filter(lbFunction).build();
+    }
     
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
         ServerHttpRequest request = exchange.getRequest();
         String token = getToken(request);
         if (token != null) {
-            Long uid = userLoginApi.validToken(token);
-            if (uid != null) {
-                try {
-                    MDC.put(MDCKey.UID, String.valueOf(uid));
-                    return chain.filter(exchange);
-                } finally {
-                    MDC.remove(MDCKey.UID);
-                }
-            }
+            return checkToken(token)
+                    .flatMap(uid -> {
+                        if (uid != null) {
+                            try {
+                                MDC.put(MDCKey.UID, String.valueOf(uid));
+                                return chain.filter(exchange);
+                            } finally {
+                                MDC.remove(MDCKey.UID);
+                            }
+                        } else {
+                            return handleUnauthorized(exchange, request, chain);
+                        }
+                    }).onErrorResume(throwable -> {
+                        log.error("Token validation error", throwable);
+                        return handleUnauthorized(exchange, request, chain);
+                    });
+
         }
-        
+        return handleUnauthorized(exchange, request, chain);
+    }
+
+    private Mono<Void> handleUnauthorized(ServerWebExchange exchange, ServerHttpRequest request, GatewayFilterChain chain) {
         // token校验失败且不是公开接口，返回401错误
         if (!isPublic(request)) {
             ApiResult<?> result = ApiResult.fail(CommonErrorEnum.SYSTEM_ERROR.getErrCode(), "未授权访问");
             return WebFrameworkUtils.writeJSON(exchange, result);
         }
-        
+
         // 公开接口直接放行
         return chain.filter(exchange);
+    }
+
+    /**
+     * 使用webclient发送请求校验Token
+     */
+    private Mono<Long> checkToken(String token) {
+        return webClient.get()
+                .uri(UserLoginApi.VALID_TOKEN_URI, uriBuilder -> uriBuilder.queryParam("token", token).build())
+                .header(AUTHORIZATION_HEADER, AUTHORIZATION_SCHEMA + token)
+                .retrieve()
+                .bodyToMono(Long.class);
     }
 
     /**

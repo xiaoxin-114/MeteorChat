@@ -26,7 +26,7 @@ public class BlackFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        Map<Integer, Set<String>> blackMap = userInfoApi.getBlackMap();
+        Map<Integer, Set<String>> blackMap = userInfoApi.getBlackMap().getCheckData();
         RequestInfo user = UserContext.get();
         if (Objects.nonNull(user) && (inBlackList(user.getUid(), blackMap.get(BlackTypeEnum.UID.getId()))
                 || inBlackList(user.getIp(), blackMap.get(BlackTypeEnum.IP.getId())))) {

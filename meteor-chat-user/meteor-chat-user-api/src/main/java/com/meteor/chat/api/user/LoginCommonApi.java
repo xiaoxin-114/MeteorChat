@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @FeignClient(name = RpcConstants.USER_SERVER_NAME)
 public interface LoginCommonApi {
@@ -20,7 +21,7 @@ public interface LoginCommonApi {
      * @return
      */
     @GetMapping(ApiConstants.LOGIN_PREFIX + "/token")
-    String login(Long uid);
+    String login(@RequestParam("uid") Long uid);
 
     /**
      * 用户登陆成功后，根据用户id和ip信息来更新用户状态、在线人数和用户信息
