@@ -57,7 +57,7 @@ public class UserTokenFilter extends OncePerRequestFilter {
         try {
             filterChain.doFilter(request, response);
         } finally {
-            MDC.remove(ATTRIBUTE_UID);
+            MDC.remove(MDCKey.UID);
             UserContext.remove();
         }
     }

@@ -1,10 +1,12 @@
 package com.meteor.chat.gateway.filter;
 
+import com.meteor.chat.common.constants.MDCKey;
 import com.meteor.chat.common.exception.CommonErrorEnum;
 import com.meteor.chat.api.UserLoginApi;
 import com.meteor.chat.common.result.ApiResult;
 import com.meteor.chat.gateway.util.WebFrameworkUtils;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.MDC;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.core.Ordered;
@@ -36,7 +38,12 @@ public class UserTokenFilter implements GlobalFilter, Ordered {
         if (token != null) {
             Long uid = userLoginApi.validToken(token);
             if (uid != null) {
-                return chain.filter(exchange);
+                try {
+                    MDC.put(MDCKey.UID, String.valueOf(uid));
+                    return chain.filter(exchange);
+                } finally {
+                    MDC.remove(MDCKey.UID);
+                }
             }
         }
         
@@ -76,6 +83,6 @@ public class UserTokenFilter implements GlobalFilter, Ordered {
     
     @Override
     public int getOrder() {
-        return Ordered.HIGHEST_PRECEDENCE + 1;
+        return Ordered.HIGHEST_PRECEDENCE + 2;
     }
 }
