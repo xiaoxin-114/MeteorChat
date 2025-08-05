@@ -4,9 +4,9 @@ logging:
     com.github.binarywang.demo.wx.mp: DEBUG
     me.chanjar.weixin: DEBUG
     com.meteor.chat.common.mapper: WARN
-    org.springframework.cloud.gateway: DEBUG
-    org.springframework.web.reactive: DEBUG
-    feign: DEBUG
+#    org.springframework.cloud.gateway: DEBUG
+#    org.springframework.web.reactive: DEBUG
+#    feign: DEBUG
 mybatis-plus:
   mapper-locations: classpath:com.meteor.chat.room.mapper/**/*.xml
   configuration:
@@ -16,8 +16,6 @@ mybatis-plus:
 mock:
   enable: true
   prefix: test
-push:
-  instanceId: 01
 spring:
   profiles:
     #运行的环境

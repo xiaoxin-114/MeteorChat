@@ -1,6 +1,5 @@
 package com.meteor.chat.rabbitmq.core.producer;
 
-import cn.hutool.core.util.StrUtil;
 import com.meteor.chat.rabbitmq.core.constants.MQConstant;
 import com.meteor.chat.transaction.core.annotation.SecureInvoke;
 import lombok.RequiredArgsConstructor;
@@ -16,20 +15,18 @@ public class MQProducer {
     @Value("${push.instanceId:01}")
     private String instanceId;
 
-    public String singleQueueName;
-
-    public String roomQueueName;
+    private String msgPushQueueName;
+    private String loginQueueName;
+    private String scanQueueName;
 
     @PostConstruct
     public void init() {
-        singleQueueName = MQConstant.SINGLE_PUSH_QUEUE.replace("${instanceId}", instanceId);
-        roomQueueName = MQConstant.ROOM_PUSH_QUEUE.replace("${instanceId}", instanceId);
+        msgPushQueueName = MQConstant.MSG_PUSH_QUEUE.replace(MQConstant.INSTANCE_ID_PLACE, instanceId);
+        loginQueueName = MQConstant.LOGIN_QUEUE.replace(MQConstant.INSTANCE_ID_PLACE, instanceId);
+        scanQueueName = MQConstant.SCAN_QUEUE.replace(MQConstant.INSTANCE_ID_PLACE, instanceId);
     }
 
     public void sendMsg(String exchange, String routingKey, Object body) {
-        if (StrUtil.isNotBlank(routingKey)) {
-            routingKey = routingKey.contains("${instanceId") ? routingKey.replace("${instanceId}", instanceId) : routingKey;
-        }
         mqTemplate.convertAndSend(exchange, routingKey,  body);
     }
 
@@ -40,18 +37,23 @@ public class MQProducer {
      */
     @SecureInvoke
     public void sendSecureMsg(String exchange, String routingKey, Object body) {
-        if (StrUtil.isNotBlank(routingKey)) {
-            routingKey = routingKey.contains("${instanceId") ? routingKey.replace("${instanceId}", instanceId) : routingKey;
-        }
         mqTemplate.convertAndSend(exchange, routingKey, body);
     }
 
-    public String getSingleQueueName() {
-        return singleQueueName;
+    public String getMsgPushQueueName() {
+        return msgPushQueueName;
     }
 
-    public String getRoomQueueName() {
-        return roomQueueName;
+    public String getLoginQueueName() {
+        return loginQueueName;
+    }
+
+    public String getScanQueueName() {
+        return scanQueueName;
+    }
+
+    public String getInstanceId() {
+        return instanceId;
     }
 }
 

@@ -2,7 +2,6 @@ package com.meteor.chat.push.core.consumer;
 
 import com.meteor.chat.push.common.domain.dto.ScanSuccessMessageDTO;
 import com.meteor.chat.push.core.service.WebSocketService;
-import com.meteor.chat.rabbitmq.core.constants.MQConstant;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Component;
 
@@ -16,7 +15,7 @@ public class SacnSuccessMsgConsumer {
     @Resource
     private WebSocketService webSocketService;
 
-    @RabbitListener(queues = MQConstant.SCAN_QUEUE)
+    @RabbitListener(queues = {"#{@mqProducer.getScanQueueName()}"})
     public void consume(ScanSuccessMessageDTO scanSuccessMessageDTO) {
         webSocketService.scanSuccess(scanSuccessMessageDTO.getCode());
     }

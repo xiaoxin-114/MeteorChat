@@ -1,8 +1,8 @@
 logging:
   level:
-    com.alibaba.cloud.nacos: DEBUG
-    com.alibaba.nacos.client: DEBUG
-    com.alibaba.nacos.common.remote: DEBUG
+#    com.alibaba.cloud.nacos: DEBUG
+#    com.alibaba.nacos.client: DEBUG
+#    com.alibaba.nacos.common.remote: DEBUG
     org.springframework.web: INFO
     com.github.binarywang.demo.wx.mp: DEBUG
     me.chanjar.weixin: DEBUG

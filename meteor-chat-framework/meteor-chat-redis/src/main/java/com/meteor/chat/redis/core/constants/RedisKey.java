@@ -55,6 +55,10 @@ public class RedisKey {
      * 用户的信息汇总
      */
     public static final String USER_SUMMARY_STRING = "userSummary:uid_%d";
+    /**
+     * 用户登陆后，所建立的连接对应的推送服务监听的消息队列routingKey
+     */
+    public static final String USER_CONNECT_QUEUE = "userConnect:uid_%d";
 
     /**
      * 用户GPT聊天次数

@@ -28,10 +28,17 @@ spring:
           uri: lb://meteor-chat-room-server
           predicates:
             - Path=/capi/room/**,/capi/chat/public/contact/**
+        - id: meteor-chat-push-server
+          uri: lb://meteor-chat-push-server
+          predicates:
+              - Path=/capi/websocket/**
+    loadbalancer:
+      ribbon:
+        enable: false
 server:
   port: 8000
-logging:
-  level:
-    org.springframework.cloud.gateway: DEBUG
-    org.springframework.web.reactive: DEBUG
-    feign: DEBUG
+#logging:
+#  level:
+#    org.springframework.cloud.gateway: DEBUG
+#    org.springframework.web.reactive: DEBUG
+#    feign: DEBUG

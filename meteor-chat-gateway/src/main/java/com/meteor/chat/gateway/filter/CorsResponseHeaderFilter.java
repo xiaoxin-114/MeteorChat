@@ -1,5 +1,6 @@
 package com.meteor.chat.gateway.filter;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.cloud.gateway.filter.NettyWriteResponseFilter;
@@ -22,6 +23,7 @@ import java.util.stream.Collectors;
  * @author 芋道源码
  */
 @Component
+@Slf4j
 public class CorsResponseHeaderFilter implements GlobalFilter, Ordered {
 
     @Override
@@ -33,7 +35,7 @@ public class CorsResponseHeaderFilter implements GlobalFilter, Ordered {
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
-        return chain.filter(exchange).then(Mono.defer(() -> {
+        return chain.filter(exchange).then(Mono.fromRunnable(() -> {
             // https://gitee.com/zhijiantianya/yudao-cloud/pulls/177/
             List<String> keysToModify = exchange.getResponse().getHeaders().entrySet().stream()
                     .filter(kv -> (kv.getValue() != null && kv.getValue().size() > 1))
@@ -47,8 +49,8 @@ public class CorsResponseHeaderFilter implements GlobalFilter, Ordered {
                     exchange.getResponse().getHeaders().put(key, Collections.singletonList(values.get(0)));
                 }
             });
-            return chain.filter(exchange);
         }));
     }
+
 
 }

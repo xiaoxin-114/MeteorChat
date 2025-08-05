@@ -39,7 +39,7 @@ public class UserTokenFilter implements GlobalFilter, Ordered {
         // 因此，这里采用 WebClient，通过 lbFunction 实现负载均衡
         this.webClient = WebClient.builder().filter(lbFunction).build();
     }
-    
+
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
         ServerHttpRequest request = exchange.getRequest();
@@ -113,7 +113,7 @@ public class UserTokenFilter implements GlobalFilter, Ordered {
         String[] strings = uri.split("/");
         return strings.length > 2 && "public".equals(strings[3]);
     }
-    
+
     @Override
     public int getOrder() {
         return Ordered.HIGHEST_PRECEDENCE + 2;

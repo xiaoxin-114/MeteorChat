@@ -7,7 +7,7 @@ logging:
     me.chanjar.weixin: DEBUG
     com.meteor.chat.common.mapper: WARN
 push:
-  instanceId: 01
+  instanceId: "01"
 spring:
   profiles:
     #运行的环境

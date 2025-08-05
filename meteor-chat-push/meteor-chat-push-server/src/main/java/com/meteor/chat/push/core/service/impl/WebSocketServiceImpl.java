@@ -15,6 +15,7 @@ import com.meteor.chat.push.config.ThreadConfig;
 import com.meteor.chat.push.core.adapter.WSAdapter;
 import com.meteor.chat.push.core.service.WebSocketService;
 import com.meteor.chat.push.core.util.NettyUtils;
+import com.meteor.chat.rabbitmq.core.producer.MQProducer;
 import com.meteor.chat.redis.core.constants.RedisKey;
 import com.meteor.chat.redis.core.util.RedisUtils;
 import com.meteor.chat.api.UserLoginApi;
@@ -50,6 +51,9 @@ public class WebSocketServiceImpl  implements WebSocketService {
 
     @Resource(name = ThreadConfig.WB_EXECUTOR)
     private ThreadPoolTaskExecutor webSocketExecutor;
+
+    @Resource
+    private MQProducer mqProducer;
     /**
      * 所有请求登录的code与channel关系，存储还未登入的code和channel映射关系，登录成功后删除映射
      */
@@ -236,6 +240,7 @@ public class WebSocketServiceImpl  implements WebSocketService {
         ONLINE_UID_MAP.putIfAbsent(uid, new CopyOnWriteArrayList<>());
         ONLINE_UID_MAP.get(uid).add(channel);
         NettyUtils.setAttr(channel, NettyUtils.UID_KEY, uid);
+        RedisUtils.lSet(RedisKey.getKey(RedisKey.USER_CONNECT_QUEUE, uid), mqProducer.getInstanceId());
     }
 
     /**
@@ -247,6 +252,8 @@ public class WebSocketServiceImpl  implements WebSocketService {
     private boolean offline(Channel channel, Optional<Long> uid) {
         ONLINE_WS_MAP.remove(channel);
         if (uid.isPresent()) {
+            // 移除用户所在pushServer的实例id
+            RedisUtils.lRemove(RedisKey.getKey(RedisKey.USER_CONNECT_QUEUE, uid.get()), 1, mqProducer.getInstanceId());
             CopyOnWriteArrayList<Channel> channels = ONLINE_UID_MAP.get(uid.get());
             channels.forEach(uChannel -> {
                 if (uChannel == channel) {

@@ -1,5 +1,6 @@
 package com.meteor.chat.push.config;
 
+import com.meteor.chat.push.core.controller.PortSearchController;
 import com.meteor.chat.push.core.handler.HttpHeadersHandler;
 import com.meteor.chat.push.core.handler.WebsocketHandler;
 import io.netty.bootstrap.ServerBootstrap;
@@ -24,6 +25,7 @@ import org.springframework.context.annotation.Configuration;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
+import javax.annotation.Resource;
 
 /**
  * netty 框架实现websocket的服务启动器
@@ -37,11 +39,15 @@ public class NettyWebsocketServer {
     private final EventLoopGroup bossGroup = new NioEventLoopGroup(1);
     private final EventLoopGroup workerGroup = new NioEventLoopGroup(NettyRuntime.availableProcessors());
 
+    @Resource
+    private PortSearchController portSearchController;
+
     @PostConstruct
     public void start(){
         try {
             // 默认websocket监听的端口为服务端口+1000
             serverPort = serverPort + 1000;
+            portSearchController.setWebsocketPort(serverPort);
             run();
         } catch (InterruptedException e) {
             log.error("websocket server start filed", e);

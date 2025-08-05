@@ -63,12 +63,12 @@ public class RabbitMqAutoConfiguration {
 
     @Bean
     public Exchange scanExchange() {
-        return ExchangeBuilder.topicExchange(MQConstant.SCAN_EXCHANGE).build();
+        return ExchangeBuilder.fanoutExchange(MQConstant.SCAN_EXCHANGE).build();
     }
 
     @Bean
     public Exchange loginExchange() {
-        return ExchangeBuilder.topicExchange(MQConstant.LOGIN_EXCHANGE).build();
+        return ExchangeBuilder.fanoutExchange(MQConstant.LOGIN_EXCHANGE).build();
     }
 
     @Bean
@@ -77,23 +77,18 @@ public class RabbitMqAutoConfiguration {
     }
 
     @Bean
-    public Queue singlePushQueue() {
-        return new Queue(mqProducer.getSingleQueueName());
-    }
-
-    @Bean
-    public Queue roomPushQueue() {
-        return new Queue(mqProducer.getRoomQueueName());
+    public Queue msgPushQueue() {
+        return new Queue(mqProducer.getMsgPushQueueName());
     }
 
     @Bean
     public Queue loginQueue() {
-        return new Queue(MQConstant.LOGIN_QUEUE);
+        return new Queue(mqProducer.getLoginQueueName());
     }
 
     @Bean
     public Queue scanQueue() {
-        return new Queue(MQConstant.SCAN_QUEUE);
+        return new Queue(mqProducer.getScanQueueName());
     }
 
 
@@ -111,8 +106,8 @@ public class RabbitMqAutoConfiguration {
      * 支持模糊匹配 routing key
      */
     @Bean
-    public Binding bindingSinglePushMsg(Exchange singlePushExchange, Queue singlePushQueue) {
-        return BindingBuilder.bind(singlePushQueue).to(singlePushExchange).with(MQConstant.SINGLE_PUSH_ROUTING_KEY.replace("${instanceId}", instanceId)).noargs();
+    public Binding bindingSinglePushMsg(Exchange singlePushExchange, Queue msgPushQueue) {
+        return BindingBuilder.bind(msgPushQueue).to(singlePushExchange).with(MQConstant.SINGLE_PUSH_ROUTING_KEY.replace(MQConstant.INSTANCE_ID_PLACE, instanceId)).noargs();
     }
 
     /**
@@ -120,17 +115,19 @@ public class RabbitMqAutoConfiguration {
      * 支持模糊匹配 routing key
      */
     @Bean
-    public Binding bindingRoomPushMsg(FanoutExchange roomPushExchange, Queue roomPushQueue) {
-        return BindingBuilder.bind(roomPushQueue).to(roomPushExchange);
+    public Binding bindingRoomPushMsg(FanoutExchange roomPushExchange, Queue msgPushQueue) {
+        return BindingBuilder.bind(msgPushQueue).to(roomPushExchange);
     }
 
     /**
      * scanExchange -> scanQueue (TopicExchange)
      * 用于扫码相关事件
+     * todo 扫码和用户登陆的消息是用户未登录时发送的，无法根据用户id 进行匹配，暂时采用广播模式，后续考虑优化
+     * 使用分布式唯一id来匹配实例id
      */
     @Bean
-    public Binding bindingScanEvent(Exchange scanExchange, Queue scanQueue) {
-        return BindingBuilder.bind(scanQueue).to(scanExchange).with(MQConstant.SCAN_ROUTING_KEY).noargs();
+    public Binding bindingScanEvent(FanoutExchange scanExchange, Queue scanQueue) {
+        return BindingBuilder.bind(scanQueue).to(scanExchange);
     }
 
     /**
@@ -138,8 +135,8 @@ public class RabbitMqAutoConfiguration {
      * 用户登录事件
      */
     @Bean
-    public Binding bindingLoginEvent(Exchange loginExchange, Queue loginQueue) {
-        return BindingBuilder.bind(loginQueue).to(loginExchange).with(MQConstant.LOGIN_ROUTING_KEY).noargs();
+    public Binding bindingLoginEvent(FanoutExchange loginExchange, Queue loginQueue) {
+        return BindingBuilder.bind(loginQueue).to(loginExchange);
     }
 
 

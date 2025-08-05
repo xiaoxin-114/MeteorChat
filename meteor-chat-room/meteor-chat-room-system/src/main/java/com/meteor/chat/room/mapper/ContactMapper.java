@@ -2,6 +2,7 @@ package com.meteor.chat.room.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.meteor.chat.room.domain.entity.Contact;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.Date;
 import java.util.List;
@@ -13,7 +14,10 @@ import java.util.List;
 * @Entity generator.domain.Contact
 */
 public interface ContactMapper extends BaseMapper<Contact> {
-    void refreshActiveTime(Long roomId, List<Long> uidList, Date sendTime, Long msgId);
+    void refreshActiveTime(@Param("roomId") Long roomId,
+                           @Param("uidList") List<Long> uidList,
+                           @Param("sendTime") Date sendTime,
+                           @Param("msgId") Long msgId);
 }
 
 

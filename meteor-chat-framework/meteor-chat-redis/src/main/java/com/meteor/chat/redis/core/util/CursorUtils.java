@@ -64,7 +64,7 @@ public class CursorUtils {
         }
         // 一些独特的条件逻辑，比如查询某人的会话列表，需要用户id条件
         consumer.accept(queryWrapper);
-        queryWrapper.orderByAsc(cursorCollum);
+        queryWrapper.orderByDesc(cursorCollum);
         // 根据游标翻页，构建普通翻页的page对象
         Page page = request.plusPage();
         // 不查询总数，节约性能

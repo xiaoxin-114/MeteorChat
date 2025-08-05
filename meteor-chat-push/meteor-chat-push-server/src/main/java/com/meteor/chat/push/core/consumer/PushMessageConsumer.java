@@ -18,7 +18,7 @@ public class PushMessageConsumer {
     @Resource
     private WebSocketService webSocketService;
 
-    @RabbitListener(queues = {"#{@mqProducer.getSingleQueueName()}", "#{@mqProducer.getRoomQueueName()}"})
+    @RabbitListener(queues = {"#{@mqProducer.getMsgPushQueueName()}"})
     public void consume(PushMessageDTO pushMessageDTO) {
         if (PushMessageDTO.ALL.equals(pushMessageDTO.getType())) {
             webSocketService.sendToAllOnline(pushMessageDTO.getWsBaseResp());
