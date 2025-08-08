@@ -5,13 +5,15 @@ import com.meteor.chat.common.result.ApiResult;
 import com.meteor.chat.room.domain.entity.RoomGroup;
 import com.meteor.chat.room.service.cache.GroupMemberCache;
 import com.meteor.chat.room.service.cache.RoomGroupCache;
+import org.apache.dubbo.config.annotation.DubboService;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
-@RestController
+
+@DubboService
 public class RoomMemberCommonApiImpl implements RoomMemberCommonApi {
     @Resource
     private RoomGroupCache roomGroupCache;

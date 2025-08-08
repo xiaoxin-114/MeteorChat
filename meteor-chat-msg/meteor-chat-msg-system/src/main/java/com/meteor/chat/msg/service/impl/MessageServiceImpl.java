@@ -39,6 +39,7 @@ import com.meteor.chat.msg.service.handler.msg.MsgHandlerFactory;
 import com.meteor.chat.msg.service.handler.msgmark.AbstractMsgMarkHandler;
 import com.meteor.chat.msg.service.handler.msgmark.MsgMarkHandlerFacroty;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.dubbo.config.annotation.DubboReference;
 import org.junit.Assert;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
@@ -56,22 +57,22 @@ public class MessageServiceImpl implements MessageService {
     @Resource
     private MessageDao messageDao;
 
-    @Resource
+    @DubboReference
     private ContactCommonApi contactCommonApi;
 
     @Resource
     private ApplicationEventPublisher applicationEventPublisher;
 
-    @Resource
+    @DubboReference
     private RoomCommonApi roomCommonApi;
 
-    @Resource
+    @DubboReference
     private RoomMemberCommonApi roomMemberCommonApi;
 
     @Resource
     private MessageMarkDao messageMarkDao;
 
-    @Resource
+    @DubboReference
     private UserInfoCommonApi userInfoCommonApi;
 
     @Resource

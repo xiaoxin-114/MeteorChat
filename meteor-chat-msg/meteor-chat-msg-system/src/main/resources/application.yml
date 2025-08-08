@@ -157,6 +157,23 @@ meteor:
   chat:
     transaction:
       enable: true
+dubbo:
+  application:
+    name: ${spring.application.name}
+  registry:
+    address: nacos://${spring.cloud.nacos.server-addr}
+    register-mode: instance
+    parameters:
+      username: ${spring.cloud.nacos.username}
+      password: ${spring.cloud.nacos.password}
+      group: DEFAULT_GROUP
+      namespace: dubbo
+  consumer:
+    check: false
+  protocol:
+    port: 28001
+    name: dubbo
+    serialization: hessian2
 management:
   server:
     port: 18001

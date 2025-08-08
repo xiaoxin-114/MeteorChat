@@ -6,19 +6,16 @@ import com.meteor.chat.api.user.dto.UserInfoDTO;
 import com.meteor.chat.common.result.ApiResult;
 import com.meteor.chat.user.service.LoginService;
 import com.meteor.chat.api.UserLoginApi;
+import org.apache.dubbo.config.annotation.DubboService;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
-@RestController
-public class LoginCommonApiImpl implements LoginCommonApi, UserLoginApi {
+
+@DubboService
+public class LoginCommonApiImpl implements LoginCommonApi {
 
     @Resource
     private LoginService loginService;
-
-    @Override
-    public ApiResult<Long> validToken(String token) {
-        return ApiResult.success(loginService.getValidUid(token));
-    }
 
     @Override
     public ApiResult<String> login(Long uid) {

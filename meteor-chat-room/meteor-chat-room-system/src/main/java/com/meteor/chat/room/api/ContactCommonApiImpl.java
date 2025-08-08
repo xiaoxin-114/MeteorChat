@@ -7,11 +7,12 @@ import com.meteor.chat.api.room.dto.ReadMessageDTO;
 import com.meteor.chat.common.result.ApiResult;
 import com.meteor.chat.mybatis.domain.CursorPageBaseResp;
 import com.meteor.chat.room.service.ContactService;
-import org.springframework.web.bind.annotation.RestController;
+import org.apache.dubbo.config.annotation.DubboService;
 
 import javax.annotation.Resource;
 import java.util.List;
-@RestController
+
+@DubboService
 public class ContactCommonApiImpl implements ContactCommonApi {
 
     @Resource

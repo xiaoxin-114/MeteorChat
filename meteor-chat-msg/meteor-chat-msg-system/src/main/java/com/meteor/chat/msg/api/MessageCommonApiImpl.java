@@ -6,12 +6,14 @@ import com.meteor.chat.common.constants.CommonConstants;
 import com.meteor.chat.common.result.ApiResult;
 import com.meteor.chat.msg.adapter.MsgAdapter;
 import com.meteor.chat.msg.service.MessageService;
+import org.apache.dubbo.config.annotation.DubboService;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
 import java.util.List;
-@RestController
+
+@DubboService
 public class MessageCommonApiImpl implements MessageCommonApi {
 
     @Resource

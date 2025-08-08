@@ -6,6 +6,7 @@ import com.meteor.chat.msg.domain.entity.Message;
 import com.meteor.chat.msg.domain.entity.MsgRecall;
 import com.meteor.chat.msg.enums.MessageTypeEnum;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.dubbo.config.annotation.DubboReference;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
@@ -14,7 +15,7 @@ import java.util.Objects;
 @Component
 @Slf4j
 public class RecallMsgHandler extends AbstractMsgHandler<String>{
-    @Resource
+    @DubboReference
     private UserInfoCommonApi userInfoCommonApi;
 
     @Override

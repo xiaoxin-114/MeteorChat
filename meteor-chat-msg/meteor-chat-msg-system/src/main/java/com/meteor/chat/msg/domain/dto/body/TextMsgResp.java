@@ -7,10 +7,11 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 @Data
-public class TextMsgResp {
+public class TextMsgResp implements Serializable {
     @ApiModelProperty("消息内容")
     private String content;
     @ApiModelProperty("消息链接映射")
@@ -24,7 +25,7 @@ public class TextMsgResp {
     @Builder
     @AllArgsConstructor
     @NoArgsConstructor
-    public static class ReplyMsg {
+    public static class ReplyMsg implements Serializable {
         @ApiModelProperty("消息id")
         private Long id;
         @ApiModelProperty("用户uid")

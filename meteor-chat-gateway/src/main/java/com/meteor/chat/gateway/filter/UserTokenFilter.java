@@ -6,6 +6,7 @@ import com.meteor.chat.api.UserLoginApi;
 import com.meteor.chat.common.result.ApiResult;
 import com.meteor.chat.gateway.util.WebFrameworkUtils;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.dubbo.config.annotation.DubboReference;
 import org.slf4j.MDC;
 import org.springframework.cloud.client.loadbalancer.reactive.ReactorLoadBalancerExchangeFilterFunction;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
@@ -17,8 +18,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
+import reactor.core.scheduler.Schedulers;
 
-import javax.annotation.Resource;
 import java.util.Optional;
 
 @Slf4j
@@ -29,6 +30,9 @@ public class UserTokenFilter implements GlobalFilter, Ordered {
     public static final String AUTHORIZATION_HEADER = "Authorization";
     // 看清楚，空格必须加上，否则token解析错误
     public static final String AUTHORIZATION_SCHEMA = "Bearer ";
+
+    @DubboReference
+    private UserLoginApi userLoginApi;
 
     private final WebClient webClient;
 
@@ -81,13 +85,14 @@ public class UserTokenFilter implements GlobalFilter, Ordered {
      * 使用webclient发送请求校验Token
      */
     private Mono<Long> checkToken(String token) {
-        return webClient.get()
-                .uri(UserLoginApi.VALID_TOKEN_URI, uriBuilder -> uriBuilder.queryParam("token", token).build())
-                .header(AUTHORIZATION_HEADER, AUTHORIZATION_SCHEMA + token)
-                .retrieve()
-                .bodyToMono(new ParameterizedTypeReference<ApiResult<Long>>() {})
-                .map(ApiResult::getCheckData)
-                .onErrorReturn(null);
+        return Mono.fromCallable(() -> {
+            try {
+                return userLoginApi.validToken(token).getCheckData();
+            } catch (Exception e) {
+                log.error("Token validation failed", e);
+                return null;
+            }
+        }).subscribeOn(Schedulers.boundedElastic());
     }
 
     /**

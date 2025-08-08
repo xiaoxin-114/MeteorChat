@@ -5,6 +5,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.io.Serializable;
+
 /**
  * 基础的群成员变动消息DTO
  */
@@ -12,7 +14,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class BaseMemberChangDTO {
+public class BaseMemberChangDTO implements Serializable {
     private Long roomId;
     private Long uid;
 }

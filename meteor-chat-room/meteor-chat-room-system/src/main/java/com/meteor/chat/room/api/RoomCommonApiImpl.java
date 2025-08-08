@@ -8,11 +8,12 @@ import com.meteor.chat.common.result.ApiResult;
 import com.meteor.chat.room.domain.entity.Room;
 import com.meteor.chat.room.service.RoomService;
 import com.meteor.chat.room.service.cache.RoomCache;
-import org.springframework.web.bind.annotation.RestController;
+import org.apache.dubbo.config.annotation.DubboService;
 
 import javax.annotation.Resource;
 import java.util.Objects;
-@RestController
+
+@DubboService
 public class RoomCommonApiImpl implements RoomCommonApi {
 
     @Resource

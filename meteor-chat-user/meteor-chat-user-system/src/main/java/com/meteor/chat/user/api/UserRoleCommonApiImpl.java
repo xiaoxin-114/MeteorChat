@@ -5,11 +5,12 @@ import com.meteor.chat.common.result.ApiResult;
 import com.meteor.chat.user.dao.UserRoleDao;
 import com.meteor.chat.user.domain.entity.UserRole;
 import com.meteor.chat.user.enums.RoleEnum;
+import org.apache.dubbo.config.annotation.DubboService;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
 import java.util.Objects;
-@RestController
+@DubboService
 public class UserRoleCommonApiImpl implements UserRoleCommonApi {
 
     @Resource

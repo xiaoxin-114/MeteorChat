@@ -24,6 +24,7 @@ import com.meteor.chat.user.service.UserFriendService;
 import com.meteor.chat.user.adapter.FriendAdapter;
 import com.meteor.chat.user.service.cache.UserCache;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.dubbo.config.annotation.DubboReference;
 import org.junit.Assert;
 import org.springframework.aop.framework.AopContext;
 import org.springframework.context.ApplicationEventPublisher;
@@ -51,10 +52,10 @@ public class UserFriendServiceImpl implements UserFriendService {
     @Resource
     private ApplicationEventPublisher applicationEventPublisher;
 
-    @Resource
+    @DubboReference
     private RoomCommonApi roomCommonApi;
 
-    @Resource
+    @DubboReference
     private MessageCommonApi messageCommonApi;
 
     @Override

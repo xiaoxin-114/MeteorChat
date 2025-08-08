@@ -27,7 +27,7 @@ public class ChatMessageResp implements Serializable {
     }
 
     @Data
-    public static class Message {
+    public static class Message implements Serializable{
         @ApiModelProperty("消息id")
         private Long id;
         @ApiModelProperty("房间id")
@@ -43,7 +43,7 @@ public class ChatMessageResp implements Serializable {
     }
 
     @Data
-    public static class MessageMark {
+    public static class MessageMark implements Serializable{
         @ApiModelProperty("点赞数")
         private Integer likeCount;
         @ApiModelProperty("该用户是否已经点赞 0否 1是")

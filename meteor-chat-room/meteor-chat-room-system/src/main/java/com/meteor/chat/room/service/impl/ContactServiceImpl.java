@@ -29,6 +29,7 @@ import com.meteor.chat.room.service.cache.HotRoomCache;
 import com.meteor.chat.room.service.cache.RoomCache;
 import com.meteor.chat.room.service.cache.RoomFriendCache;
 import com.meteor.chat.room.service.cache.RoomGroupCache;
+import org.apache.dubbo.config.annotation.DubboReference;
 import org.junit.Assert;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -56,13 +57,13 @@ public class ContactServiceImpl implements ContactService {
     @Resource
     private RoomGroupCache roomGroupCache;
 
-    @Resource
+    @DubboReference
     private MessageCommonApi messageCommonApi;
 
     @Resource
     private RoomFriendDao roomFriendDao;
 
-    @Resource
+    @DubboReference
     private UserInfoCommonApi userInfoCommonApi;
 
     @Override

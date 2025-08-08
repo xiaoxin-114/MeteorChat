@@ -22,6 +22,7 @@ import com.meteor.chat.api.UserLoginApi;
 import io.netty.channel.Channel;
 import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.dubbo.config.annotation.DubboReference;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -42,11 +43,11 @@ public class WebSocketServiceImpl  implements WebSocketService {
 
     private static final Duration EXPIRE_TIME = Duration.ofHours(1);
     private static final Long MAX_MUM_SIZE = 10000L;
-    @Resource
+    @DubboReference
     private WxMsgCommonApi wxMsgCommonApi;
-    @Resource
+    @DubboReference
     private LoginCommonApi loginCommonApi;
-    @Resource
+    @DubboReference
     private UserLoginApi userLoginApi;
 
     @Resource(name = ThreadConfig.WB_EXECUTOR)

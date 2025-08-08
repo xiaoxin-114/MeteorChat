@@ -12,6 +12,7 @@ import com.meteor.chat.room.dao.RoomDao;
 import com.meteor.chat.room.domain.entity.Room;
 import com.meteor.chat.room.domain.entity.RoomFriend;
 import com.meteor.chat.room.service.cache.*;
+import org.apache.dubbo.config.annotation.DubboReference;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,7 +23,7 @@ import java.util.List;
 @Component
 public class MsgSendConsumer {
 
-    @Resource
+    @DubboReference
     private MessageCommonApi messageCommonApi;
 
     @Resource

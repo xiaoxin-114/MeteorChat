@@ -1,11 +1,12 @@
 logging:
   level:
-    org:
-      springframework:
-        web: INFO
+    org.springframework.web: INFO
     com.github.binarywang.demo.wx.mp: DEBUG
     me.chanjar.weixin: DEBUG
     com.meteor.chat.common.mapper: WARN
+    org.apache.dubbo.rpc.protocol.tri: DEBUG
+    org.apache.dubbo.remoting: DEBUG
+    org.apache.dubbo.rpc.protocol.dubbo: DEBUG
 push:
   instanceId: "01"
 spring:
@@ -58,6 +59,22 @@ spring:
     username: ${rabbitmq.username}
     password: ${rabbitmq.password}
     virtual-host: /
+dubbo:
+  application:
+    name: ${spring.application.name}
+  registry:
+    address: nacos://${spring.cloud.nacos.server-addr}
+    register-mode: instance
+    parameters:
+      username: ${spring.cloud.nacos.username}
+      password: ${spring.cloud.nacos.password}
+      group: DEFAULT_GROUP
+      namespace: dubbo
+  consumer:
+    check: false
+  protocol:
+    name: dubbo
+    serialization: hessian2
 #    listener: # 消息消费者配置
 #      simple:
 #        acknowledge-mode: manual # 手动确认模式（默认 auto）

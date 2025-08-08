@@ -7,6 +7,7 @@ import com.meteor.chat.msg.adapter.WSAdapter;
 import com.meteor.chat.msg.domain.dto.MessageRecallDTO;
 import com.meteor.chat.msg.event.MessageRecallEvent;
 import com.meteor.chat.push.common.core.push.PushService;
+import org.apache.dubbo.config.annotation.DubboReference;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
@@ -19,10 +20,10 @@ public class MessageRecallEventListener{
     @Resource
     private PushService pushService;
 
-    @Resource
+    @DubboReference
     private RoomCommonApi roomCommonApi;
 
-    @Resource
+    @DubboReference
     private RoomMemberCommonApi roomMemberCommonApi;
     // 推送撤回消息给群聊的所有成员
     @EventListener(value = MessageRecallEvent.class)

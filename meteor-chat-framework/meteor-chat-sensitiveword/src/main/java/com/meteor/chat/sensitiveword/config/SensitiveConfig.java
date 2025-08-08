@@ -5,6 +5,7 @@ import com.meteor.chat.sensitiveword.core.MyWordFactory;
 import com.meteor.chat.sensitiveword.core.SensitiveWords;
 import com.meteor.chat.sensitiveword.core.algorithm.AC.ACTrieFilter;
 import com.meteor.chat.sensitiveword.core.api.SensitiveWordApi;
+import org.apache.dubbo.config.annotation.DubboReference;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -12,8 +13,11 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class SensitiveConfig {
 
+    @DubboReference
+    private SensitiveWordApi sensitiveWordApi;
+
     @Bean
-    public IWordFactory myWordFactory(SensitiveWordApi sensitiveWordApi) {
+    public IWordFactory myWordFactory() {
         return new MyWordFactory(sensitiveWordApi);
     }
 

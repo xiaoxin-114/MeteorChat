@@ -12,3 +12,20 @@ spring:
       config: # 【注册中心】配置项
         namespace: dev # 命名空间。这里使用 dev 开发环境
         group: DEFAULT_GROUP # 使用的 Nacos 配置分组，默认为 DEFAULT_GROUP
+
+dubbo:
+  application:
+    name: ${spring.application.name}
+  registry:
+    address: nacos://${spring.cloud.nacos.server-addr}
+    register-mode: instance
+    parameters:
+      username: ${spring.cloud.nacos.username}
+      password: ${spring.cloud.nacos.password}
+      group: DEFAULT_GROUP
+      namespace: dubbo
+  consumer:
+    check: false
+  protocol:
+    name: dubbo
+    serialization: hessian2

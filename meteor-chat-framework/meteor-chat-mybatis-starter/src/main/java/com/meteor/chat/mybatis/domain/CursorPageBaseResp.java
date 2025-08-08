@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.util.CollectionUtils;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,7 +15,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @ApiModel("游标分页响应")
-public class CursorPageBaseResp <T> {
+public class CursorPageBaseResp <T> implements Serializable {
     @ApiModelProperty("最后一条数据的游标")
     private String cursor;
     @ApiModelProperty("是否是最后一页")

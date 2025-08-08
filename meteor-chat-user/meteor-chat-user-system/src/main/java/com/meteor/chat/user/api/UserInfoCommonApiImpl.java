@@ -10,16 +10,16 @@ import com.meteor.chat.user.domain.entity.User;
 import com.meteor.chat.user.domain.vo.req.MemberCursorReq;
 import com.meteor.chat.user.service.UserService;
 import com.meteor.chat.user.service.cache.UserCache;
-import com.meteor.chat.user.service.cache.UserInfoCache;
-import com.meteor.chat.api.UserInfoApi;
-import org.springframework.web.bind.annotation.RestController;
+import com.meteor.chat.user.service.cache.UserInfoCache;;
+import org.apache.dubbo.config.annotation.DubboService;
 
 import javax.annotation.Resource;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-@RestController
-public class UserInfoCommonApiImpl implements UserInfoCommonApi, UserInfoApi {
+
+@DubboService
+public class UserInfoCommonApiImpl implements UserInfoCommonApi {
 
     @Resource
     private UserCache userCache;
@@ -29,11 +29,6 @@ public class UserInfoCommonApiImpl implements UserInfoCommonApi, UserInfoApi {
     private UserService userService;
     @Resource
     private UserDao userDao;
-
-    @Override
-    public ApiResult<Map<Integer, Set<String>>> getBlackMap() {
-        return ApiResult.success(userCache.getBlackMap());
-    }
 
     @Override
     public ApiResult<Set<String>> getBlackList() {

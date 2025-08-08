@@ -14,6 +14,7 @@ import com.meteor.chat.msg.event.MsgMarkEvent;
 import com.meteor.chat.push.common.core.push.PushService;
 import com.meteor.chat.push.common.domain.vo.WSBaseResp;
 import com.meteor.chat.msg.domain.vo.WSMsgMark;
+import org.apache.dubbo.config.annotation.DubboReference;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.event.TransactionalEventListener;
@@ -32,10 +33,10 @@ public class MsgMarkEventListener {
     @Resource
     private MessageDao messageDao;
 
-    @Resource
+    @DubboReference
     private RoomCommonApi roomCommonApi;
 
-    @Resource
+    @DubboReference
     private RoomMemberCommonApi roomMemberCommonApi;
 
     @Resource

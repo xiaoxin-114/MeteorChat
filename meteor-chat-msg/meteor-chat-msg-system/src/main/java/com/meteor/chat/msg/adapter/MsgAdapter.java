@@ -17,6 +17,7 @@ import com.meteor.chat.msg.service.handler.msg.MsgHandlerFactory;
 import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -122,7 +123,10 @@ public class MsgAdapter {
             List<MessageMark> messageMark = markMap.getOrDefault(message.getId(), new ArrayList<>());
             chatMessageResp.setMessage(buildChatMessage(message, messageMark, receiveUid));
             return chatMessageResp;
-        }).collect(Collectors.toList());
+        })
+                // 帮前端排序
+                .sorted(Comparator.comparing(msg -> msg.getMessage().getSendTime()))
+                .collect(Collectors.toList());
     }
 
     private static ChatMessageResp.Message buildChatMessage(Message message, List<MessageMark> messageMark, Long receiveUid) {

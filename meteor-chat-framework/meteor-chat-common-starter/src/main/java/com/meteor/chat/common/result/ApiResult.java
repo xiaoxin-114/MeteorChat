@@ -7,9 +7,11 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import java.io.Serializable;
+
 @Data
 @ApiModel("基础api响应体")
-public class ApiResult<T>{
+public class ApiResult<T> implements Serializable {
     @ApiModelProperty("成功标识true or false")
     private Boolean success;
     @ApiModelProperty("错误码")

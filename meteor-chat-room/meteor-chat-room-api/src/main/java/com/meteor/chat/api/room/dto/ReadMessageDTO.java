@@ -5,11 +5,13 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.io.Serializable;
+
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ReadMessageDTO {
+public class ReadMessageDTO implements Serializable {
     private Long roomId;
     private Long uid;
 }

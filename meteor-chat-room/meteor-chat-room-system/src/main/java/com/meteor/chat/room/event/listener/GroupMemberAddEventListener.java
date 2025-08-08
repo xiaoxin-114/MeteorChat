@@ -12,6 +12,7 @@ import com.meteor.chat.room.domain.entity.RoomGroup;
 import com.meteor.chat.room.domain.vo.WSMemberChange;
 import com.meteor.chat.room.event.GroupMemberAddEvent;
 import com.meteor.chat.room.service.cache.GroupMemberCache;
+import org.apache.dubbo.config.annotation.DubboReference;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
@@ -25,7 +26,7 @@ import java.util.stream.Collectors;
 @Component
 public class GroupMemberAddEventListener {
 
-    @Resource
+    @DubboReference
     private MessageCommonApi messageCommonApi;
 
     @Resource
@@ -34,7 +35,7 @@ public class GroupMemberAddEventListener {
     @Resource
     private GroupMemberCache groupMemberCache;
 
-    @Resource
+    @DubboReference
     private UserInfoCommonApi userInfoCommonApi;
 
     @EventListener(value = GroupMemberAddEvent.class)

@@ -7,6 +7,9 @@ logging:
     com.github.binarywang.demo.wx.mp: DEBUG
     me.chanjar.weixin: DEBUG
     com.meteor.chat.common.mapper: WARN
+    org.apache.dubbo.rpc.protocol.tri: DEBUG
+    org.apache.dubbo.remoting: DEBUG
+    org.apache.dubbo.rpc.protocol.dubbo: DEBUG
 mybatis-plus:
   mapper-locations: classpath:com.meteor.chat.user.mapper/**/*.xml
   configuration:
@@ -31,17 +34,17 @@ spring:
   cloud:
     nacos:
       server-addr: 192.168.191.131:8848 # Nacos 服务器地址
-      heart-beat-interval: 5000     # 心跳间隔，单位毫秒（默认5秒）
-      heart-beat-timeout: 15000     # 心跳超时时间，单位毫秒（默认15秒）
-      ip-delete-timeout: 30000
       username: nacos # Nacos 账号
       password: nacos # Nacos 密码
-      discovery: # 【配置中心】配置项
+      discovery: # 【注册中心】配置项
         namespace: dev # 命名空间。这里使用 dev 开发环境
         group: DEFAULT_GROUP # 使用的 Nacos 配置分组，默认为 DEFAULT_GROUP
+        heart-beat-interval: 5000     # 心跳间隔，单位毫秒（默认5秒）
+        heart-beat-timeout: 15000     # 心跳超时时间，单位毫秒（默认15秒）
+        ip-delete-timeout: 30000
         metadata:
           version: 1.0.0 # 服务实例的版本号，可用于灰度发布
-      config: # 【注册中心】配置项
+      config: # 【配置中心】配置项
         namespace: dev # 命名空间。这里使用 dev 开发环境
         group: DEFAULT_GROUP # 使用的 Nacos 配置分组，默认为 DEFAULT_GROUP
   datasource:
@@ -97,6 +100,24 @@ spring:
 #          initial-interval: 2000
 #      publisher-confirm-type: correlated  # 开启发布确认（Confirm）
 #      publisher-return: true       # 开启消息返回机制（Return Listener）
+
+dubbo:
+  application:
+    name: ${spring.application.name}
+  registry:
+    address: nacos://${spring.cloud.nacos.server-addr}
+    register-mode: instance
+    parameters:
+      username: ${spring.cloud.nacos.username}
+      password: ${spring.cloud.nacos.password}
+      group: DEFAULT_GROUP
+      namespace: dubbo
+  consumer:
+    check: false
+  protocol:
+    port: 28003
+    name: dubbo
+    serialization: hessian2
 jwt:
   secret: ${mallchat.jwt.secret}
 wx:

@@ -30,6 +30,7 @@ import com.meteor.chat.room.service.cache.GroupMemberCache;
 import com.meteor.chat.room.service.cache.RoomCache;
 import com.meteor.chat.room.service.cache.RoomGroupCache;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.dubbo.config.annotation.DubboReference;
 import org.junit.Assert;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
@@ -65,13 +66,13 @@ public class RoomServiceImpl implements RoomService {
     @Resource
     private GroupMemberCache groupMemberCache;
 
-    @Resource
+    @DubboReference
     private UserInfoCommonApi userInfoCommonApi;
 
     @Resource
     private ContactDao contactDao;
 
-    @Resource
+    @DubboReference
     private UserRoleCommonApi userRoleCommonApi;
 
     @Resource
@@ -80,7 +81,7 @@ public class RoomServiceImpl implements RoomService {
     @Resource
     private PushService pushService;
 
-    @Resource
+    @DubboReference
     private MessageCommonApi messageCommonApi;
 
     @Override

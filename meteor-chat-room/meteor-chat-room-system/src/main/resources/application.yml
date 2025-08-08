@@ -55,15 +55,15 @@ spring:
     pathmatch:
       matching-strategy: ANT_PATH_MATCHER
   redis:
-    # Redis服务器地址
+#     Redis服务器地址
     host: ${mallchat.redis.host}
-    # Redis服务器端口号
+# Redis服务器端口号
     port: ${mallchat.redis.port}
-    # 使用的数据库索引，默认是0
+# 使用的数据库索引，默认是0
     database: 0
-    # 连接超时时间
+# 连接超时时间
     timeout: 1800000
-    # 设置密码
+# 设置密码
     password: ${mallchat.redis.password}
   cache:
     type: redis
@@ -94,6 +94,23 @@ spring:
 #          initial-interval: 2000
 #      publisher-confirm-type: correlated  # 开启发布确认（Confirm）
 #      publisher-return: true       # 开启消息返回机制（Return Listener）
+dubbo:
+  application:
+    name: ${spring.application.name}
+  registry:
+    address: nacos://${spring.cloud.nacos.server-addr}
+    register-mode: instance
+    parameters:
+      username: ${spring.cloud.nacos.username}
+      password: ${spring.cloud.nacos.password}
+      group: DEFAULT_GROUP
+      namespace: dubbo
+  consumer:
+    check: false
+  protocol:
+    port: 28002
+    name: dubbo
+    serialization: hessian2
 jwt:
   secret: ${mallchat.jwt.secret}
 wx:
@@ -143,7 +160,7 @@ knife4j:
   openapi:
     title: meteorChat官方文档
     description: "`我是测试`,**你知道吗**
-    # aaa"
+# aaa"
     email: xiaoymin@foxmail.com
     concat: 八一菜刀
     url: https://docs.xiaominfo.com

@@ -10,9 +10,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 /**
  * 用户权限接口
  */
-@FeignClient(name = RpcConstants.USER_SERVER_NAME)
 public interface UserRoleCommonApi {
 
-    @GetMapping(ApiConstants.ROLE_PREFIX + "/super")
-    ApiResult<Boolean> isSuperAdmin(@RequestParam("uid") Long uid);
+
+    ApiResult<Boolean> isSuperAdmin(Long uid);
 }

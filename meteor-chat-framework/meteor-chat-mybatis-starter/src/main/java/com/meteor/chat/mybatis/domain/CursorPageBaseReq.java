@@ -8,12 +8,14 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+import java.io.Serializable;
+
 @NoArgsConstructor
 @AllArgsConstructor
 @Slf4j
 @Data
 @ApiModel("游标翻页请求")
-public class CursorPageBaseReq {
+public class CursorPageBaseReq  implements Serializable {
 
     @ApiModelProperty("页面大小")
     private int pageSize;

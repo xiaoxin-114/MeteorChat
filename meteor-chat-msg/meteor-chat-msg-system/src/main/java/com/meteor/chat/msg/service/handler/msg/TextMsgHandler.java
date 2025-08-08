@@ -15,6 +15,7 @@ import com.meteor.chat.msg.domain.entity.UrlInfo;
 import com.meteor.chat.msg.enums.MessageTypeEnum;
 import com.meteor.chat.msg.urldiscover.PrioritizedUrlDiscover;
 import com.meteor.chat.sensitiveword.core.SensitiveWords;
+import org.apache.dubbo.config.annotation.DubboReference;
 import org.junit.Assert;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
@@ -33,13 +34,13 @@ public class TextMsgHandler extends AbstractMsgHandler<TextMsgReq> {
 
     private final MessageTypeEnum MESSAGE_TYPE = MessageTypeEnum.TEXT;
 
-    @Resource
+    @DubboReference
     private UserInfoCommonApi userInfoCommonApi;
 
-    @Resource
+    @DubboReference
     private RoomMemberCommonApi roomMemberCommonApi;
 
-    @Resource
+    @DubboReference
     private RoomCommonApi roomcommonApi;
 
     @Resource
