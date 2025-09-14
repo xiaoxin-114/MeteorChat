@@ -1,13 +1,13 @@
 package com.meteor.chat.msg.domain.dto.body;
 
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Size;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.List;
 @Data
@@ -19,13 +19,13 @@ public class TextMsgReq implements Serializable {
 
     @NotBlank(message = "内容不能为空")
     @Size(max = 1024, message = "消息内容过长，服务器扛不住啊，兄dei")
-    @ApiModelProperty("消息内容")
+    @Schema(description = "消息内容")
     private String content;
 
-    @ApiModelProperty("回复的消息id,如果没有别传就好")
+    @Schema(description = "回复的消息id,如果没有别传就好")
     private Long replyMsgId;
 
-    @ApiModelProperty("艾特的uid")
+    @Schema(description = "艾特的uid")
     @Size(max = 10, message = "一次别艾特这么多人")
     private List<Long> atUidList;
 }

@@ -51,7 +51,7 @@ public class MsgMarkEventListener {
         MsgMarkDTO msgMarkDTO = event.getMsgMarkDTO();
         Message message = messageDao.getById(msgMarkDTO.getMsgId());
         RoomInfoDTO room = roomCommonApi.getRoomInfo(message.getRoomId()).getCheckData();
-        Integer markCount = messageMarkDao.countMsgType(msgMarkDTO.getMsgId(), msgMarkDTO.getMarkType());
+        long markCount = messageMarkDao.countMsgType(msgMarkDTO.getMsgId(), msgMarkDTO.getMarkType());
         WSBaseResp<WSMsgMark> wsBaseResp = WSAdapter.buildMsgMarkResp(msgMarkDTO, markCount);
         if (room.isHotRoom()) {
             pushService.pushRoomMsg(wsBaseResp);

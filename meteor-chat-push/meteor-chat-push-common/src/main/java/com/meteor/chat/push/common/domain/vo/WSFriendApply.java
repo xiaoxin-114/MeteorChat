@@ -15,6 +15,6 @@ public class WSFriendApply implements Serializable {
 
     private Long uid;
 
-    private Integer unreadCount;
+    private Long unreadCount;
 
 }

@@ -217,7 +217,7 @@ public class RoomServiceImpl implements RoomService {
         if (Objects.isNull(uid)) {
             throw new BusinessException("用户未登陆，创建群聊失败");
         }
-        int count = groupMemberDao.countLeader(uid);
+        long count = groupMemberDao.countLeader(uid);
         Assert.assertTrue("该用户已经创建过群聊", count < 1);
         RoomGroup roomGroup = buildGroupRoom(uid);
         // 用户的群主角色

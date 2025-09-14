@@ -1,6 +1,6 @@
 package com.meteor.chat.room.domain.vo;
 
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class IdRespVO {
-    @ApiModelProperty("id")
+    @Schema(description ="id")
     private long id;
 
     public static IdRespVO id(Long id) {

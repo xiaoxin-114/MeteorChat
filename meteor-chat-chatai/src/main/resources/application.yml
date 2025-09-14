@@ -1,0 +1,8 @@
+spring:
+  application:
+    name: ai-service
+  ai:
+    dashscope:
+      api-key: sk-fe98e26b984245978912f9feacc3f243
+    model:
+      chat: qwen-flash

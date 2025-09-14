@@ -1,5 +1,5 @@
 package com.meteor.chat.oss.core.domain;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -17,9 +17,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class OssResp {
 
-    @ApiModelProperty(value = "上传的临时url")
+    @Schema(description = "上传的临时url")
     private String uploadUrl;
 
-    @ApiModelProperty(value = "成功后能够下载的url")
+    @Schema(description = "成功后能够下载的url")
     private String downloadUrl;
 }

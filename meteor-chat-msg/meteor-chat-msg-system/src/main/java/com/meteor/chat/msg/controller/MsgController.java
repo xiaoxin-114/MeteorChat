@@ -7,17 +7,17 @@ import com.meteor.chat.msg.domain.vo.*;
 import com.meteor.chat.msg.service.MessageService;
 import com.meteor.chat.mybatis.domain.CursorPageBaseResp;
 import com.meteor.chat.web.core.context.UserContext;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.web.bind.annotation.*;
 import com.meteor.chat.common.result.ApiResult;
 import javax.annotation.Resource;
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 import java.util.List;
 
 import static com.meteor.chat.common.result.ApiResult.success;
 
-@ApiModel("消息模块")
+@Tag(name = "消息模块")
 @RequestMapping("/capi/chat")
 @RestController
 public class MsgController {
@@ -26,14 +26,14 @@ public class MsgController {
     private MessageService messageService;
 
     @GetMapping("/msg/read/page")
-    @ApiOperation("消息的已读未读列表")
+    @Operation(summary = "消息的已读未读列表")
     public ApiResult<CursorPageBaseResp<ChatMessageReadResp>> cursorPageMsgReader(@Valid MessageReadCursorPageReq req) {
         CursorPageBaseResp<ChatMessageReadResp> result = messageService.cursorPageMsgReader(req);
         return success(result);
     }
 
     @GetMapping("/msg/read")
-    @ApiOperation("获取消息的已读未读总数")
+    @Operation(summary = "获取消息的已读未读总数")
     public ApiResult<List<MsgReadInfoDTO>> countReadAndUnRead(@Valid MessageReadInfoReq req) {
         Long uid = UserContext.getUid();
         List<MsgReadInfoDTO> result = messageService.countReadAndUnRead(req, uid);
@@ -41,7 +41,7 @@ public class MsgController {
     }
 
     @PostMapping("/msg")
-    @ApiOperation("发送消息")
+    @Operation(summary = "发送消息")
     @FrequencyControl(time = 5, count = 10, type = FrequencyControl.FrequencyTypeEnum.UID)
     @FrequencyControl(time = 10, count = 15, type = FrequencyControl.FrequencyTypeEnum.UID)
     public ApiResult<ChatMessageResp> sendMsg(@Valid @RequestBody ChatMessageReq request) {
@@ -53,7 +53,7 @@ public class MsgController {
     }
 
     @GetMapping("/public/msg/page")
-    @ApiOperation("消息列表")
+    @Operation(summary = "消息列表")
     public ApiResult<CursorPageBaseResp<ChatMessageResp>> getMsgPage(@Valid MessageCursorReq req) {
         Long uid = UserContext.getUid();
         CursorPageBaseResp<ChatMessageResp> chatMessageRespCursorPage = messageService.cursorChatMessageResp(req, uid);
@@ -61,21 +61,21 @@ public class MsgController {
     }
 
     @PutMapping("/msg/recall")
-    @ApiOperation("撤回消息")
+    @Operation(summary = "撤回消息")
     public ApiResult<Void> recallMsg(@Valid @RequestBody MsgRecallReq req) {
         messageService.recall(req, UserContext.getUid());
         return success();
     }
 
     @PutMapping("/msg/read")
-    @ApiOperation("消息阅读上报")
+    @Operation(summary = "消息阅读上报")
     public ApiResult<Void> readMsg(@Valid @RequestBody ChatMsgReadReq req) {
         messageService.readMsg(req, UserContext.getUid());
         return success();
     }
 
     @PutMapping("/msg/mark")
-    @ApiOperation("消息标记")
+    @Operation(summary = "消息标记")
     @FrequencyControl(type = FrequencyControl.FrequencyTypeEnum.UID, time = 5, count = 10)
     public ApiResult<Void> markMsg(@Valid @RequestBody MsgMarkReq req) {
         messageService.markMsg(req, UserContext.getUid());

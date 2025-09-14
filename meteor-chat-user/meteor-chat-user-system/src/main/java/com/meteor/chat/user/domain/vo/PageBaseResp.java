@@ -1,8 +1,7 @@
 package com.meteor.chat.user.domain.vo;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -17,22 +16,22 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@ApiModel("基础翻页返回")
+@Schema(description ="基础翻页返回")
 public class PageBaseResp<T> {
 
-    @ApiModelProperty("当前页数")
+    @Schema(description ="当前页数")
     private Integer pageNo;
 
-    @ApiModelProperty("每页查询数量")
+    @Schema(description ="每页查询数量")
     private Integer pageSize;
 
-    @ApiModelProperty("总记录数")
+    @Schema(description ="总记录数")
     private Long totalRecords;
 
-    @ApiModelProperty("是否最后一页")
+    @Schema(description ="是否最后一页")
     private Boolean isLast = Boolean.FALSE;
 
-    @ApiModelProperty("数据列表")
+    @Schema(description ="数据列表")
     private List<T> list;
 
 

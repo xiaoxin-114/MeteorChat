@@ -1,6 +1,6 @@
 package com.meteor.chat.user.domain.vo.req;
 
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -14,15 +14,15 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ItemInfoReq {
-    @ApiModelProperty(value = "徽章信息入参")
+    @Schema(description ="徽章信息入参")
     @Size(max = 50)
     private List<infoReq> reqList;
 
     @Data
     public static class infoReq {
-        @ApiModelProperty(value = "徽章id")
+        @Schema(description ="徽章id")
         private Long itemId;
-        @ApiModelProperty(value = "最近一次更新徽章信息时间")
+        @Schema(description ="最近一次更新徽章信息时间")
         private Long lastModifyTime;
     }
 }

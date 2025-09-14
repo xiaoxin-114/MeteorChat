@@ -1,20 +1,20 @@
 package com.meteor.chat.room.domain.vo;
 
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import java.util.List;
 
 @Data
 public class AdminChangeReq {
     @NotNull
-    @ApiModelProperty("房间号")
+    @Schema(description ="房间号")
     private Long roomId;
 
     @NotNull
     @Size(min = 1, max = 3)
-    @ApiModelProperty("需要添加管理的列表")
+    @Schema(description ="需要添加管理的列表")
     private List<Long> uidList;
 }

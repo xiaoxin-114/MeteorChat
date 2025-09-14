@@ -1,6 +1,6 @@
 package com.meteor.chat.room.domain.dto;
 
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -13,18 +13,18 @@ import java.util.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ChatRoomDTO {
-    @ApiModelProperty("房间id")
+    @Schema(description ="房间id")
     private Long roomId;
-    @ApiModelProperty("房间类型 1群聊 2单聊")
+    @Schema(description ="房间类型 1群聊 2单聊")
     private Integer type;
-    @ApiModelProperty("是否全员展示的会话 0否 1是")
+    @Schema(description ="是否全员展示的会话 0否 1是")
     private Integer hot_Flag;
-    @ApiModelProperty("最新消息id")
+    @Schema(description ="最新消息id")
     private Long lastMsgId;
-    @ApiModelProperty("会话名称")
+    @Schema(description ="会话名称")
     private String name;
-    @ApiModelProperty("会话头像")
+    @Schema(description ="会话头像")
     private String avatar;
-    @ApiModelProperty("房间最后活跃时间(用来排序)")
+    @Schema(description ="房间最后活跃时间(用来排序)")
     private Date activeTime;
 }

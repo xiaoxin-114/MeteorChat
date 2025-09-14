@@ -19,7 +19,7 @@ public class WSAdapter {
         return new WSBaseResp<>(WSRespTypeEnum.RECALL.getType(), wsMsgRecall);
     }
 
-    public static WSBaseResp<WSMsgMark> buildMsgMarkResp(MsgMarkDTO msgMarkDTO, Integer markCount) {
+    public static WSBaseResp<WSMsgMark> buildMsgMarkResp(MsgMarkDTO msgMarkDTO, long markCount) {
         WSMsgMark wsMsgMark = new WSMsgMark();
         WSMsgMark.WSMsgMarkItem wsMsgMarkItem = new WSMsgMark.WSMsgMarkItem();
         wsMsgMarkItem.setUid(msgMarkDTO.getUid());

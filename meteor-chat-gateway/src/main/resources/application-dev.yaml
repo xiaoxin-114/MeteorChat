@@ -16,6 +16,8 @@ spring:
 dubbo:
   application:
     name: ${spring.application.name}
+    serialize-check-status: DISABLE
+    qos-enable: false
   registry:
     address: nacos://${spring.cloud.nacos.server-addr}
     register-mode: instance
@@ -28,4 +30,4 @@ dubbo:
     check: false
   protocol:
     name: dubbo
-    serialization: hessian2
+    serialization: fastjson2

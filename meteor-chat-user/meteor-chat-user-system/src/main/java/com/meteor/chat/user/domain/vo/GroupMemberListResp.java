@@ -1,6 +1,6 @@
 package com.meteor.chat.user.domain.vo;
 
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -11,10 +11,10 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class GroupMemberListResp {
-    @ApiModelProperty("uid")
+    @Schema(description ="uid")
     private Long uid;
-    @ApiModelProperty("用户名称")
+    @Schema(description ="用户名称")
     private String name;
-    @ApiModelProperty("头像")
+    @Schema(description ="头像")
     private String avatar;
 }

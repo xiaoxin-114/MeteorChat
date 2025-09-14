@@ -26,7 +26,7 @@ public class WSMsgMark implements Serializable {
          */
         private Integer markType;
 
-        private Integer markCount;
+        private Long markCount;
 
         private Integer actType;
     }

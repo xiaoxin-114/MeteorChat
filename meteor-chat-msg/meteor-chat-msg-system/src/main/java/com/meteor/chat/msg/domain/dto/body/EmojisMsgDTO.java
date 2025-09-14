@@ -1,12 +1,10 @@
 package com.meteor.chat.msg.domain.dto.body;
 
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
 
 @Data
@@ -16,7 +14,6 @@ import java.io.Serializable;
 public class EmojisMsgDTO implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    @ApiModelProperty("下载地址")
-    @NotBlank
+    @Schema(description = "下载地址")
     private String url;
 }

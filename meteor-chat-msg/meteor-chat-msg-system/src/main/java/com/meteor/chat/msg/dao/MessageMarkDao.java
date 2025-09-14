@@ -12,15 +12,15 @@ import java.util.List;
 @Repository
 public class MessageMarkDao extends ServiceImpl<MessageMarkMapper, MessageMark> {
 
-    public Integer countMsgLike(Long msgId) {
+    public long countMsgLike(Long msgId) {
         return countMsgType(msgId, MessageMarkTypeEnum.LIKE.getCode());
     }
 
-    public Integer countMsgUnLike(Long msgId) {
+    public long countMsgUnLike(Long msgId) {
         return countMsgType(msgId, MessageMarkTypeEnum.UNLIKE.getCode());
     }
 
-    public Integer countMsgType(Long msgId, Integer type) {
+    public long countMsgType(Long msgId, Integer type) {
         return lambdaQuery().eq(MessageMark::getMsgId, msgId)
                 .eq(MessageMark::getType, type)
                 .eq(MessageMark::getStatus, YesOrNoEnum.YES.getCode())

@@ -5,6 +5,7 @@ import cn.hutool.core.map.WeakConcurrentMap;
 import cn.hutool.core.util.ReflectUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.toolkit.support.ColumnCache;
+import com.baomidou.mybatisplus.core.toolkit.support.LambdaMeta;
 import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
 import lombok.SneakyThrows;
 import org.apache.ibatis.reflection.property.PropertyNamer;
@@ -60,8 +61,8 @@ public class LambdaUtils {
 
     @SneakyThrows
     public static <T> Class<?> getReturnType(SFunction<T, ?> func) {
-        com.baomidou.mybatisplus.core.toolkit.support.SerializedLambda lambda = com.baomidou.mybatisplus.core.toolkit.LambdaUtils.resolve(func);
-        Class<?> aClass = lambda.getInstantiatedType();
+        LambdaMeta lambda = com.baomidou.mybatisplus.core.toolkit.LambdaUtils.extract(func);
+        Class<?> aClass = lambda.getInstantiatedClass();
         String fieldName = PropertyNamer.methodToProperty(lambda.getImplMethodName());
         Field field = aClass.getDeclaredField(fieldName);
         field.setAccessible(true);

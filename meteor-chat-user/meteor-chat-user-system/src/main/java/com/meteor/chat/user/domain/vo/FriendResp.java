@@ -1,7 +1,6 @@
 package com.meteor.chat.user.domain.vo;
 
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -11,15 +10,15 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@ApiModel("好友列表游标分页响应")
+@Schema(description ="好友列表游标分页响应")
 public class FriendResp {
 
-    @ApiModelProperty("好友uid")
+    @Schema(description ="好友uid")
     private Long uid;
 
     /**
      * @see com.meteor.chat.common.domain.enums.ChatActiveStatusEnum
      */
-    @ApiModelProperty("在线状态 1在线 2离线")
+    @Schema(description ="在线状态 1在线 2离线")
     private Integer activeStatus;
 }

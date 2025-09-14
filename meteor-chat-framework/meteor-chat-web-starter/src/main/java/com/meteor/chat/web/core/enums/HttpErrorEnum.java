@@ -5,7 +5,7 @@ import com.meteor.chat.common.exception.ErrorEnum;
 import com.meteor.chat.common.result.ApiResult;
 import com.meteor.chat.web.core.utils.WebFrameworkUtils;
 
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 

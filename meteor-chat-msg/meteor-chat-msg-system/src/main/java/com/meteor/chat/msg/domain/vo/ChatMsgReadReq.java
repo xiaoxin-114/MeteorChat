@@ -1,10 +1,13 @@
 package com.meteor.chat.msg.domain.vo;
 
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
+
+import jakarta.validation.constraints.NotNull;
 
 @Data
 public class ChatMsgReadReq {
-    @ApiModelProperty("用户读取的房间号id")
+    @NotNull
+    @Schema(description = "用户读取的房间号id")
     private Long roomId;
 }

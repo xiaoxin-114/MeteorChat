@@ -1,13 +1,13 @@
 package com.meteor.chat.room.domain.vo;
 
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import java.util.List;
 
 @Data
@@ -17,6 +17,6 @@ import java.util.List;
 public class GroupAddReq {
     @NotNull
     @Size(min = 1, max = 50)
-    @ApiModelProperty("邀请的uid")
+    @Schema(description ="邀请的uid")
     private List<Long> uidList;
 }

@@ -49,7 +49,7 @@ public class UserBackpackServiceImpl implements UserBackpackService {
         ItemConfig item = itemCache.getById(itemId);
         // 如果是徽章，用户背包已经存在的话就不发了
         if (ItemConfigTypeEnum.BADGE.getType().equals(item.getType())) {
-            int count = userBackpackDao.getCountByUidAndItemId(uid, itemId);
+            long count = userBackpackDao.getCountByUidAndItemId(uid, itemId);
             if (count > 0) {
                 return;
             }
@@ -71,7 +71,7 @@ public class UserBackpackServiceImpl implements UserBackpackService {
     }
 
     @Override
-    public int countRenameTimes(Long uid) {
+    public Long countRenameTimes(Long uid) {
         List<ItemConfig> modifyCard = itemCache.getByType(ItemConfigTypeEnum.MODIFY_NAME_CARD.getType().toString());
         if (modifyCard == null || modifyCard.size() != 1 || modifyCard.get(0) == null) {
             throw new BusinessException("改名卡数据异常");

@@ -30,5 +30,5 @@ public class RoomMsgDTO implements Serializable {
     /**
      * 未读消息数量
      */
-    private Integer unreadCount;
+    private Long unreadCount;
 }

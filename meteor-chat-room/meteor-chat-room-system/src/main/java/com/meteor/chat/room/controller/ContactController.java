@@ -9,19 +9,20 @@ import com.meteor.chat.room.service.ContactService;
 import com.meteor.chat.room.service.RoomService;
 import com.meteor.chat.web.core.context.UserContext;
 import com.meteor.chat.common.result.ApiResult;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 
 @RestController
 @Slf4j
 @RequestMapping("/capi/chat/public/contact")
-@ApiOperation("会话请求")
+@Tag(name = "会话请求")
 public class ContactController {
 
     @Resource
@@ -38,7 +39,7 @@ public class ContactController {
     }
 
     @GetMapping("/detail")
-    @ApiOperation("会话详情")
+    @Operation(summary = "获取会话详情")
     public ApiResult<ChatRoomResp> detail(@Valid IdBaseReq req) {
         Long uid = UserContext.getUid();
         ChatRoomResp chatRoomResp = contactService.getChatRoomDetail(req, uid);
@@ -46,7 +47,7 @@ public class ContactController {
     }
 
     @GetMapping("/detail/friend")
-    @ApiOperation("会话详情(联系人列表发消息用)")
+    @Operation(summary = "会话详情(联系人列表发消息用)")
     public ApiResult<ChatRoomResp> detailFriend(@Valid ContactFriendReq req) {
         Long uid = UserContext.getUid();
         ChatRoomResp chatRoomResp = contactService.detailChatRoomByTargetId(req, uid);

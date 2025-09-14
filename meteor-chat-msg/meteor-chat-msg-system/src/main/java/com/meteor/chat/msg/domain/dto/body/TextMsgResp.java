@@ -1,7 +1,7 @@
 package com.meteor.chat.msg.domain.dto.body;
 
 import com.meteor.chat.msg.domain.entity.UrlInfo;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -10,15 +10,16 @@ import lombok.NoArgsConstructor;
 import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
+
 @Data
 public class TextMsgResp implements Serializable {
-    @ApiModelProperty("消息内容")
+    @Schema(description = "消息内容")
     private String content;
-    @ApiModelProperty("消息链接映射")
+    @Schema(description = "消息链接映射")
     private Map<String, UrlInfo> urlContentMap;
-    @ApiModelProperty("艾特的uid")
+    @Schema(description = "艾特的uid")
     private List<Long> atUidList;
-    @ApiModelProperty("父消息，如果没有父消息，返回的是null")
+    @Schema(description = "父消息，如果没有父消息，返回的是null")
     private ReplyMsg reply;
 
     @Data
@@ -26,19 +27,19 @@ public class TextMsgResp implements Serializable {
     @AllArgsConstructor
     @NoArgsConstructor
     public static class ReplyMsg implements Serializable {
-        @ApiModelProperty("消息id")
+        @Schema(description = "消息id")
         private Long id;
-        @ApiModelProperty("用户uid")
+        @Schema(description = "用户uid")
         private Long uid;
-        @ApiModelProperty("用户名称")
+        @Schema(description = "用户名称")
         private String username;
-        @ApiModelProperty("消息类型 1正常文本 2.撤回消息")
+        @Schema(description = "消息类型 1正常文本 2.撤回消息")
         private Integer type;
-        @ApiModelProperty("消息内容不同的消息类型，见父消息内容体")
+        @Schema(description = "消息内容不同的消息类型，见父消息内容体")
         private Object body;
-        @ApiModelProperty("是否可消息跳转 0否 1是")
+        @Schema(description = "是否可消息跳转 0否 1是")
         private Integer canCallback;
-        @ApiModelProperty("跳转间隔的消息条数")
-        private Integer gapCount;
+        @Schema(description = "跳转间隔的消息条数")
+        private Long gapCount;
     }
 }

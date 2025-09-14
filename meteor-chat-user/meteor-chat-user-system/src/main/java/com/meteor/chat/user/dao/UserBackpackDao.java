@@ -17,13 +17,13 @@ public class UserBackpackDao extends ServiceImpl<UserBackpackMapper, UserBackpac
         return getOne(queryWrapper);
     }
 
-    public int getCountByUidAndItemId(Long uid, Long itemId) {
+    public long getCountByUidAndItemId(Long uid, Long itemId) {
         LambdaQueryWrapper<UserBackpack> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(UserBackpack::getUid, uid).eq(UserBackpack::getItemId, itemId);
         return this.count(queryWrapper);
     }
 
-    public int countNumber(Long uid, Long itemId) {
+    public Long countNumber(Long uid, Long itemId) {
         return lambdaQuery()
                 .eq(UserBackpack::getUid, uid)
                 .eq(UserBackpack::getItemId, itemId)

@@ -1,13 +1,13 @@
 package com.meteor.chat.msg.domain.vo;
 
 import com.meteor.chat.mybatis.domain.CursorPageBaseReq;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 
 @Data
 @Builder
@@ -15,6 +15,6 @@ import javax.validation.constraints.NotNull;
 @NoArgsConstructor
 public class MessageCursorReq extends CursorPageBaseReq {
     @NotNull
-    @ApiModelProperty("会话id")
+    @Schema(description ="会话id")
     private Long roomId;
 }

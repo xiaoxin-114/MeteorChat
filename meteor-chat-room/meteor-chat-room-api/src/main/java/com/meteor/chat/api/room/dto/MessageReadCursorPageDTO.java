@@ -1,6 +1,6 @@
 package com.meteor.chat.api.room.dto;
 
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -18,8 +18,8 @@ public class MessageReadCursorPageDTO implements Serializable {
     private Long roomId;
 
     private Date msgCreateTime;
-    @ApiModelProperty("页面大小")
+    @Schema(description ="页面大小")
     private int pageSize;
-    @ApiModelProperty("游标")
+    @Schema(description ="游标")
     private String cursor;
 }

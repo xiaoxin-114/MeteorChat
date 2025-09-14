@@ -54,7 +54,7 @@ public class GroupMemberDao extends ServiceImpl<GroupMemberMapper, GroupMember> 
      * @param uid 用户id
      * @return
      */
-    public int countLeader(Long uid) {
+    public long countLeader(Long uid) {
         return lambdaQuery().eq(GroupMember::getUid, uid)
                 .eq(GroupMember::getRole, GroupRoleAPPEnum.LEADER.getCode())
                 .count();

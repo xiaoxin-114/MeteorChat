@@ -1,13 +1,13 @@
 package com.meteor.chat.msg.domain.dto.body;
 
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 import java.io.Serializable;
 
 @EqualsAndHashCode(callSuper = true)
@@ -18,7 +18,7 @@ import java.io.Serializable;
 public class SoundMsgDTO extends BaseFileDTO implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    @ApiModelProperty("时长（秒）")
+    @Schema(description = "时长（秒）")
     @NotNull
     private Integer second;
 }

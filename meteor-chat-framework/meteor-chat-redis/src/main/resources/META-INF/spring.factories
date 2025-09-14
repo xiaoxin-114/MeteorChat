@@ -1,2 +1,0 @@
-#Auto Configuration
-org.springframework.boot.autoconfigure.EnableAutoConfiguration=com.meteor.chat.redis.config.RedisConfig,com.meteor.chat.redis.config.RedissonConfig

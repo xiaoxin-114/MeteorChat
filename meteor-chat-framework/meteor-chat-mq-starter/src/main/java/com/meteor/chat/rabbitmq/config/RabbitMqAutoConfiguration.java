@@ -7,6 +7,7 @@ import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.amqp.rabbit.listener.RabbitListenerContainerFactory;
 import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -62,12 +63,12 @@ public class RabbitMqAutoConfiguration {
     }
 
     @Bean
-    public Exchange scanExchange() {
+    public FanoutExchange scanExchange() {
         return ExchangeBuilder.fanoutExchange(MQConstant.SCAN_EXCHANGE).build();
     }
 
     @Bean
-    public Exchange loginExchange() {
+    public FanoutExchange loginExchange() {
         return ExchangeBuilder.fanoutExchange(MQConstant.LOGIN_EXCHANGE).build();
     }
 
@@ -97,7 +98,7 @@ public class RabbitMqAutoConfiguration {
      * 使用固定 routing key
      */
     @Bean
-    public Binding bindingSendMsg(Exchange sendMsgExchange, Queue sendMsgQueue) {
+    public Binding bindingSendMsg(@Qualifier("sendMsgExchange") Exchange sendMsgExchange, @Qualifier("sendMsgQueue") Queue sendMsgQueue) {
         return BindingBuilder.bind(sendMsgQueue).to(sendMsgExchange).with(MQConstant.SEND_MSG_ROUTING_KEY).noargs();
     }
 
@@ -106,7 +107,7 @@ public class RabbitMqAutoConfiguration {
      * 支持模糊匹配 routing key
      */
     @Bean
-    public Binding bindingSinglePushMsg(Exchange singlePushExchange, Queue msgPushQueue) {
+    public Binding bindingSinglePushMsg(@Qualifier("singlePushExchange") Exchange singlePushExchange, @Qualifier("msgPushQueue") Queue msgPushQueue) {
         return BindingBuilder.bind(msgPushQueue).to(singlePushExchange).with(MQConstant.SINGLE_PUSH_ROUTING_KEY.replace(MQConstant.INSTANCE_ID_PLACE, instanceId)).noargs();
     }
 
@@ -115,7 +116,7 @@ public class RabbitMqAutoConfiguration {
      * 支持模糊匹配 routing key
      */
     @Bean
-    public Binding bindingRoomPushMsg(FanoutExchange roomPushExchange, Queue msgPushQueue) {
+    public Binding bindingRoomPushMsg(@Qualifier("roomPushExchange") FanoutExchange roomPushExchange, @Qualifier("msgPushQueue") Queue msgPushQueue) {
         return BindingBuilder.bind(msgPushQueue).to(roomPushExchange);
     }
 
@@ -126,7 +127,7 @@ public class RabbitMqAutoConfiguration {
      * 使用分布式唯一id来匹配实例id
      */
     @Bean
-    public Binding bindingScanEvent(FanoutExchange scanExchange, Queue scanQueue) {
+    public Binding bindingScanEvent(@Qualifier("scanExchange") FanoutExchange scanExchange, @Qualifier("scanQueue") Queue scanQueue) {
         return BindingBuilder.bind(scanQueue).to(scanExchange);
     }
 
@@ -135,7 +136,7 @@ public class RabbitMqAutoConfiguration {
      * 用户登录事件
      */
     @Bean
-    public Binding bindingLoginEvent(FanoutExchange loginExchange, Queue loginQueue) {
+    public Binding bindingLoginEvent(@Qualifier("loginExchange") FanoutExchange loginExchange, @Qualifier("loginQueue") Queue loginQueue) {
         return BindingBuilder.bind(loginQueue).to(loginExchange);
     }
 

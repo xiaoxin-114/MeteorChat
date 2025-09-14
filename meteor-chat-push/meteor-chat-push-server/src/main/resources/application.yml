@@ -34,17 +34,18 @@ spring:
       config: # 【注册中心】配置项
         namespace: dev # 命名空间。这里使用 dev 开发环境
         group: DEFAULT_GROUP # 使用的 Nacos 配置分组，默认为 DEFAULT_GROUP
-  redis:
-    # Redis服务器地址
-    host: ${mallchat.redis.host}
-    # Redis服务器端口号
-    port: ${mallchat.redis.port}
-    # 使用的数据库索引，默认是0
-    database: 0
-    # 连接超时时间
-    timeout: 1800000
-    # 设置密码
-    password: ${mallchat.redis.password}
+  data:
+    redis:
+      # Redis服务器地址
+      host: ${mallchat.redis.host}
+      # Redis服务器端口号
+      port: ${mallchat.redis.port}
+      # 使用的数据库索引，默认是0
+      database: 0
+      # 连接超时时间
+      timeout: 1800000
+      # 设置密码
+      password: ${mallchat.redis.password}
   cache:
     type: redis
     redis:
@@ -62,6 +63,8 @@ spring:
 dubbo:
   application:
     name: ${spring.application.name}
+    serialize-check-status: DISABLE
+    qos-enable: false
   registry:
     address: nacos://${spring.cloud.nacos.server-addr}
     register-mode: instance
@@ -74,7 +77,7 @@ dubbo:
     check: false
   protocol:
     name: dubbo
-    serialization: hessian2
+    serialization: fastjson2
 #    listener: # 消息消费者配置
 #      simple:
 #        acknowledge-mode: manual # 手动确认模式（默认 auto）

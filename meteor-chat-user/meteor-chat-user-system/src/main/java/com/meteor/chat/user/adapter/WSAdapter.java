@@ -38,7 +38,7 @@ public class WSAdapter {
         return notify;
     }
 
-    public static WSBaseResp<WSFriendApply> buildFriendApply(Long uid, Integer unreadCount) {
+    public static WSBaseResp<WSFriendApply> buildFriendApply(Long uid, Long unreadCount) {
         WSFriendApply wsFriendApply = new WSFriendApply(uid, unreadCount);
         return new WSBaseResp<WSFriendApply>(WSRespTypeEnum.APPLY.getType(), wsFriendApply);
     }

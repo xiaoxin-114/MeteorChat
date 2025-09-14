@@ -11,7 +11,7 @@ import com.meteor.chat.user.service.UserBackpackService;
 import com.meteor.chat.user.service.UserService;
 import com.meteor.chat.web.core.context.UserContext;
 import com.meteor.chat.common.result.ApiResult;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -61,14 +61,14 @@ public class UserController {
     }
 
     @GetMapping("/badges")
-    @ApiOperation("获取徽章图鉴")
+    @Operation(summary = "获取徽章图鉴")
     public ApiResult<List<BadgeResp>> getBadgeList() {
         Long uid = UserContext.getUid();
         return ApiResult.success(userBackpackService.allBadgeList(uid));
     }
 
     @PutMapping("/badge")
-    @ApiOperation("佩戴徽章")
+    @Operation(summary = "佩戴徽章")
     public ApiResult<Void> wearBadge(@RequestBody WearBadgeReq req) {
         Long uid = UserContext.getUid();
         userService.wearBadge(uid, req.getBadgeId());
@@ -76,7 +76,7 @@ public class UserController {
     }
 
     @PutMapping("/name")
-    @ApiOperation("用户修改名称")
+    @Operation(summary = "用户修改名称")
     public ApiResult<Void> rename(@RequestBody @Valid ModifyNameReq req) {
         Long uid = UserContext.getUid();
         userService.rename(uid, req);
@@ -84,13 +84,13 @@ public class UserController {
     }
 
     @PostMapping("/public/summary/userInfo/batch")
-    @ApiOperation("批量懒加载更新用户数据")
+    @Operation(summary = "批量懒加载更新用户数据")
     public ApiResult<List<SummaryInfoDTO>> batchRefreshUserInfo(@RequestBody @Valid SummaryInfoReq req) {
         return ApiResult.success(userService.getSummaryInfoDTOList(req));
     }
 
     @PostMapping("/public/badges/batch")
-    @ApiOperation("批量懒加载徽章数据")
+    @Operation(summary = "批量懒加载徽章数据")
     public ApiResult<List<ItemInfoDTO>> batchRefreshBadgesInfo(@RequestBody @Valid ItemInfoReq req) {
         return ApiResult.success(userService.getItemInfoDTOList(req));
     }

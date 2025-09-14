@@ -1,6 +1,6 @@
 package com.meteor.chat.user.domain.vo.req;
 
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -15,6 +15,6 @@ import javax.validation.constraints.NotNull;
 public class FriendDeleteReq {
 
     @NotNull
-    @ApiModelProperty("删除的好友id")
+    @Schema(description ="删除的好友id")
     private Long friendId;
 }

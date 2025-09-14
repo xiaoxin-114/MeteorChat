@@ -1,6 +1,6 @@
 package com.meteor.chat.user.domain.vo;
 
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -14,12 +14,12 @@ import java.util.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 public class GroupMemberResp implements Serializable {
-    @ApiModelProperty("uid")
+    @Schema(description ="uid")
     private Long uid;
     /**
      * @see com.meteor.chat.user.enums.ChatActiveStatusEnum
      */
-    @ApiModelProperty("在线状态 1在线 2离线")
+    @Schema(description ="在线状态 1在线 2离线")
     private Integer activeStatus;
 
     /**
@@ -27,6 +27,6 @@ public class GroupMemberResp implements Serializable {
      */
     private Integer roleId;
 
-    @ApiModelProperty("最后一次上下线时间")
+    @Schema(description ="最后一次上下线时间")
     private Date lastOptTime;
 }

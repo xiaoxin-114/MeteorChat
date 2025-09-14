@@ -1,10 +1,12 @@
 package com.meteor.chat.mybatis.domain;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.AllArgsConstructor;
+import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
+import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -14,12 +16,16 @@ import java.io.Serializable;
 @AllArgsConstructor
 @Slf4j
 @Data
-@ApiModel("游标翻页请求")
-public class CursorPageBaseReq  implements Serializable {
+@Schema(description = "游标翻页请求")
+public class CursorPageBaseReq implements Serializable {
 
-    @ApiModelProperty("页面大小")
-    private int pageSize;
-    @ApiModelProperty("游标")
+    @NotNull
+    @Min(0)
+    @Max(100)
+    @Schema(description = "页面大小")
+    private Integer pageSize;
+    
+    @Schema(description = "游标")
     private String cursor;
 
     public Page plusPage() {

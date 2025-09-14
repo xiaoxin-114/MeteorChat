@@ -97,7 +97,7 @@ public class UserServiceImpl implements UserService {
     public UserInfoVO getUserInfo(Long uid) {
         User userInfo = userCache.getUserInfo(uid);
         // 背包改名卡查询，获取用户可改名次数
-        int renameTimes = userBackpackService.countRenameTimes(uid);
+        long renameTimes = userBackpackService.countRenameTimes(uid);
         return UserAdapter.buildUserInfoResp(userInfo, renameTimes);
     }
 

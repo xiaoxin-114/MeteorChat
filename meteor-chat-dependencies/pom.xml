@@ -11,32 +11,32 @@
     <packaging>pom</packaging>
 
     <properties>
-        <maven.compiler.source>8</maven.compiler.source>
-        <maven.compiler.target>8</maven.compiler.target>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <spring-boot.version>2.6.7</spring-boot.version>
-        <spring-cloud.version>2021.0.3</spring-cloud.version>
-        <spring-cloud.alibaba.version>2021.0.4.0</spring-cloud.alibaba.version>
+        <spring-boot.version>3.4.5</spring-boot.version>
+        <spring-ai.version>1.0.0</spring-ai.version>
+        <spring-ai-alibaba.version>1.0.0.2</spring-ai-alibaba.version>
+        <spring-cloud.version>2024.0.2</spring-cloud.version>
+        <spring-cloud.alibaba.version>2023.0.1.0</spring-cloud.alibaba.version>
         <hutool.version>5.8.18</hutool.version>
         <springfox-swagger.version>3.0.0</springfox-swagger.version>
         <swagger-models.version>1.6.0</swagger-models.version>
         <mybatis-plus-generator.version>3.4.1</mybatis-plus-generator.version>
-        <mybatis.version>3.5.10</mybatis.version>
         <mysql-connector.version>8.0.29</mysql-connector.version>
         <spring-data-commons.version>2.7.5</spring-data-commons.version>
         <jwt.version>3.19.0</jwt.version>
         <logstash-logback.version>7.2</logstash-logback.version>
         <minio.version>8.4.5</minio.version>
         <jaxb-api.version>2.3.1</jaxb-api.version>
-        <lombok.version>1.18.10</lombok.version>
         <netty-all.version>4.1.76.Final</netty-all.version>
         <weixin-java-mp.version>4.4.0</weixin-java-mp.version>
-        <mybatis-plus-boot-starter.version>3.4.0</mybatis-plus-boot-starter.version>
+        <mybatis-plus-boot-starter.version>3.5.12</mybatis-plus-boot-starter.version>
         <jsoup.version>1.15.3</jsoup.version>
-        <knife4j.version>4.4.0</knife4j.version>
+        <knife4j.version>4.3.0</knife4j.version>
         <okhttp3.version>4.8.1</okhttp3.version>
-        <redisson-spring-boot-starter.version>3.17.1</redisson-spring-boot-starter.version>
-        <dubbo.version>3.0.9</dubbo.version>
+        <redisson-spring-boot-starter.version>3.41.0</redisson-spring-boot-starter.version>
+        <dubbo.version>3.2.10</dubbo.version>
         <protobuf.version>3.19.6</protobuf.version>
         <revision>1.0-SNAPSHOT</revision>
     </properties>
@@ -149,8 +149,18 @@
                 <version>${revision}</version>
             </dependency>
             <dependency>
+                <groupId>com.alibaba.cloud.ai</groupId>
+                <artifactId>spring-ai-alibaba-starter-memory-jdbc</artifactId>
+                <version>${spring-ai-alibaba.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.alibaba.cloud.ai</groupId>
+                <artifactId>spring-ai-alibaba-starter-dashscope</artifactId>
+                <version>${spring-ai-alibaba.version}</version>
+            </dependency>
+            <dependency>
                 <groupId>com.github.xiaoymin</groupId>
-                <artifactId>knife4j-openapi2-spring-boot-starter</artifactId>
+                <artifactId>knife4j-openapi3-jakarta-spring-boot-starter</artifactId>
                 <version>${knife4j.version}</version>
             </dependency>
             <dependency>
@@ -165,8 +175,10 @@
             </dependency>
             <dependency>
                 <groupId>com.baomidou</groupId>
-                <artifactId>mybatis-plus-boot-starter</artifactId>
+                <artifactId>mybatis-plus-bom</artifactId>
                 <version>${mybatis-plus-boot-starter.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
             </dependency>
             <dependency>
                 <groupId>org.springframework.boot</groupId>
@@ -209,11 +221,6 @@
             </dependency>
 
             <dependency>
-                <groupId>org.projectlombok</groupId>
-                <artifactId>lombok</artifactId>
-                <version>${lombok.version}</version>
-            </dependency>
-            <dependency>
                 <groupId>com.github.binarywang</groupId>
                 <artifactId>weixin-java-mp</artifactId>
                 <version>${weixin-java-mp.version}</version>
@@ -245,12 +252,6 @@
                 <groupId>cn.hutool</groupId>
                 <artifactId>hutool-all</artifactId>
                 <version>${hutool.version}</version>
-            </dependency>
-            <!-- MyBatis-->
-            <dependency>
-                <groupId>org.mybatis</groupId>
-                <artifactId>mybatis</artifactId>
-                <version>${mybatis.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.baomidou</groupId>

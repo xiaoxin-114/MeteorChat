@@ -1,24 +1,23 @@
 package com.meteor.chat.msg.domain.vo;
 
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 
 @Data
-@ApiModel("标记消息请求对象")
+@Schema(description ="标记消息请求对象")
 public class MsgMarkReq {
-    @ApiModelProperty("操作类型，1表示生效，2表示取消")
+    @Schema(description ="操作类型，1表示生效，2表示取消")
     @NotNull
     private Integer actType;
-    @ApiModelProperty("标记类型，1表示点赞，2表示点踩")
+    @Schema(description ="标记类型，1表示点赞，2表示点踩")
     @NotNull
     /**
      * @see com.meteor.chat.common.domain.enums.MessageMarkTypeEnum
      */
     private Integer markType;
-    @ApiModelProperty("消息id")
+    @Schema(description ="消息id")
     @NotNull
     private Long msgId;
 }

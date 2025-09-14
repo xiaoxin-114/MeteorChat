@@ -11,7 +11,11 @@ import com.meteor.chat.user.service.cache.UserCache;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
+
+import java.util.ArrayList;
+import java.util.TreeSet;
+
 @Component
 public class BlackUserEventListener {
 
@@ -27,6 +31,7 @@ public class BlackUserEventListener {
      */
     @EventListener(BlackUserEvent.class)
     public void sendBlackMsg (BlackUserEvent event) {
+
         pushService.pushRoomMsg(new WSBaseResp<>(WSRespTypeEnum.BLACK.getType(),
                 new WSBlack(event.getUser().getId())));
     }

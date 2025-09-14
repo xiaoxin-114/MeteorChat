@@ -1,13 +1,13 @@
 package com.meteor.chat.msg.domain.dto.body;
 
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import java.io.Serializable;
 @Data
 @SuperBuilder
@@ -16,11 +16,11 @@ import java.io.Serializable;
 public class BaseFileDTO implements Serializable {
 
     private static final long serialVersionUID = -6110490245902742033L;
-    @ApiModelProperty("大小（字节）")
+    @Schema(description = "大小（字节）")
     @NotNull
     private Long size;
 
-    @ApiModelProperty("下载地址")
+    @Schema(description = "下载地址")
     @NotBlank
     private String url;
 }

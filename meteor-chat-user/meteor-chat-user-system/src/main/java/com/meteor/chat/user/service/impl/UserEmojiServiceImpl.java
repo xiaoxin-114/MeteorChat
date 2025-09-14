@@ -34,7 +34,7 @@ public class UserEmojiServiceImpl implements UserEmojiService {
 
     @Override
     public IdRespVO addEmoji(UserEmojiAddReq req, Long uid) {
-        int count = userEmojiDao.countByUid(uid);
+        long count = userEmojiDao.countByUid(uid);
         Assert.assertTrue("最多支持收藏" + CommonConstants.USER_EMOJI_MAX_NUM + "个表情包", count < CommonConstants.USER_EMOJI_MAX_NUM);
         List<UserEmoji> emojiList = userEmojiDao.getByUidAndUrl(uid, req.getExpressionUrl());
         Assert.assertTrue("该表情包已经收藏过了~", CollectionUtils.isEmpty(emojiList));

@@ -1,6 +1,6 @@
 package com.meteor.chat.room.domain.vo;
 
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -11,17 +11,17 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class GroupResp {
-    @ApiModelProperty("房间id")
+    @Schema(description ="房间id")
     private Long roomId;
-    @ApiModelProperty("群名称")
+    @Schema(description ="群名称")
     private String groupName;
-    @ApiModelProperty("群头像")
+    @Schema(description ="群头像")
     private String avatar;
-    @ApiModelProperty("在线人数")
+    @Schema(description ="在线人数")
     private Long onlineNum;
     /**
      * @see com.meteor.chat.room.enums.GroupRoleAPPEnum
      */
-    @ApiModelProperty("成员角色 1群主 2管理员 3普通成员 4踢出群聊")
+    @Schema(description ="成员角色 1群主 2管理员 3普通成员 4踢出群聊")
     private Integer role;
 }

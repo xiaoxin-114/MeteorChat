@@ -1,24 +1,24 @@
 package com.meteor.chat.msg.domain.vo;
 
 import com.meteor.chat.mybatis.domain.CursorPageBaseReq;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
 public class MessageReadCursorPageReq extends CursorPageBaseReq {
-    @ApiModelProperty("消息id")
+    @Schema(description = "消息id")
     @NotNull
     private Long msgId;
 
-    @ApiModelProperty("查询类型 1已读 2未读")
+    @Schema(description = "查询类型 1已读 2未读")
     @NotNull
     private Integer searchType;
 }

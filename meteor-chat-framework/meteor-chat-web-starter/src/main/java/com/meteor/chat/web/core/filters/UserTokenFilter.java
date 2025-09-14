@@ -1,21 +1,22 @@
 package com.meteor.chat.web.core.filters;
 
 import cn.hutool.core.util.StrUtil;
+import cn.hutool.extra.servlet.JakartaServletUtil;
 import cn.hutool.extra.servlet.ServletUtil;
 import com.meteor.chat.common.constants.MDCKey;
 import com.meteor.chat.api.UserLoginApi;
 import com.meteor.chat.web.core.context.UserContext;
 import com.meteor.chat.web.core.domian.RequestInfo;
 import com.meteor.chat.web.core.enums.HttpErrorEnum;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.MDC;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Objects;
 import java.util.Optional;
@@ -43,7 +44,7 @@ public class UserTokenFilter extends OncePerRequestFilter {
             //如果token没过期，用户已经登入，把uid存入request中
             if (uid != null) {
                 request.setAttribute(ATTRIBUTE_UID, uid);
-                String ip = ServletUtil.getClientIP(request);
+                String ip = JakartaServletUtil.getClientIP(request);
                 RequestInfo info = new RequestInfo();
                 info.setIp(ip);
                 info.setUid(uid);

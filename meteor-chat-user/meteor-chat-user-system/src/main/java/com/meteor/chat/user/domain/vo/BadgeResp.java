@@ -1,25 +1,24 @@
 package com.meteor.chat.user.domain.vo;
 
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 @Data
-@ApiModel("徽章图鉴的返回值")
+@Schema(description ="徽章图鉴的返回值")
 public class BadgeResp {
 
-    @ApiModelProperty(value = "徽章id")
+    @Schema(description = "徽章id")
     private Long id;
 
-    @ApiModelProperty(value = "徽章图标")
+    @Schema(description = "徽章图标")
     private String img;
 
-    @ApiModelProperty(value = "徽章描述")
+    @Schema(description = "徽章描述")
     private String describe;
 
-    @ApiModelProperty(value = "是否拥有 0否 1是")
+    @Schema(description = "是否拥有 0否 1是")
     private Integer obtain;
 
-    @ApiModelProperty(value = "是否佩戴  0否 1是")
+    @Schema(description = "是否佩戴  0否 1是")
     private Integer wearing;
 }

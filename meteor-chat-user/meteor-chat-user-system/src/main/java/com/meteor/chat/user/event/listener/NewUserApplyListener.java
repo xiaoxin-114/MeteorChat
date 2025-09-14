@@ -23,7 +23,7 @@ public class NewUserApplyListener {
     public void sendMsgToTarget(NewUserApplyEvent event){
         UserApply userApply = event.getUserApply();
         Long targetId = userApply.getTargetId();
-        int unRead = userApplyDao.countUnRead(targetId);
+        long unRead = userApplyDao.countUnRead(targetId);
         pushService.pushSingleMsg(WSAdapter.buildFriendApply(userApply.getUid(), unRead), targetId);
     }
 }

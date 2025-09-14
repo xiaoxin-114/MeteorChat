@@ -14,7 +14,7 @@ import java.util.Objects;
 
 @Repository
 public class MessageDao extends ServiceImpl<MessageMapper, Message> {
-    public int countUnReadMsg(Long roomId, Date readTime) {
+    public long countUnReadMsg(Long roomId, Date readTime) {
         return lambdaQuery().eq(Message::getRoomId, roomId)
                 .eq(Objects.nonNull(readTime), Message::getCreateTime, readTime)
                 .count();
@@ -37,7 +37,7 @@ public class MessageDao extends ServiceImpl<MessageMapper, Message> {
      * @param replyMsgId 被回复消息的id
      * @return
      */
-    public Integer countMsgGap(Long roomId, Long msgId, Long replyMsgId) {
+    public long countMsgGap(Long roomId, Long msgId, Long replyMsgId) {
         return lambdaQuery().eq(Message::getRoomId, roomId)
                 .gt(Message::getId, replyMsgId)
                 .lt(Message::getId, msgId)

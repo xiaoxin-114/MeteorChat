@@ -3,7 +3,7 @@ package com.meteor.chat.web.core.utils;
 import cn.hutool.http.ContentType;
 import com.meteor.chat.common.result.ApiResult;
 
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 

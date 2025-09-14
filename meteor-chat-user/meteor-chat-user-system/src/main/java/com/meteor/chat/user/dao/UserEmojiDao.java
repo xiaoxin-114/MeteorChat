@@ -13,7 +13,7 @@ public class UserEmojiDao extends ServiceImpl<UserEmojiMapper, UserEmoji> {
         return lambdaQuery().eq(UserEmoji::getUid, uid).list();
     }
 
-    public int countByUid(Long uid) {
+    public long countByUid(Long uid) {
         return lambdaQuery().eq(UserEmoji::getUid, uid).count();
     }
 

@@ -3,22 +3,21 @@ package com.meteor.chat.common.result;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.meteor.chat.common.exception.BusinessException;
 import com.meteor.chat.common.exception.ErrorEnum;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 import java.io.Serializable;
 
 @Data
-@ApiModel("基础api响应体")
+@Schema(description = "基础api响应体")
 public class ApiResult<T> implements Serializable {
-    @ApiModelProperty("成功标识true or false")
+    @Schema(description = "成功标识true or false")
     private Boolean success;
-    @ApiModelProperty("错误码")
+    @Schema(description = "错误码")
     private Integer errCode;
-    @ApiModelProperty("错误消息")
+    @Schema(description = "错误消息")
     private String errMsg;
-    @ApiModelProperty("返回数据对象")
+    @Schema(description = "返回数据对象")
     private T data;
 
     public static <T> ApiResult<T> success(){

@@ -23,7 +23,7 @@ public class UserApplyDao extends ServiceImpl<UserApplyMapper, UserApply> {
         return getOne(queryWrapper);
     }
 
-    public int countUnRead(Long uid) {
+    public long countUnRead(Long uid) {
         return count(
                 new LambdaQueryWrapper<UserApply>()
                         .eq(UserApply::getTargetId, uid)

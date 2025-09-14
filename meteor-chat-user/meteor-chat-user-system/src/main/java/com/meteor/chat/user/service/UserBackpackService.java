@@ -23,7 +23,7 @@ public interface UserBackpackService {
      * @param uid
      * @return
      */
-    int countRenameTimes(Long uid);
+    Long countRenameTimes(Long uid);
 
 
     /**

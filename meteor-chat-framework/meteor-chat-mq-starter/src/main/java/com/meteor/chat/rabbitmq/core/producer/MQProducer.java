@@ -2,11 +2,11 @@ package com.meteor.chat.rabbitmq.core.producer;
 
 import com.meteor.chat.rabbitmq.core.constants.MQConstant;
 import com.meteor.chat.transaction.core.annotation.SecureInvoke;
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Value;
 
-import javax.annotation.PostConstruct;
 
 @RequiredArgsConstructor
 public class MQProducer {

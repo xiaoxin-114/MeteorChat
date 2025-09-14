@@ -53,7 +53,7 @@ public class Message implements Serializable {
     /**
      * 与回复的消息间隔多少条
      */
-    private Integer gapCount;
+    private Long gapCount;
 
     /**
      * 消息类型 1正常文本 2.撤回消息

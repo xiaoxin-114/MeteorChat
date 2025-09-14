@@ -1,15 +1,14 @@
 package com.meteor.chat.room.domain.vo;
 
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 
-@ApiModel("获取详情请求")
+@Schema(description ="获取详情请求")
 @Data
 public class IdBaseReq {
     @NotNull
-    @ApiModelProperty("获取详情的id")
+    @Schema(description ="获取详情的id")
     private Long id;
 }

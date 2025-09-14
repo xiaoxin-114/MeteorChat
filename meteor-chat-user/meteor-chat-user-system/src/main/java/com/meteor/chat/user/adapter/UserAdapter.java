@@ -24,7 +24,7 @@ public class UserAdapter {
      * @param countByValidItemId 剩余改名次数
      * @return
      */
-    public static UserInfoVO buildUserInfoResp(User userInfo, Integer countByValidItemId) {
+    public static UserInfoVO buildUserInfoResp(User userInfo, long countByValidItemId) {
         UserInfoVO userInfoResp = new UserInfoVO();
         BeanUtil.copyProperties(userInfo, userInfoResp);
         userInfoResp.setModifyNameChance(countByValidItemId);

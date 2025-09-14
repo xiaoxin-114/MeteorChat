@@ -1,6 +1,7 @@
 package com.meteor.chat.user.domain.vo.req;
 
-import io.swagger.annotations.ApiModelProperty;
+
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -12,7 +13,7 @@ public class UserEmojiAddReq {
     /**
      * 表情地址
      */
-    @ApiModelProperty(value = "新增的表情url")
+    @Schema(description ="新增的表情url")
     private String expressionUrl;
 
 }
